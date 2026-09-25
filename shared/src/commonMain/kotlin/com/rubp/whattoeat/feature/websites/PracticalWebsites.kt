@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.misc
+package com.rubp.whattoeat.feature.websites
 
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Search

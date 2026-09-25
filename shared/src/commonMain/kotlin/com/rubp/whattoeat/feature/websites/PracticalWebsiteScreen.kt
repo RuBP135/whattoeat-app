@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.misc
+package com.rubp.whattoeat.feature.websites
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

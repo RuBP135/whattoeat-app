@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.misc
+package com.rubp.whattoeat.feature.websites
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.DrawableResource

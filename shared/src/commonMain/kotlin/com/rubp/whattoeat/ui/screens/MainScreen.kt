@@ -34,7 +34,7 @@ import com.rubp.whattoeat.feature.food.ui.EatScreen
 import com.rubp.whattoeat.feature.food.ui.FoodEditScreen
 import com.rubp.whattoeat.ui.screens.home.HomeScreen
 import com.rubp.whattoeat.ui.screens.misc.OtherScreen
-import com.rubp.whattoeat.ui.screens.misc.PracticalWebsiteScreen
+import com.rubp.whattoeat.feature.websites.PracticalWebsiteScreen
 import com.rubp.whattoeat.feature.settings.ui.SettingsScreen
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.serialization.Serializable
