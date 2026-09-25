@@ -6,7 +6,7 @@ import com.rubp.whattoeat.feature.food.data.entity.Food
 import kotlinx.coroutines.flow.Flow
 
 class FoodRepository(
-    private val dao: FoodDao = AppDatabase.Companion.database.foodDao()
+    private val dao: FoodDao
 ) {
     fun getByTableId(tableId: Long): Flow<List<Food>> = dao.getByTableId(tableId)
 

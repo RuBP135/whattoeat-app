@@ -16,8 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -30,13 +28,14 @@ import com.composables.icons.materialicons.filled.Home
 import com.composables.icons.materialicons.filled.Settings
 import com.composables.icons.materialicons.outlined.Home
 import com.composables.icons.materialicons.outlined.Settings
+import com.rubp.whattoeat.app.di.AppContainer.foodViewModelFactory
 import com.rubp.whattoeat.feature.food.ui.EatScreen
 import com.rubp.whattoeat.feature.food.ui.FoodEditScreen
+import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import com.rubp.whattoeat.feature.home.HomeScreen
 import com.rubp.whattoeat.feature.other.OtherScreen
-import com.rubp.whattoeat.feature.websites.ui.PracticalWebsiteScreen
 import com.rubp.whattoeat.feature.settings.ui.SettingsScreen
-import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
+import com.rubp.whattoeat.feature.websites.ui.PracticalWebsiteScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -58,13 +57,7 @@ object Other
 @Composable
 fun MainScreen(){
     val navController = rememberNavController()
-    val foodViewModel: FoodViewModel = viewModel(
-        factory = viewModelFactory {
-            initializer {
-                FoodViewModel()
-            }
-        }
-    )
+    val foodViewModel: FoodViewModel = viewModel(factory = foodViewModelFactory)
 
     Scaffold(
         modifier = Modifier,

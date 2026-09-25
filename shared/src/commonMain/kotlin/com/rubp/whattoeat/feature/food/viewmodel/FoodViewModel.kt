@@ -21,8 +21,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FoodViewModel(
-    private val foodRepository: FoodRepository = FoodRepository(),
-    private val foodTableRepository: FoodTableRepository = FoodTableRepository(),
+    private val foodRepository: FoodRepository,
+    private val foodTableRepository: FoodTableRepository,
     private val foodPreferences: FoodPreferences
 ) : ViewModel() {
 

@@ -1,6 +1,5 @@
 package com.rubp.whattoeat.feature.food.data.preferences
 
-import com.rubp.whattoeat.app.config.Config.observableSettings
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.getLongOrNullFlow
@@ -11,12 +10,12 @@ class FoodPreferences(
     private val settings: ObservableSettings
 ) {
     @OptIn(ExperimentalSettingsApi::class)
-    val foodTableIdFlow = observableSettings.getLongOrNullFlow(
+    val foodTableIdFlow = settings.getLongOrNullFlow(
         FOOD_TABLE_ID
     )
 
     fun saveFoodTableId(id: Long){
-        observableSettings.putLong(FOOD_TABLE_ID, id)
+        settings.putLong(FOOD_TABLE_ID, id)
     }
 }
 
