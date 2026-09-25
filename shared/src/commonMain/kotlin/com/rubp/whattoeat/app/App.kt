@@ -1,4 +1,4 @@
-package com.rubp.whattoeat
+package com.rubp.whattoeat.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
