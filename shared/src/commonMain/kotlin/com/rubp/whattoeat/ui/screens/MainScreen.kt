@@ -32,7 +32,7 @@ import com.composables.icons.materialicons.outlined.Home
 import com.composables.icons.materialicons.outlined.Settings
 import com.rubp.whattoeat.feature.food.ui.EatScreen
 import com.rubp.whattoeat.feature.food.ui.FoodEditScreen
-import com.rubp.whattoeat.ui.screens.home.HomeScreen
+import com.rubp.whattoeat.feature.home.HomeScreen
 import com.rubp.whattoeat.feature.other.OtherScreen
 import com.rubp.whattoeat.feature.websites.PracticalWebsiteScreen
 import com.rubp.whattoeat.feature.settings.ui.SettingsScreen

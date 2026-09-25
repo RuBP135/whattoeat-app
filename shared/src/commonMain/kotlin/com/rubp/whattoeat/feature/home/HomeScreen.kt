@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.home
+package com.rubp.whattoeat.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
