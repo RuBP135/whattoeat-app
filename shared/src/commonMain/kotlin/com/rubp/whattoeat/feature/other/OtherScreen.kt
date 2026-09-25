@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.misc
+package com.rubp.whattoeat.feature.other
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
