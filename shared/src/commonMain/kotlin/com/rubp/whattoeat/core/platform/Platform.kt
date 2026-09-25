@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core
+package com.rubp.whattoeat.core.platform
 
 interface Platform {
     val name: String
