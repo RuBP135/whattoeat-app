@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.rubp.whattoeat.feature.settings.data.repository.ConfigRepository
-import com.rubp.whattoeat.ui.screens.MainScreen
+import com.rubp.whattoeat.app.navigation.MainScreen
 import com.rubp.whattoeat.core.theme.ColorTheme
 import com.rubp.whattoeat.core.theme.WhatToEatTheme
 

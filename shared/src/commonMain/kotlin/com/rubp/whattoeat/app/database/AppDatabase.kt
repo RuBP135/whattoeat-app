@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.data.local.database
+package com.rubp.whattoeat.app.database
 
 import androidx.room.ConstructedBy
 import androidx.room.Database

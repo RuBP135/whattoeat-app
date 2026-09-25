@@ -1,6 +1,6 @@
 package com.rubp.whattoeat.feature.food.data.repository
 
-import com.rubp.whattoeat.data.local.database.AppDatabase
+import com.rubp.whattoeat.app.database.AppDatabase
 import com.rubp.whattoeat.feature.food.data.dao.FoodTableDao
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import kotlinx.coroutines.flow.Flow

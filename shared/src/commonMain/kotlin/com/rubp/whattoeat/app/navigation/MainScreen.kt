@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens
+package com.rubp.whattoeat.app.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding

@@ -1,4 +1,4 @@
-package com.rubp.whattoeat
+package com.rubp.whattoeat.app.platform
 
 import com.rubp.whattoeat.core.Platform
 import platform.UIKit.UIDevice
