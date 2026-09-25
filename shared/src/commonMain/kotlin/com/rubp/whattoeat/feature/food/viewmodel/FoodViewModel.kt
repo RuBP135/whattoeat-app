@@ -3,10 +3,10 @@ package com.rubp.whattoeat.feature.food.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rubp.whattoeat.data.repository.ConfigRepository
-import com.rubp.whattoeat.data.repository.FoodRepository
-import com.rubp.whattoeat.data.repository.FoodTableRepository
-import com.rubp.whattoeat.domain.FoodTableDto
-import com.rubp.whattoeat.domain.selectFood
+import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
+import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
+import com.rubp.whattoeat.feature.food.domain.FoodTableDto
+import com.rubp.whattoeat.feature.food.domain.selectFood
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import kotlinx.coroutines.ExperimentalCoroutinesApi

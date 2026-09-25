@@ -1,6 +1,7 @@
-package com.rubp.whattoeat.domain
+package com.rubp.whattoeat.feature.food.domain
 
 import com.rubp.whattoeat.feature.food.data.entity.Food
+import kotlin.random.Random
 
 fun selectFood(
     foodList: List<Food>,
@@ -15,7 +16,7 @@ fun selectFood(
     }
 
     val totalWeight = candidates.sumOf { food -> food.weight }
-    val random = kotlin.random.Random.nextDouble()
+    val random = Random.nextDouble()
     var sumWeight = 0
 
     for (food in candidates) {

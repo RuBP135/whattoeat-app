@@ -1,7 +1,7 @@
 package com.rubp.whattoeat.feature.food.ui
 
 import com.rubp.whattoeat.feature.food.data.entity.Food
-import com.rubp.whattoeat.domain.FoodTableDto
+import com.rubp.whattoeat.feature.food.domain.FoodTableDto
 
 interface FoodEditActions {
     fun onReturnToEat()

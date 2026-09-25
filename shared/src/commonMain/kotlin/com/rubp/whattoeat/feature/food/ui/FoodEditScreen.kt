@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.domain.FoodTableDto
-import com.rubp.whattoeat.domain.foodTableToJson
-import com.rubp.whattoeat.domain.jsonToFoodTableDto
+import com.rubp.whattoeat.feature.food.domain.FoodTableDto
+import com.rubp.whattoeat.feature.food.domain.foodTableToJson
+import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
 import com.rubp.whattoeat.core.components.AppTopBar
 import com.rubp.whattoeat.core.components.CardText
 import com.rubp.whattoeat.core.components.MenuButton

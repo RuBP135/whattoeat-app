@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.domain
+package com.rubp.whattoeat.feature.food.domain
 
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
