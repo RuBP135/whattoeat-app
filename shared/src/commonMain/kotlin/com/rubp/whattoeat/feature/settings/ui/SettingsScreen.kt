@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.settings
+package com.rubp.whattoeat.feature.settings.ui
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -32,7 +32,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.TitleCard
 import com.rubp.whattoeat.core.theme.ColorTheme
-import com.rubp.whattoeat.ui.viewmodel.SettingsViewModel
+import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 import com.rubp.whattoeat.BuildKonfig
 import com.rubp.whattoeat.core.icons.GitHubIcon
 

@@ -1,12 +1,12 @@
-package com.rubp.whattoeat.data.repository
+package com.rubp.whattoeat.feature.settings.data.repository
 
-import kotlinx.coroutines.flow.map
 import com.rubp.whattoeat.core.theme.ColorTheme
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.getLongFlow
 import com.russhwolf.settings.coroutines.getStringFlow
+import kotlinx.coroutines.flow.map
 
 object ConfigRepository {
     private val settings: Settings = Settings()

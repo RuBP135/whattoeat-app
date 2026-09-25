@@ -2,7 +2,7 @@ package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rubp.whattoeat.data.repository.ConfigRepository
+import com.rubp.whattoeat.feature.settings.data.repository.ConfigRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
 import com.rubp.whattoeat.feature.food.domain.FoodTableDto

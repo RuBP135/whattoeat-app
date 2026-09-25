@@ -1,12 +1,12 @@
-package com.rubp.whattoeat.ui.viewmodel
+package com.rubp.whattoeat.feature.settings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rubp.whattoeat.data.repository.ConfigRepository
+import com.rubp.whattoeat.core.theme.ColorTheme
+import com.rubp.whattoeat.feature.settings.data.repository.ConfigRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import com.rubp.whattoeat.core.theme.ColorTheme
 
 class SettingsViewModel(
     private val repository: ConfigRepository = ConfigRepository
@@ -14,7 +14,7 @@ class SettingsViewModel(
 
     val colorTheme: StateFlow<ColorTheme> = repository.colorThemeFlow.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly,
+        started = SharingStarted.Companion.Eagerly,
         initialValue = ColorTheme.Pink
     )
     fun saveColorTheme(colorTheme: ColorTheme){
