@@ -38,10 +38,10 @@ import com.composables.icons.materialicons.filled.Add
 import com.composables.icons.materialicons.filled.Delete
 import com.rubp.whattoeat.data.local.entry.Food
 import com.rubp.whattoeat.data.local.entry.FoodTable
-import com.rubp.whattoeat.ui.components.Cell
-import com.rubp.whattoeat.ui.components.CircleIconButton
-import com.rubp.whattoeat.ui.components.LeftSwipeBox
-import com.rubp.whattoeat.ui.components.RowItem
+import com.rubp.whattoeat.core.components.Cell
+import com.rubp.whattoeat.core.components.CircleIconButton
+import com.rubp.whattoeat.core.components.LeftSwipeBox
+import com.rubp.whattoeat.core.components.RowItem
 import org.jetbrains.compose.resources.painterResource
 import whattoeat.shared.generated.resources.Res
 import whattoeat.shared.generated.resources.filled_star

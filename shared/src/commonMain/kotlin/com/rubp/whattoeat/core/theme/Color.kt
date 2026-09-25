@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.theme
+package com.rubp.whattoeat.core.theme
 
 import androidx.compose.ui.graphics.Color
 

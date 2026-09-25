@@ -1,7 +1,7 @@
 package com.rubp.whattoeat.data.repository
 
 import kotlinx.coroutines.flow.map
-import com.rubp.whattoeat.ui.theme.ColorTheme
+import com.rubp.whattoeat.core.theme.ColorTheme
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings

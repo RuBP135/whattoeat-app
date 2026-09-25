@@ -6,7 +6,7 @@ import com.rubp.whattoeat.data.repository.ConfigRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import com.rubp.whattoeat.ui.theme.ColorTheme
+import com.rubp.whattoeat.core.theme.ColorTheme
 
 class SettingsViewModel(
     private val repository: ConfigRepository = ConfigRepository

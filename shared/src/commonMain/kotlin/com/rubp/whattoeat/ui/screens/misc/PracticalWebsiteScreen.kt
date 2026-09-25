@@ -19,8 +19,8 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-import com.rubp.whattoeat.ui.components.AppTopBar
-import com.rubp.whattoeat.ui.components.CardButton
+import com.rubp.whattoeat.core.components.AppTopBar
+import com.rubp.whattoeat.core.components.CardButton
 import androidx.compose.foundation.lazy.items
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource

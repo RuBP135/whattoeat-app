@@ -7,8 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.rubp.whattoeat.data.repository.ConfigRepository
 import com.rubp.whattoeat.ui.screens.MainScreen
-import com.rubp.whattoeat.ui.theme.ColorTheme
-import com.rubp.whattoeat.ui.theme.WhatToEatTheme
+import com.rubp.whattoeat.core.theme.ColorTheme
+import com.rubp.whattoeat.core.theme.WhatToEatTheme
 
 @Composable
 @Preview

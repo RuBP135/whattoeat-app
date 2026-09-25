@@ -31,9 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.ui.viewmodel.FoodViewModel
 import com.rubp.whattoeat.data.local.entry.FoodTable
-import com.rubp.whattoeat.ui.components.AppTopBar
-import com.rubp.whattoeat.ui.components.CardButton
-import com.rubp.whattoeat.ui.components.CircleIconButton
+import com.rubp.whattoeat.core.components.AppTopBar
+import com.rubp.whattoeat.core.components.CardButton
+import com.rubp.whattoeat.core.components.CircleIconButton
 
 @Composable
 fun EatScreen(

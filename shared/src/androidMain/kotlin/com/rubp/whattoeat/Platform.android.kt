@@ -1,6 +1,7 @@
 package com.rubp.whattoeat
 
 import android.os.Build
+import com.rubp.whattoeat.core.Platform
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"

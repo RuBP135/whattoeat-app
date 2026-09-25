@@ -1,5 +1,6 @@
 package com.rubp.whattoeat
 
+import com.rubp.whattoeat.core.Platform
 import platform.UIKit.UIDevice
 
 class IOSPlatform: Platform {

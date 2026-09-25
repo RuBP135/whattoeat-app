@@ -29,12 +29,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.rubp.whattoeat.ui.components.CardButton
-import com.rubp.whattoeat.ui.components.TitleCard
-import com.rubp.whattoeat.ui.theme.ColorTheme
+import com.rubp.whattoeat.core.components.CardButton
+import com.rubp.whattoeat.core.components.TitleCard
+import com.rubp.whattoeat.core.theme.ColorTheme
 import com.rubp.whattoeat.ui.viewmodel.SettingsViewModel
 import com.rubp.whattoeat.BuildKonfig
-import com.rubp.whattoeat.ui.icons.GitHubIcon
+import com.rubp.whattoeat.core.icons.GitHubIcon
 
 
 @Preview

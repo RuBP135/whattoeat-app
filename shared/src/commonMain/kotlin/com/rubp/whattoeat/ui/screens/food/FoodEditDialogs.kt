@@ -22,8 +22,8 @@ import androidx.compose.ui.window.Dialog
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.outlined.Help
 import com.rubp.whattoeat.data.local.entry.FoodTable
-import com.rubp.whattoeat.ui.components.ConfirmDialog
-import com.rubp.whattoeat.ui.components.EditDialog
+import com.rubp.whattoeat.core.components.ConfirmDialog
+import com.rubp.whattoeat.core.components.EditDialog
 
 @Composable
 fun FoodEditDialogHandler(
