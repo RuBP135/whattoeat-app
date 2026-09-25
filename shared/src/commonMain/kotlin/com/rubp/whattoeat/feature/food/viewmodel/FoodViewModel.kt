@@ -2,13 +2,14 @@ package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rubp.whattoeat.feature.settings.data.repository.ConfigRepository
+import com.rubp.whattoeat.feature.settings.data.preferences.ConfigRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
 import com.rubp.whattoeat.feature.food.domain.FoodTableDto
 import com.rubp.whattoeat.feature.food.domain.selectFood
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
+import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
 class FoodViewModel(
     private val foodRepository: FoodRepository = FoodRepository(),
     private val foodTableRepository: FoodTableRepository = FoodTableRepository(),
-    private val configRepository: ConfigRepository = ConfigRepository
+    private val foodPreferences: FoodPreferences
 ) : ViewModel() {
 
     // 所有表格
@@ -144,7 +145,7 @@ class FoodViewModel(
         }
     }
     private fun saveCurrentTableId(id: Long){
-        configRepository.saveTableId(id)
+        foodPreferences.saveFoodTableId(id)
     }
 
     fun inputFoodTableDto(foodTableDto: FoodTableDto){

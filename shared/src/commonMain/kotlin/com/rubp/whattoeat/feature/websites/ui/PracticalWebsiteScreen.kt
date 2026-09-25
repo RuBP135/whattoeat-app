@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.feature.websites
+package com.rubp.whattoeat.feature.websites.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.core.components.AppTopBar
 import com.rubp.whattoeat.core.components.CardButton
 import androidx.compose.foundation.lazy.items
+import com.rubp.whattoeat.feature.websites.model.practicalWebsites
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
