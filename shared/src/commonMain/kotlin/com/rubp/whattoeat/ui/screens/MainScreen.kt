@@ -30,13 +30,13 @@ import com.composables.icons.materialicons.filled.Home
 import com.composables.icons.materialicons.filled.Settings
 import com.composables.icons.materialicons.outlined.Home
 import com.composables.icons.materialicons.outlined.Settings
-import com.rubp.whattoeat.ui.screens.food.EatScreen
-import com.rubp.whattoeat.ui.screens.food.FoodEditScreen
+import com.rubp.whattoeat.feature.food.ui.EatScreen
+import com.rubp.whattoeat.feature.food.ui.FoodEditScreen
 import com.rubp.whattoeat.ui.screens.home.HomeScreen
 import com.rubp.whattoeat.ui.screens.misc.OtherScreen
 import com.rubp.whattoeat.ui.screens.misc.PracticalWebsiteScreen
 import com.rubp.whattoeat.ui.screens.settings.SettingsScreen
-import com.rubp.whattoeat.ui.viewmodel.FoodViewModel
+import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable

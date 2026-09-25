@@ -1,6 +1,6 @@
-package com.rubp.whattoeat.ui.screens.food
+package com.rubp.whattoeat.feature.food.ui
 
-import com.rubp.whattoeat.data.local.entry.Food
+import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.domain.FoodTableDto
 
 interface FoodEditActions {

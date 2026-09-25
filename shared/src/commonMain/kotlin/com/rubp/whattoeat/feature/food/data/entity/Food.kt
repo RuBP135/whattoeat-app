@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.data.local.entry
+package com.rubp.whattoeat.feature.food.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

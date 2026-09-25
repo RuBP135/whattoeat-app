@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.food
+package com.rubp.whattoeat.feature.food.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.outlined.Help
-import com.rubp.whattoeat.data.local.entry.FoodTable
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.core.components.ConfirmDialog
 import com.rubp.whattoeat.core.components.EditDialog
 

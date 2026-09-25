@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.food
+package com.rubp.whattoeat.feature.food.ui
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -25,7 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.rubp.whattoeat.data.local.entry.FoodTable
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import kotlin.collections.forEach
 
 // --- 书签侧栏 ---

@@ -5,10 +5,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.rubp.whattoeat.data.local.dao.FoodDao
-import com.rubp.whattoeat.data.local.dao.FoodTableDao
-import com.rubp.whattoeat.data.local.entry.Food
-import com.rubp.whattoeat.data.local.entry.FoodTable
+import com.rubp.whattoeat.feature.food.data.dao.FoodDao
+import com.rubp.whattoeat.feature.food.data.dao.FoodTableDao
+import com.rubp.whattoeat.feature.food.data.entity.Food
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 

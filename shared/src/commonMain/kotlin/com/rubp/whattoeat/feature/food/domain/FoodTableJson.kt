@@ -1,7 +1,7 @@
 package com.rubp.whattoeat.domain
 
-import com.rubp.whattoeat.data.local.entry.Food
-import com.rubp.whattoeat.data.local.entry.FoodTable
+import com.rubp.whattoeat.feature.food.data.entity.Food
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString

@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.data.local.dao
+package com.rubp.whattoeat.feature.food.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import com.rubp.whattoeat.data.local.entry.Food
+import com.rubp.whattoeat.feature.food.data.entity.Food
 
 @Dao
 interface FoodDao {

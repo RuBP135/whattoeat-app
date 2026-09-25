@@ -1,9 +1,9 @@
 package com.rubp.whattoeat.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import com.rubp.whattoeat.data.local.dao.FoodDao
+import com.rubp.whattoeat.feature.food.data.dao.FoodDao
 import com.rubp.whattoeat.data.local.database.AppDatabase
-import com.rubp.whattoeat.data.local.entry.Food
+import com.rubp.whattoeat.feature.food.data.entity.Food
 
 class FoodRepository(
     private val dao: FoodDao = AppDatabase.database.foodDao()

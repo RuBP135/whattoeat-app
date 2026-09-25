@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.food
+package com.rubp.whattoeat.feature.food.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,8 +28,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rubp.whattoeat.data.local.entry.Food
-import com.rubp.whattoeat.data.local.entry.FoodTable
+import com.rubp.whattoeat.feature.food.data.entity.Food
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.domain.FoodTableDto
 import com.rubp.whattoeat.domain.foodTableToJson
 import com.rubp.whattoeat.domain.jsonToFoodTableDto
@@ -37,7 +37,7 @@ import com.rubp.whattoeat.core.components.AppTopBar
 import com.rubp.whattoeat.core.components.CardText
 import com.rubp.whattoeat.core.components.MenuButton
 import com.rubp.whattoeat.core.components.PrimaryButton
-import com.rubp.whattoeat.ui.viewmodel.FoodViewModel
+import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
 

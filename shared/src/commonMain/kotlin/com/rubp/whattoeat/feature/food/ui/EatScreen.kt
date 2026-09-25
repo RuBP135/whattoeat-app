@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.food
+package com.rubp.whattoeat.feature.food.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rubp.whattoeat.ui.viewmodel.FoodViewModel
-import com.rubp.whattoeat.data.local.entry.FoodTable
+import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.core.components.AppTopBar
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.CircleIconButton

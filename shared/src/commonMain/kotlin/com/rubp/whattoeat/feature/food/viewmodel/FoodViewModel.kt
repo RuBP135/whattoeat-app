@@ -1,14 +1,14 @@
-package com.rubp.whattoeat.ui.viewmodel
+package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rubp.whattoeat.data.local.entry.Food
-import com.rubp.whattoeat.data.local.entry.FoodTable
 import com.rubp.whattoeat.data.repository.ConfigRepository
 import com.rubp.whattoeat.data.repository.FoodRepository
 import com.rubp.whattoeat.data.repository.FoodTableRepository
 import com.rubp.whattoeat.domain.FoodTableDto
 import com.rubp.whattoeat.domain.selectFood
+import com.rubp.whattoeat.feature.food.data.entity.Food
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,20 +27,20 @@ class FoodViewModel(
 
     // 所有表格
     val tables: StateFlow<List<FoodTable>> = foodTableRepository.getAll()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(viewModelScope, SharingStarted.Companion.Eagerly, emptyList())
 
 
     // 当前表格对象，跟随 ConfigRepository中的savedIdFlow 变化自动更新
     val currentTable: StateFlow<FoodTable?> = ConfigRepository.savedTableIdFlow.flatMapLatest { tableId ->
         foodTableRepository.getById(tableId)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    }.stateIn(viewModelScope, SharingStarted.Companion.Eagerly, null)
 
     // 随着tableId的变化而变化的：
     // 当前表格中的食物，切换表格时自动更新
     val foods: StateFlow<List<Food>> = currentTable.flatMapLatest { table ->
         if(table != null) foodRepository.getByTableId(table.id)
         else flowOf(emptyList())
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }.stateIn(viewModelScope, SharingStarted.Companion.Eagerly, emptyList())
 
     var chosenFood: Food? = null
 
@@ -53,7 +53,7 @@ class FoodViewModel(
         }
     }
 
-    // --- 表格管理 ---
+    // 表格管理
 
     fun switchTable(id: Long) {
         if (id == currentTable.value?.id) return
@@ -97,7 +97,6 @@ class FoodViewModel(
         }
     }
 
-    // --- 食物 CRUD ---
     // 添加新菜品用，没有选择表格的时候不会添加
     fun insert(food: Food) {
         viewModelScope.launch { // ui层不管之table_id，因此移到这里添加
@@ -119,7 +118,7 @@ class FoodViewModel(
         }
     }
 
-    // --- 随机选择 ---
+    // 随机选择
 
     fun chosenRandomFood(): String {
         val foodList = foods.value.filter { food ->

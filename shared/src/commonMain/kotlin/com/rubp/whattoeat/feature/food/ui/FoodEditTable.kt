@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.ui.screens.food
+package com.rubp.whattoeat.feature.food.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Add
 import com.composables.icons.materialicons.filled.Delete
-import com.rubp.whattoeat.data.local.entry.Food
-import com.rubp.whattoeat.data.local.entry.FoodTable
+import com.rubp.whattoeat.feature.food.data.entity.Food
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.core.components.Cell
 import com.rubp.whattoeat.core.components.CircleIconButton
 import com.rubp.whattoeat.core.components.LeftSwipeBox

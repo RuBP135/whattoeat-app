@@ -1,6 +1,6 @@
 package com.rubp.whattoeat.domain
 
-import com.rubp.whattoeat.data.local.entry.Food
+import com.rubp.whattoeat.feature.food.data.entity.Food
 
 fun selectFood(
     foodList: List<Food>,
