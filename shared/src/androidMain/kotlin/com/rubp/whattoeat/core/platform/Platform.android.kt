@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.platform
+package com.rubp.whattoeat.core.platform
 
 import android.os.Build
 import com.rubp.whattoeat.core.Platform
