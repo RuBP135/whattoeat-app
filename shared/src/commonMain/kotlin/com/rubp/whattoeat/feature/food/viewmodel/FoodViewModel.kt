@@ -2,14 +2,13 @@ package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rubp.whattoeat.feature.settings.data.preferences.ConfigRepository
+import com.rubp.whattoeat.feature.food.data.entity.Food
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
+import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
 import com.rubp.whattoeat.feature.food.domain.FoodTableDto
 import com.rubp.whattoeat.feature.food.domain.selectFood
-import com.rubp.whattoeat.feature.food.data.entity.Food
-import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,20 +27,28 @@ class FoodViewModel(
 
     // 所有表格
     val tables: StateFlow<List<FoodTable>> = foodTableRepository.getAll()
-        .stateIn(viewModelScope, SharingStarted.Companion.Eagerly, emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
     // 当前表格对象，跟随 ConfigRepository中的savedIdFlow 变化自动更新
-    val currentTable: StateFlow<FoodTable?> = ConfigRepository.savedTableIdFlow.flatMapLatest { tableId ->
-        foodTableRepository.getById(tableId)
-    }.stateIn(viewModelScope, SharingStarted.Companion.Eagerly, null)
+    val currentTable: StateFlow<FoodTable?> =
+        foodPreferences.foodTableIdFlow.flatMapLatest { tableId ->
+            tableId?.let {
+                foodTableRepository.getById(tableId)
+            } ?: flowOf(null)
+    }.stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            null
+    )
 
     // 随着tableId的变化而变化的：
     // 当前表格中的食物，切换表格时自动更新
     val foods: StateFlow<List<Food>> = currentTable.flatMapLatest { table ->
-        if(table != null) foodRepository.getByTableId(table.id)
-        else flowOf(emptyList())
-    }.stateIn(viewModelScope, SharingStarted.Companion.Eagerly, emptyList())
+        table?.let{
+            foodRepository.getByTableId(table.id)
+        } ?: flowOf(emptyList())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     var chosenFood: Food? = null
 
