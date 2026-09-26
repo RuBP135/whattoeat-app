@@ -12,7 +12,7 @@ class SettingsViewModel(
     private val settingsPreferences: SettingsPreferences
 ): ViewModel() {
 
-    val colorTheme: StateFlow<ColorTheme> = settingsPreferences.colorThemeFlow.stateIn(
+    val colorThemeStateFlow: StateFlow<ColorTheme> = settingsPreferences.colorThemeFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = ColorTheme.Pink

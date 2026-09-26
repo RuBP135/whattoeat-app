@@ -35,6 +35,7 @@ import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import com.rubp.whattoeat.feature.home.HomeScreen
 import com.rubp.whattoeat.feature.other.OtherScreen
 import com.rubp.whattoeat.feature.settings.ui.SettingsScreen
+import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 import com.rubp.whattoeat.feature.websites.ui.PracticalWebsiteScreen
 import kotlinx.serialization.Serializable
 
@@ -53,9 +54,11 @@ object Other
 
 
 //@OptIn(ExperimentalMaterial3Api::class)
-@Preview
+
 @Composable
-fun MainScreen(){
+fun MainScreen(
+    settingsViewModel: SettingsViewModel
+){
     val navController = rememberNavController()
     val foodViewModel: FoodViewModel = viewModel(factory = appViewModelFactory)
 
@@ -72,7 +75,7 @@ fun MainScreen(){
                     onNavigateToPracticalWebsite = { navController.navigate(PracticalWebsite) }, // Home -> PracticalWebsite
                     onNavigateToOther = { navController.navigate(Other) }
                 ) }
-                composable<Settings>{ SettingsScreen() }
+                composable<Settings>{ SettingsScreen(settingsViewModel) }
                 composable<Eat>{ EatScreen( // Home <- Eat -> FoodEdit
                     foodViewModel = foodViewModel,
                     onNavigateToFoodEdit = { navController.navigate(FoodEdit) },

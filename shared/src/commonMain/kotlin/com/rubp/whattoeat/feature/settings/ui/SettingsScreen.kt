@@ -26,9 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rubp.whattoeat.BuildKonfig
-import com.rubp.whattoeat.app.di.AppContainer.appViewModelFactory
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.TitleCard
 import com.rubp.whattoeat.core.icons.GitHubIcon
@@ -36,12 +34,25 @@ import com.rubp.whattoeat.core.theme.ColorTheme
 import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 
 
-@Preview
 @Composable
-fun SettingsScreen(){
-    val settingsViewModel: SettingsViewModel = viewModel(factory = appViewModelFactory)
+fun SettingsScreen(
+    settingsViewModel: SettingsViewModel
+){
+    val colorTheme by settingsViewModel.colorThemeStateFlow.collectAsState()
+    SettingsContent(
+        colorTheme = colorTheme,
+        onClickChosen = settingsViewModel::saveColorTheme
+    )
+}
+
+@Composable
+fun SettingsContent(
+    colorTheme: ColorTheme,
+    onClickChosen: (ColorTheme) -> Unit
+){
 
     val titleCardModifier = Modifier.width(300.dp)
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +62,11 @@ fun SettingsScreen(){
     ){
 
         item {
-            ColorSettings(settingsViewModel, titleCardModifier)
+            ColorSettings(
+                nowColorTheme = colorTheme,
+                onClickChosen = onClickChosen,
+                modifier = titleCardModifier
+            )
         }
         item {
             AppInfo(titleCardModifier)
@@ -62,7 +77,8 @@ fun SettingsScreen(){
 
 @Composable
 private fun ColorSettings(
-    settingsViewModel: SettingsViewModel,
+    nowColorTheme: ColorTheme,
+    onClickChosen: (ColorTheme) -> Unit,
     modifier: Modifier
 ){
     TitleCard(
@@ -92,17 +108,25 @@ private fun ColorSettings(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                val nowColorTheme by settingsViewModel.colorTheme.collectAsState()
                 for(colorTheme in ColorTheme.entries){
                     ColorChooserItem(
                         colorTheme = colorTheme,
                         chosen = colorTheme == nowColorTheme,
-                        onClickChosen = { settingsViewModel.saveColorTheme(colorTheme) }
+                        onClickChosen = { onClickChosen(colorTheme) }
                     )
                 }
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun SettingsScreenPreview(){
+    SettingsContent(
+        colorTheme = ColorTheme.Pink,
+        onClickChosen = {}
+    )
 }
 
 @Composable

@@ -17,9 +17,9 @@ import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 fun App() {
     val settingsViewModel: SettingsViewModel = viewModel(factory = appViewModelFactory)
 
-    val colorTheme: ColorTheme by settingsViewModel.colorTheme.collectAsState()
+    val colorTheme: ColorTheme by settingsViewModel.colorThemeStateFlow.collectAsState()
 
     WhatToEatTheme(colorTheme = colorTheme, darkTheme = isSystemInDarkTheme()) {
-        MainScreen()
+        MainScreen(settingsViewModel)
     }
 }
