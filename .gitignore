@@ -21,3 +21,8 @@ node_modules/
 ### claude code ###
 .claude/settings.local.json
 .claude/worktrees/
+
+### agents local files ###
+.agents/settings.local.json
+.agents/worktrees/
+.agents/cache/
