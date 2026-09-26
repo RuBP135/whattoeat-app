@@ -17,16 +17,24 @@ object AppContainer {
     private val database: AppDatabase = AppDatabase.database
     private val settings: ObservableSettings = Settings() as ObservableSettings
 
+
     // food
     private val foodDao = database.foodDao()
     private val foodTableDao = database.foodTableDao()
-
 
     private val foodRepository = FoodRepository(foodDao)
     private val foodTableRepository = FoodTableRepository(foodTableDao)
     private val foodPreferences = FoodPreferences(settings)
 
-    val foodViewModelFactory = viewModelFactory {
+
+    // settings
+    private val settingsPreferences = SettingsPreferences(settings)
+
+
+    // viewModelFactory
+
+    val appViewModelFactory = viewModelFactory {
+
         initializer {
             FoodViewModel(
                 foodRepository,
@@ -34,17 +42,12 @@ object AppContainer {
                 foodPreferences
             )
         }
-    }
 
-
-    // settings
-    private val settingsPreferences = SettingsPreferences(settings)
-
-    val settingsViewModelFactory = viewModelFactory {
         initializer {
             SettingsViewModel(
                 settingsPreferences
             )
         }
     }
+
 }

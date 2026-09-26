@@ -28,7 +28,7 @@ import com.composables.icons.materialicons.filled.Home
 import com.composables.icons.materialicons.filled.Settings
 import com.composables.icons.materialicons.outlined.Home
 import com.composables.icons.materialicons.outlined.Settings
-import com.rubp.whattoeat.app.di.AppContainer.foodViewModelFactory
+import com.rubp.whattoeat.app.di.AppContainer.appViewModelFactory
 import com.rubp.whattoeat.feature.food.ui.EatScreen
 import com.rubp.whattoeat.feature.food.ui.FoodEditScreen
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
@@ -57,7 +57,7 @@ object Other
 @Composable
 fun MainScreen(){
     val navController = rememberNavController()
-    val foodViewModel: FoodViewModel = viewModel(factory = foodViewModelFactory)
+    val foodViewModel: FoodViewModel = viewModel(factory = appViewModelFactory)
 
     Scaffold(
         modifier = Modifier,
