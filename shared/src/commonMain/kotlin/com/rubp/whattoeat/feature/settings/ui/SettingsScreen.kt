@@ -27,26 +27,19 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import com.rubp.whattoeat.BuildKonfig
+import com.rubp.whattoeat.app.di.AppContainer.appViewModelFactory
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.TitleCard
+import com.rubp.whattoeat.core.icons.GitHubIcon
 import com.rubp.whattoeat.core.theme.ColorTheme
 import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
-import com.rubp.whattoeat.BuildKonfig
-import com.rubp.whattoeat.core.icons.GitHubIcon
 
 
 @Preview
 @Composable
 fun SettingsScreen(){
-    val settingsViewModel: SettingsViewModel = viewModel(
-        factory = viewModelFactory {
-            initializer {
-                SettingsViewModel()
-            }
-        }
-    )
+    val settingsViewModel: SettingsViewModel = viewModel(factory = appViewModelFactory)
 
     val titleCardModifier = Modifier.width(300.dp)
     LazyColumn(
