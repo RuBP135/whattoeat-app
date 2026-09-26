@@ -25,12 +25,11 @@ class FoodViewModel(
     private val foodPreferences: FoodPreferences
 ) : ViewModel() {
 
-    // 所有表格
+
     val tables: StateFlow<List<FoodTable>> = foodTableRepository.getAll()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
-    // 当前表格对象，跟随 ConfigRepository中的savedIdFlow 变化自动更新
     val currentTable: StateFlow<FoodTable?> =
         foodPreferences.foodTableIdFlow.flatMapLatest { tableId ->
             tableId?.let {
@@ -42,8 +41,7 @@ class FoodViewModel(
             null
     )
 
-    // 随着tableId的变化而变化的：
-    // 当前表格中的食物，切换表格时自动更新
+
     val foods: StateFlow<List<Food>> = currentTable.flatMapLatest { table ->
         table?.let{
             foodRepository.getByTableId(table.id)
@@ -89,8 +87,7 @@ class FoodViewModel(
         }
     }
 
-    // 删除表，注意删除的表是正在使用的表的情况，需要将表id切换到剩余的表
-    // 如果没有表格，需要创建一个默认表格
+
     fun deleteTable(id: Long) {
         viewModelScope.launch {
             if (currentTable.value?.id == id) {
