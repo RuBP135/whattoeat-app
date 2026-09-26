@@ -21,20 +21,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun foodDao(): FoodDao
     abstract fun foodTableDao(): FoodTableDao
 
-    companion object {
-        private var _database: AppDatabase? = null
-
-        val database: AppDatabase
-            get() = _database ?: throw IllegalStateException(
-                "数据库未成功初始化"
-            )
-
-        fun init(builder: Builder<AppDatabase>) {
-            if (_database == null) {
-                _database = getDatabase(builder)
-            }
-        }
-    }
 }
 
 // 必须自动生成，不需手写actual
@@ -44,7 +30,7 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
 }
 
 
-fun getDatabase(
+fun buildAppDatabase(
     builder: RoomDatabase.Builder<AppDatabase>
 ): AppDatabase {
     return builder

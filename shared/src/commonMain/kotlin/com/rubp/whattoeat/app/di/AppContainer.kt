@@ -10,13 +10,11 @@ import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import com.rubp.whattoeat.feature.settings.data.preferences.SettingsPreferences
 import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 import com.russhwolf.settings.ObservableSettings
-import com.russhwolf.settings.Settings
 
-object AppContainer {
-
-    private val database: AppDatabase = AppDatabase.database
-    private val settings: ObservableSettings = Settings() as ObservableSettings
-
+class AppContainer(
+    database: AppDatabase,
+    settings: ObservableSettings
+) {
 
     // food
     private val foodDao = database.foodDao()

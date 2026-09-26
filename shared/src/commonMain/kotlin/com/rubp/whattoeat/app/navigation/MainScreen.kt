@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -28,7 +28,6 @@ import com.composables.icons.materialicons.filled.Home
 import com.composables.icons.materialicons.filled.Settings
 import com.composables.icons.materialicons.outlined.Home
 import com.composables.icons.materialicons.outlined.Settings
-import com.rubp.whattoeat.app.di.AppContainer.appViewModelFactory
 import com.rubp.whattoeat.feature.food.ui.EatScreen
 import com.rubp.whattoeat.feature.food.ui.FoodEditScreen
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
@@ -57,6 +56,7 @@ object Other
 
 @Composable
 fun MainScreen(
+    appViewModelFactory: ViewModelProvider.Factory,
     settingsViewModel: SettingsViewModel
 ){
     val navController = rememberNavController()
