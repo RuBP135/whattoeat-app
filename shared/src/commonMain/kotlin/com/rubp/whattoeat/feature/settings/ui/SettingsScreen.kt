@@ -41,14 +41,14 @@ fun SettingsScreen(
     val colorTheme by settingsViewModel.colorThemeStateFlow.collectAsState()
     SettingsContent(
         colorTheme = colorTheme,
-        onClickChosen = settingsViewModel::saveColorTheme
+        onColorThemeChange = settingsViewModel::saveColorTheme
     )
 }
 
 @Composable
 fun SettingsContent(
     colorTheme: ColorTheme,
-    onClickChosen: (ColorTheme) -> Unit
+    onColorThemeChange: (ColorTheme) -> Unit
 ){
 
     val titleCardModifier = Modifier.width(300.dp)
@@ -64,7 +64,7 @@ fun SettingsContent(
         item {
             ColorSettings(
                 nowColorTheme = colorTheme,
-                onClickChosen = onClickChosen,
+                onColorThemeChange = onColorThemeChange,
                 modifier = titleCardModifier
             )
         }
@@ -78,7 +78,7 @@ fun SettingsContent(
 @Composable
 private fun ColorSettings(
     nowColorTheme: ColorTheme,
-    onClickChosen: (ColorTheme) -> Unit,
+    onColorThemeChange: (ColorTheme) -> Unit,
     modifier: Modifier
 ){
     TitleCard(
@@ -112,7 +112,7 @@ private fun ColorSettings(
                     ColorChooserItem(
                         colorTheme = colorTheme,
                         chosen = colorTheme == nowColorTheme,
-                        onClickChosen = { onClickChosen(colorTheme) }
+                        onClickChosen = { onColorThemeChange(colorTheme) }
                     )
                 }
             }
@@ -125,7 +125,7 @@ private fun ColorSettings(
 private fun SettingsContentPreview(){
     SettingsContent(
         colorTheme = ColorTheme.Pink,
-        onClickChosen = {}
+        onColorThemeChange = {}
     )
 }
 
