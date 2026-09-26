@@ -122,7 +122,7 @@ private fun ColorSettings(
 
 @Preview
 @Composable
-fun SettingsScreenPreview(){
+private fun SettingsContentPreview(){
     SettingsContent(
         colorTheme = ColorTheme.Pink,
         onClickChosen = {}
