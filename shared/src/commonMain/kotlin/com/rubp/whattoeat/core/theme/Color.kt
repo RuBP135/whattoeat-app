@@ -2,21 +2,25 @@ package com.rubp.whattoeat.core.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// WTE 基础色板，Material 语义角色与品牌扩展角色共用这些颜色
+val WteOrange = Color(0xFFF9732F)
+val WteOrangeSoft = Color(0xFFFFB38A)
+val WtePeach = Color(0xFFFFD8C2)
+val WteCream = Color(0xFFFFF9F1)
+val WteApricot = Color(0xFFF7B555)
+val WteCoral = Color(0xFFFF7B6B)
+val WteCaramel = Color(0xFF8B4E2B)
+val WteCocoa = Color(0xFF32180F)
+val WteMutedPeach = Color(0xFFD9A885)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val WteLightBackground = Color(0xFFFFF4ED)
+val WteLightSurfaceVariant = Color(0xFFF3DED2)
 
-val White = Color(0xFFFFFFFF)
-
-val BluePrimary = Color(0xFF2196F3)
-val YellowPrimary = Color(0xFFFFC107)
-val GreenPrimary = Color(0xFF4CAF50)
-val PinkPrimary = Color(0xFFE91E63)
-
-// 通用的辅助色 (保持一致，避免混乱)
-val NeutralSecondary = Color(0xFF607D8B)
-val NeutralTertiary = Color(0xFF795548)
+val WteDarkBackground = Color(0xFF1F120D)
+val WteDarkSurface = Color(0xFF2F1E16)
+val WteDarkSurfaceHigh = Color(0xFF3A261C)
+val WteDarkText = Color(0xFFF7E8DF)
+val WteDarkTextMuted = Color(0xFFDCC2B5)
+val WteDarkOutline = Color(0xFFA98A7C)
+val WteDarkPrimaryContainer = Color(0xFF7A2D0B)
+val WteDarkShadow = Color(0xFF100805)
