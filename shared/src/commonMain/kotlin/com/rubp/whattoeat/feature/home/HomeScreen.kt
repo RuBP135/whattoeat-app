@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +19,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rubp.whattoeat.app.navigation.MainBottomBarSpacer
 import com.rubp.whattoeat.core.components.CardButton
 
 
@@ -29,38 +31,45 @@ fun HomeScreen(
 ){
     val uriHandler = LocalUriHandler.current
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
-    ){
-        MobaMessageCard()
-
+    Scaffold(
+        bottomBar = { MainBottomBarSpacer() }
+    ){ paddingValues ->
         Column(
-            modifier = Modifier.width(IntrinsicSize.Max),
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
         ){
-            val modifier = Modifier.height(70.dp)
-            CardButton(
-                title = "Moba",
-                subtitle = "我们需要开始moba！",
-                modifier = modifier
-            ){ onNavigateToEat() }
-            CardButton(
-                title = "实用网站",
-                subtitle = "看看有哪些实用网站",
-                modifier = modifier
-            ){ onNavigateToPracticalWebsite() }
-            CardButton(
-                title = "测网速",
-                subtitle = "感觉学校网又卡了？",
-                modifier = modifier
-            ){ uriHandler.openUri("https://test.xidian.edu.cn") }
-            CardButton(
-                title = "其他",
-                modifier = modifier,
-            ){ onNavigateToOther() }
+            MobaMessageCard()
+
+            Column(
+                modifier = Modifier.width(IntrinsicSize.Max),
+            ){
+                val modifier = Modifier.height(70.dp)
+                CardButton(
+                    title = "Moba",
+                    subtitle = "我们需要开始moba！",
+                    modifier = modifier
+                ){ onNavigateToEat() }
+                CardButton(
+                    title = "实用网站",
+                    subtitle = "看看有哪些实用网站",
+                    modifier = modifier
+                ){ onNavigateToPracticalWebsite() }
+                CardButton(
+                    title = "测网速",
+                    subtitle = "感觉学校网又卡了？",
+                    modifier = modifier
+                ){ uriHandler.openUri("https://test.xidian.edu.cn") }
+                CardButton(
+                    title = "其他",
+                    modifier = modifier,
+                ){ onNavigateToOther() }
+            }
         }
     }
+
 
 }
 

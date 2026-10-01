@@ -134,7 +134,7 @@ private val LightExtendedColors = WteExtendedColors(
     paperBorder = WteCaramel.copy(alpha = 0.55f),
     paperInnerLine = WteMutedPeach,
     patternLine = WteMutedPeach,
-    offsetShadow = WteCaramel,
+    offsetShadow = WteMutedPeach.copy(alpha = 0.55f),
     decorativeCoral = WteCoral
 )
 
