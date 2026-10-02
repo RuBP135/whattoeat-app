@@ -1,6 +1,8 @@
 package com.rubp.whattoeat.app.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
@@ -109,8 +111,8 @@ fun MainBottomBar(
     AnimatedVisibility(
         modifier = modifier,
         visible = mainDestination != null,
-        enter = slideInVertically{ it },
-        exit = slideOutVertically{ it }
+        enter = fadeIn() + slideInVertically{ it / 2 },
+        exit = fadeOut() + slideOutVertically{ it / 2 }
     ){
         val barShape = RoundedCornerShape(20.dp)
 
