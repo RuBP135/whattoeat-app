@@ -43,7 +43,6 @@ fun HomeScreen(
     val uriHandler = LocalUriHandler.current
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = { MainBottomBarSpacer() }
     ) { paddingValues ->
         Column(
