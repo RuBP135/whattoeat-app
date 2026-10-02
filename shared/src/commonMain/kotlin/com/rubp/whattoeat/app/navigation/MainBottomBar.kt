@@ -76,6 +76,8 @@ fun MainBottomBarLayout(
 }
 
 /**
+ * 包含主页面底部导航栏的组件
+ *
  * @param mainDestination 当前顶级页面；为 null 时隐藏导航栏。
  * @param onDestinationSelected 用户选择导航项时的回调。
  */
@@ -110,86 +112,67 @@ fun MainBottomBar(
         enter = slideInVertically{ it },
         exit = slideOutVertically{ it }
     ){
-        MainBottomBarContent(
-            items = items,
-            onDestinationSelected = onDestinationSelected
-        )
-    }
+        val barShape = RoundedCornerShape(20.dp)
 
-
-}
-
-/**
- * 绘制 WTE 圆角描边与右下错位阴影的底部导航栏。
- *
- * @param items 导航项及其当前选中状态。
- * @param onDestinationSelected 用户选择导航项时的回调。
- */
-@Composable
-private fun MainBottomBarContent(
-    items: List<MainBottomBarItem>,
-    onDestinationSelected: (MainDestination) -> Unit
-) {
-    val barShape = RoundedCornerShape(20.dp)
-
-    MainBottomBarLayout {
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .padding(start = 4.dp, top = 4.dp)
-                .background(
-                    color = WteTheme.extendedColors.offsetShadow,
-                    shape = barShape
-                )
-        )
-        Surface(
-            modifier = Modifier
-                .matchParentSize()
-                .padding(end = 4.dp, bottom = 4.dp),
-            color = WteTheme.extendedColors.paper,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            shape = barShape,
-            border = BorderStroke(
-                width = 1.dp,
-                color = WteTheme.extendedColors.paperBorder
-            )
-        ) {
-            Row(
+        MainBottomBarLayout {
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .selectableGroup(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                items.forEach { item ->
-                    NavigationBarItem(
-                        selected = item.selected,
-                        onClick = { onDestinationSelected(item.destination) },
-                        icon = {
-                            Icon(
-                                imageVector = if (item.selected) {
-                                    item.filledVector
-                                } else {
-                                    item.outlinedVector
-                                },
-                                contentDescription = null
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = item.label,
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        },
-                        alwaysShowLabel = true,
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = Color.Transparent,
-                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    .matchParentSize()
+                    .padding(start = 4.dp, top = 4.dp)
+                    .background(
+                        color = WteTheme.extendedColors.offsetShadow,
+                        shape = barShape
                     )
+            )
+            Surface(
+                modifier = Modifier
+                    .matchParentSize()
+                    .padding(end = 4.dp, bottom = 4.dp),
+                color = WteTheme.extendedColors.paper,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                shape = barShape,
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = WteTheme.extendedColors.paperBorder
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .selectableGroup(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    items.forEach { item ->
+                        NavigationBarItem(
+                            selected = item.selected,
+                            onClick = { onDestinationSelected(item.destination) },
+                            icon = {
+                                Icon(
+                                    imageVector = if (item.selected) {
+                                        item.filledVector
+                                    } else {
+                                        item.outlinedVector
+                                    },
+                                    contentDescription = null
+                                )
+                            },
+                            label = {
+                                Text(
+                                    text = item.label,
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            },
+                            alwaysShowLabel = true,
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                indicatorColor = Color.Transparent,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -208,8 +191,8 @@ fun MainBottomBarSpacer(){
 private fun MainBottomBarLightPreview() {
     WhatToEatPreviewTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            MainBottomBarContent(
-                items = previewItems,
+            MainBottomBar(
+                MainDestination.Home,
                 onDestinationSelected = {}
             )
         }
@@ -221,27 +204,11 @@ private fun MainBottomBarLightPreview() {
 private fun MainBottomBarDarkPreview() {
     WhatToEatPreviewTheme(darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            MainBottomBarContent(
-                items = previewItems,
+            MainBottomBar(
+                MainDestination.Home,
                 onDestinationSelected = {}
             )
         }
     }
 }
 
-private val previewItems = listOf(
-    MainBottomBarItem(
-        label = "首页",
-        selected = true,
-        filledVector = MaterialIcons.Filled.Home,
-        outlinedVector = MaterialIcons.Outlined.Home,
-        destination = MainDestination.Home
-    ),
-    MainBottomBarItem(
-        label = "设置",
-        selected = false,
-        filledVector = MaterialIcons.Filled.Settings,
-        outlinedVector = MaterialIcons.Outlined.Settings,
-        destination = MainDestination.Settings
-    )
-)
