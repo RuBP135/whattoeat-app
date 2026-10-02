@@ -33,7 +33,7 @@ import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.domain.FoodTableDto
 import com.rubp.whattoeat.feature.food.domain.foodTableToJson
 import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
-import com.rubp.whattoeat.core.components.AppTopBar
+import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.CardText
 import com.rubp.whattoeat.core.components.MenuButton
 import com.rubp.whattoeat.core.components.PrimaryButton
@@ -91,7 +91,7 @@ fun FoodEditContent(
 
     Scaffold(
         topBar = {
-            AppTopBar(actions::onReturnToEat, "编辑清单"){ closeMenu ->
+            WteTopBar(actions::onReturnToEat, "编辑清单"){ closeMenu ->
                 MenuButton("新建表格"){ closeMenu(); editDialogState = EditDialogState.CreateTable }
                 HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("重命名表格"){ closeMenu(); editDialogState = EditDialogState.RenameTable }

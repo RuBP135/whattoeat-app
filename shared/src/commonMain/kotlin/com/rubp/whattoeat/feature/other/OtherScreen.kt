@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import whattoeat.shared.generated.resources.Res
-import com.rubp.whattoeat.core.components.AppTopBar
+import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.ElegantButton
 import whattoeat.shared.generated.resources.moba
 
@@ -28,7 +28,7 @@ fun OtherScreen (
 ){
     Scaffold(
         topBar = {
-            AppTopBar(
+            WteTopBar(
                 onClickReturn = onReturnToHome,
                 title = "其他"
             )

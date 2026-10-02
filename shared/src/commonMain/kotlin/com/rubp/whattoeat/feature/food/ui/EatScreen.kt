@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.core.components.AppTopBar
+import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.CircleIconButton
 
@@ -76,7 +76,7 @@ private fun EatContent(
     onClickClearIgnore: () -> Unit
 ) {
     Scaffold(
-        topBar = { AppTopBar(onReturnToHome, "Eat") }
+        topBar = { WteTopBar(onReturnToHome, "Eat") }
     ) { paddingValues ->
 
         Box(
