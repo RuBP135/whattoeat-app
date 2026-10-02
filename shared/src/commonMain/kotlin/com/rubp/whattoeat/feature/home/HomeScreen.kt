@@ -1,5 +1,6 @@
 package com.rubp.whattoeat.feature.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,18 +17,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.rubp.whattoeat.app.navigation.MainBottomBarSpacer
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.PrimaryButton
 import com.rubp.whattoeat.core.components.WtePaperCard
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.theme.WteTheme
+import org.jetbrains.compose.resources.painterResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.what_to_eat_wordmark
 
 
 @Composable
@@ -66,16 +70,13 @@ fun HomeScreen(
 
 @Composable
 private fun HomeHeader() {
-    Text(
-        text = "WTE",
+    Image(
         modifier = Modifier
-            .widthIn(max = 600.dp)
+            .widthIn(max = 280.dp)
             .fillMaxWidth(),
-        color = MaterialTheme.colorScheme.primary,
-        style = MaterialTheme.typography.headlineLarge,
-        fontWeight = FontWeight.Bold,
-        letterSpacing = 2.sp,
-        textAlign = TextAlign.Center
+        painter = painterResource(Res.drawable.what_to_eat_wordmark),
+        contentDescription = "What To Eat",
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground)
     )
 }
 
