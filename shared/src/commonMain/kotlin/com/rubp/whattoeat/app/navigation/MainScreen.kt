@@ -1,5 +1,7 @@
 package com.rubp.whattoeat.app.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,7 +61,12 @@ fun MainScreen(
 
     Box{
         Box{
-            NavHost(navController, Home){
+            NavHost(
+                navController = navController,
+                startDestination = Home,
+                enterTransition =  { EnterTransition.None },
+                exitTransition = { ExitTransition.None }
+            ){
                 composable<Home>{ HomeScreen(
                     onNavigateToEat = { navController.navigate(Eat)}, // Home -> Eat
                     onNavigateToPracticalWebsite = { navController.navigate(PracticalWebsite) }, // Home -> PracticalWebsite
