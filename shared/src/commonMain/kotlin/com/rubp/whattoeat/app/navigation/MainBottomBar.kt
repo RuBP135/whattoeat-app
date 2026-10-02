@@ -48,7 +48,11 @@ private data class MainBottomBarItem(
     val destination: MainDestination
 )
 
-
+/**
+ * 导航栏和占位空白的统一外层容器
+ *
+ * @Param content 放置导航栏或占位空白
+ */
 @Composable
 fun MainBottomBarLayout(
     modifier: Modifier = Modifier,
@@ -73,7 +77,6 @@ fun MainBottomBarLayout(
 
 /**
  * @param mainDestination 当前顶级页面；为 null 时隐藏导航栏。
- * @param modifier 导航栏在宿主布局中的位置和尺寸修饰符。
  * @param onDestinationSelected 用户选择导航项时的回调。
  */
 @Composable
@@ -121,13 +124,11 @@ fun MainBottomBar(
  *
  * @param items 导航项及其当前选中状态。
  * @param onDestinationSelected 用户选择导航项时的回调。
- * @param modifier 导航栏外层布局修饰符。
  */
 @Composable
 private fun MainBottomBarContent(
     items: List<MainBottomBarItem>,
-    onDestinationSelected: (MainDestination) -> Unit,
-    modifier: Modifier = Modifier
+    onDestinationSelected: (MainDestination) -> Unit
 ) {
     val barShape = RoundedCornerShape(20.dp)
 
