@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,7 +44,8 @@ fun BookmarkSidebar(
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .padding(vertical = 100.dp),
+            .padding(vertical = 100.dp)
+            .verticalScroll(state = rememberScrollState()), // state 保存书签列表的滚动位置
         verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.End
     ) {
