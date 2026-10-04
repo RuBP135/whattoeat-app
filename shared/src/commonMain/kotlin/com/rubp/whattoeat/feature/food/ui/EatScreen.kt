@@ -149,12 +149,12 @@ private fun EatContent(
                         }
                     ) { onClickIgnore() }
                     CardButton(
-                        text = "恢复",
+                        text = "恢复全部",
                         modifier = modifier,
                         icon = {
                             Icon(
                                 imageVector = MaterialIcons.Filled.Clear_all,
-                                contentDescription = "恢复"
+                                contentDescription = "恢复全部"
                             )
                         }
                     ) { onClickClearIgnore() }
