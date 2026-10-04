@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Block
 import com.composables.icons.materialicons.filled.Clear
@@ -88,6 +90,7 @@ private fun EatContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(state = rememberScrollState()) // state 保存主内容的滚动位置
                     .padding(top = 70.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(50.dp)
