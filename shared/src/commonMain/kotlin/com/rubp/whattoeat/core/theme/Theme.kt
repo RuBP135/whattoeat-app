@@ -174,6 +174,12 @@ fun WhatToEatTheme(
     }
 }
 
+/**
+ * 为 Compose 预览提供应用主题，支持切换浅色与深色模式
+ *
+ * @param darkTheme 是否参与深色主题
+ * @param content 预览的内容
+ */
 @Composable
 fun WhatToEatPreviewTheme(
     darkTheme: Boolean = false,
