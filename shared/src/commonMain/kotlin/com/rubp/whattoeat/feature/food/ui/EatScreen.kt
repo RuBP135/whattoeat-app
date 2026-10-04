@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -102,7 +101,7 @@ private fun EatContent(
                     modifier = Modifier
                         .width(250.dp)
                         .heightIn(min = 70.dp),
-                    verticalArrangement = Arrangement.Center // 将结果文字放在卡片垂直中心
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = foodName,
@@ -124,10 +123,10 @@ private fun EatContent(
                         .height(height)
 
                     PrimaryButton(
-                        text = "查询", // 按钮文字
-                        modifier = modifier, // 沿用操作区按钮尺寸
-                        textColor = MaterialTheme.colorScheme.onPrimary, // 与品牌主色搭配的文字颜色
-                        onClick = onClickRandomFood // 触发随机抽取
+                        text = "查询",
+                        modifier = modifier,
+                        textColor = MaterialTheme.colorScheme.onPrimary,
+                        onClick = onClickRandomFood
                     )
                     CardButton(
                         text = "清除",
@@ -175,7 +174,7 @@ private fun EatContent(
                 onClick = onNavigateToFoodEdit,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .offset(y = 150.dp)
+                    .padding(top = 16.dp, end = 16.dp)
             ) {
                 Icon(
                     imageVector = MaterialIcons.Filled.Edit,
@@ -210,5 +209,4 @@ private fun EatContentPreview() {
             onClickClearIgnore = {}
         )
     }
-
 }
