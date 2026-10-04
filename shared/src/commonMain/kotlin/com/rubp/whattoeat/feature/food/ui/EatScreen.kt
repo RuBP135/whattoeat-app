@@ -17,7 +17,6 @@ import com.composables.icons.materialicons.filled.Block
 import com.composables.icons.materialicons.filled.Clear
 import com.composables.icons.materialicons.filled.Clear_all
 import com.composables.icons.materialicons.filled.Edit
-import com.composables.icons.materialicons.filled.Query_stats
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -39,6 +38,7 @@ import com.rubp.whattoeat.core.components.WtePaperCard
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.CircleIconButton
+import com.rubp.whattoeat.core.components.PrimaryButton
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 
 @Composable
@@ -101,7 +101,8 @@ private fun EatContent(
                 WtePaperCard(
                     modifier = Modifier
                         .width(250.dp)
-                        .heightIn(min = 70.dp)
+                        .heightIn(min = 70.dp),
+                    verticalArrangement = Arrangement.Center // 将结果文字放在卡片垂直中心
                 ) {
                     Text(
                         text = foodName,
@@ -122,16 +123,12 @@ private fun EatContent(
                         .width(width)
                         .height(height)
 
-                    CardButton(
-                        text = "查询",
-                        modifier = modifier,
-                        icon = {
-                            Icon(
-                                imageVector = MaterialIcons.Filled.Query_stats,
-                                contentDescription = "查询"
-                            )
-                        }
-                    ) { onClickRandomFood() }
+                    PrimaryButton(
+                        text = "查询", // 按钮文字
+                        modifier = modifier, // 沿用操作区按钮尺寸
+                        textColor = MaterialTheme.colorScheme.onPrimary, // 与品牌主色搭配的文字颜色
+                        onClick = onClickRandomFood // 触发随机抽取
+                    )
                     CardButton(
                         text = "清除",
                         modifier = modifier,

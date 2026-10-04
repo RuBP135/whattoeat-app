@@ -20,6 +20,7 @@ import com.rubp.whattoeat.core.theme.WteTheme
 @Composable
 fun WtePaperCard(
     modifier: Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(6.dp), // 控制内容的垂直排列与间距
     content: @Composable ColumnScope.() -> Unit
 ){
     Surface(
@@ -34,7 +35,7 @@ fun WtePaperCard(
     ){
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = verticalArrangement
         ){
             content()
         }
