@@ -17,6 +17,11 @@ import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.theme.WteTheme
 
+/**
+ * 圆角纸感卡片，提供纵向布局
+ *
+ * @param verticalArrangement 允许修改垂直排列参数
+ */
 @Composable
 fun WtePaperCard(
     modifier: Modifier,
