@@ -34,6 +34,7 @@ import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.CircleIconButton
+import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 
 @Composable
 fun EatScreen(
@@ -191,20 +192,23 @@ private fun EatContent(
 @Preview
 @Composable
 private fun EatContentPreview() {
-    EatContent(
-        foodName = "显示一个食物名称",
-        tables = listOf(
-            FoodTable(1L, "默认", 0),
-            FoodTable(2L, "午餐", 1),
-            FoodTable(3L, "晚餐", 2)
-        ),
-        currentTable = FoodTable(1L, "默认", 0),
-        onNavigateToFoodEdit = {},
-        onReturnToHome = {},
-        onTableSelected = {},
-        onClickRandomFood = {},
-        onClickClear = {},
-        onClickIgnore = {},
-        onClickClearIgnore = {}
-    )
+    WhatToEatPreviewTheme {
+        EatContent(
+            foodName = "显示一个食物名称",
+            tables = listOf(
+                FoodTable(1L, "默认", 0),
+                FoodTable(2L, "午餐", 1),
+                FoodTable(3L, "晚餐", 2)
+            ),
+            currentTable = FoodTable(1L, "默认", 0),
+            onNavigateToFoodEdit = {},
+            onReturnToHome = {},
+            onTableSelected = {},
+            onClickRandomFood = {},
+            onClickClear = {},
+            onClickIgnore = {},
+            onClickClearIgnore = {}
+        )
+    }
+
 }

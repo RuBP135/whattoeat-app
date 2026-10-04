@@ -37,6 +37,7 @@ import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.CardText
 import com.rubp.whattoeat.core.components.MenuButton
 import com.rubp.whattoeat.core.components.PrimaryButton
+import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
@@ -217,25 +218,27 @@ fun FoodEditContent(
 @Preview
 @Composable
 private fun FoodEditContentPreview() {
-    FoodEditContent(
-        foods = emptyList(),
-        tables = listOf(
-            FoodTable(1L, "早餐", 0L),
-            FoodTable(2L, "午餐", 1L)
-        ),
-        currentTable = FoodTable(1L, "早餐", 0L),
-        actions = object : FoodEditActions {
-            override fun onReturnToEat() {}
-            override fun onTableSelected(id: Long) {}
-            override fun onRenameTable(tableId: Long, name: String) {}
-            override fun onDeleteTable(tableId: Long) {}
-            override fun onCreateTable(name: String) {}
-            override fun onImportFoodAndTable(dto: FoodTableDto) {}
-            override fun onAddFood() {}
-            override fun onDelFood(food: Food) {}
-            override fun onClickStar(food: Food) {}
-            override fun onInputName(food: Food, name: String) {}
-            override fun onInputWeight(food: Food, weight: Int) {}
-        }
-    )
+    WhatToEatPreviewTheme {
+        FoodEditContent(
+            foods = emptyList(),
+            tables = listOf(
+                FoodTable(1L, "早餐", 0L),
+                FoodTable(2L, "午餐", 1L)
+            ),
+            currentTable = FoodTable(1L, "早餐", 0L),
+            actions = object : FoodEditActions {
+                override fun onReturnToEat() {}
+                override fun onTableSelected(id: Long) {}
+                override fun onRenameTable(tableId: Long, name: String) {}
+                override fun onDeleteTable(tableId: Long) {}
+                override fun onCreateTable(name: String) {}
+                override fun onImportFoodAndTable(dto: FoodTableDto) {}
+                override fun onAddFood() {}
+                override fun onDelFood(food: Food) {}
+                override fun onClickStar(food: Food) {}
+                override fun onInputName(food: Food, name: String) {}
+                override fun onInputWeight(food: Food, weight: Int) {}
+            }
+        )
+    }
 }
