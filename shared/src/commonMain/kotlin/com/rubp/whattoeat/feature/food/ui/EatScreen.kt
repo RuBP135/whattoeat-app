@@ -38,6 +38,7 @@ import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.CircleIconButton
 import com.rubp.whattoeat.core.components.PrimaryButton
 import com.rubp.whattoeat.core.components.WtePaperCard
+import com.rubp.whattoeat.core.components.WteSnackbar
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
@@ -106,7 +107,12 @@ private fun EatContent(
 ) {
     Scaffold(
         topBar = { WteTopBar(onReturnToHome, "Eat") },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = { WteSnackbar(it) }
+            )
+        }
     ) { paddingValues ->
 
         Box(
