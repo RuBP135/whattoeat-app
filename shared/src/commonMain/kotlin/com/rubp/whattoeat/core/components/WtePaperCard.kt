@@ -1,9 +1,14 @@
 package com.rubp.whattoeat.core.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -28,22 +33,42 @@ fun WtePaperCard(
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(6.dp), // 控制内容的垂直排列与间距
     content: @Composable ColumnScope.() -> Unit
 ){
-    Surface(
+    Box(
         modifier = modifier,
-        color = WteTheme.extendedColors.paper,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(
-            1.dp,
-            color = WteTheme.extendedColors.paperBorder
-        )
+        propagateMinConstraints = true
     ){
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = verticalArrangement
+
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .absoluteOffset(
+                    x = 4.dp,
+                    y = 4.dp
+                )
+                .background(
+                    color = WteTheme.extendedColors.offsetShadow,
+                    shape = RoundedCornerShape(20.dp)
+                )
+        )
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = WteTheme.extendedColors.paper,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            shape = RoundedCornerShape(20.dp),
+            border = BorderStroke(
+                1.dp,
+                color = WteTheme.extendedColors.paperBorder
+            )
         ){
-            content()
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = verticalArrangement
+            ){
+                content()
+            }
         }
+
     }
 }
 
