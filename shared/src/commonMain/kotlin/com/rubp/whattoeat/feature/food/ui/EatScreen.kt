@@ -11,34 +11,38 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import com.composables.icons.materialicons.MaterialIcons
-import com.composables.icons.materialicons.filled.Block
-import com.composables.icons.materialicons.filled.Clear
-import com.composables.icons.materialicons.filled.Clear_all
-import com.composables.icons.materialicons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
-import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.core.components.WtePaperCard
-import com.rubp.whattoeat.core.components.WteTopBar
+import com.composables.icons.materialicons.MaterialIcons
+import com.composables.icons.materialicons.filled.Block
+import com.composables.icons.materialicons.filled.Clear
+import com.composables.icons.materialicons.filled.Clear_all
+import com.composables.icons.materialicons.filled.Edit
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.CircleIconButton
 import com.rubp.whattoeat.core.components.PrimaryButton
+import com.rubp.whattoeat.core.components.WtePaperCard
+import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
+import com.rubp.whattoeat.feature.food.data.entity.FoodTable
+import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun EatScreen(
@@ -50,10 +54,14 @@ fun EatScreen(
     val currentTable by foodViewModel.currentTable.collectAsState()
     var foodName by remember { mutableStateOf("点击查询今天吃什么") }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     EatContent(
         foodName = foodName,
         tables = tables,
         currentTable = currentTable,
+        snackbarHostState = snackbarHostState,
         onNavigateToFoodEdit = onNavigateToFoodEdit,
         onReturnToHome = onReturnToHome,
         onTableSelected = { tableId ->
@@ -61,9 +69,24 @@ fun EatScreen(
             foodName = "点击查询今天吃什么"
         },
         onClickRandomFood = { foodName = foodViewModel.chosenRandomFood() },
-        onClickClear = { foodName = "点击查询今天吃什么" },
-        onClickIgnore = { foodViewModel.ignoreChosenFood() },
-        onClickClearIgnore = { foodViewModel.clearAllIgnore() }
+        onClickClear = {
+            foodName = "点击查询今天吃什么"
+            scope.launch {
+                snackbarHostState.showSnackbar("已清除当前选择")
+            }
+        },
+        onClickIgnore = {
+            foodViewModel.ignoreChosenFood()
+            scope.launch {
+                snackbarHostState.showSnackbar("已忽略当前选择食物")
+            }
+        },
+        onClickClearIgnore = {
+            foodViewModel.clearAllIgnore()
+            scope.launch {
+                snackbarHostState.showSnackbar("已恢复所有被忽略的食物")
+            }
+        }
     )
 }
 
@@ -72,6 +95,7 @@ private fun EatContent(
     foodName: String,
     tables: List<FoodTable>,
     currentTable: FoodTable?,
+    snackbarHostState: SnackbarHostState,
     onNavigateToFoodEdit: () -> Unit,
     onReturnToHome: () -> Unit,
     onTableSelected: (Long) -> Unit,
@@ -81,7 +105,8 @@ private fun EatContent(
     onClickClearIgnore: () -> Unit
 ) {
     Scaffold(
-        topBar = { WteTopBar(onReturnToHome, "Eat") }
+        topBar = { WteTopBar(onReturnToHome, "Eat") },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
 
         Box(
@@ -200,6 +225,7 @@ private fun EatContentPreview() {
                 FoodTable(3L, "晚餐", 2)
             ),
             currentTable = FoodTable(1L, "默认", 0),
+            snackbarHostState = remember { SnackbarHostState() },
             onNavigateToFoodEdit = {},
             onReturnToHome = {},
             onTableSelected = {},
