@@ -59,3 +59,6 @@
 - `docs/design/design-system.md` 是项目 UI 视觉设计的事实来源；除非用户明确要求改变设计方向，否则不得偏离。
 - 设计方向发生变化时，应先更新视觉规范文档，再修改具体页面代码。
 
+## 14.Android Studio mcp
+
+- 若配置了Android Studio mcp，应当优先使用mcp，以获得更准确的结果
