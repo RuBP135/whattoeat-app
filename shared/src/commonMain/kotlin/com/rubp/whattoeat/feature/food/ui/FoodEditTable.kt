@@ -32,12 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Add
 import com.composables.icons.materialicons.filled.Delete
 import com.rubp.whattoeat.core.components.LeftSwipeBox
 import com.rubp.whattoeat.core.components.button.CircleIconButton
+import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import org.jetbrains.compose.resources.painterResource
@@ -94,8 +96,8 @@ fun ScrollableTableTitleRow(
 }
 
 @Composable
-fun EditTable(
-    modifier: Modifier,
+fun FoodEditTable(
+    modifier: Modifier = Modifier,
     foods: List<Food>,
     onClickStar: (food: Food) -> Unit,
     onInputName: (food: Food, name: String) -> Unit,
@@ -264,5 +266,23 @@ private fun SwipeRow(
             )
         }
 
+    }
+}
+
+@Preview
+@Composable
+private fun FoodEditTablePreview(){
+    WhatToEatPreviewTheme {
+        FoodEditTable(
+            foods = listOf(
+                Food(id = 1L, name = "糖醋排骨", weight = 1, marked = true),
+                Food(id = 2L, name = "鱼香肉丝", weight = 2, marked = true),
+                Food(id = 3L, name = "水煮肉片", weight = 3, marked = false)
+            ),
+            onClickStar = {},
+            onInputName = { _, _ -> },
+            onInputWeight = { _, _ -> },
+            onClickDelFood = {}
+        )
     }
 }

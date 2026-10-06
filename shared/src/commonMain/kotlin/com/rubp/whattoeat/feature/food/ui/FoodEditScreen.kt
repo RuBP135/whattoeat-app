@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,7 +34,6 @@ import com.rubp.whattoeat.feature.food.domain.FoodTableDto
 import com.rubp.whattoeat.feature.food.domain.foodTableToJson
 import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
 import com.rubp.whattoeat.core.components.WteTopBar
-import com.rubp.whattoeat.core.components.CardText
 import com.rubp.whattoeat.core.components.button.MenuButton
 import com.rubp.whattoeat.core.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.components.button.WteSecondaryButton
@@ -146,23 +145,27 @@ fun FoodEditContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 5.dp, bottom = 8.dp),
+                    .padding(horizontal = 32.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ){
-                // 标题
-                CardText(
+
+                // 表格标题
+                Box(
                     modifier = Modifier
-                        .padding(horizontal = 35.dp)
-                        .height(70.dp),
-                    text = tableName,
-                    style = MaterialTheme.typography.titleLarge,
-                    textColor = MaterialTheme.colorScheme.primary
-                )
+                        .fillMaxWidth()
+                        .height(72.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = tableName,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
 
                 // 滚动标题栏（切换表格）
                 ScrollableTableTitleRow(
                     modifier = Modifier
-                        .padding(horizontal = 30.dp)
                         .fillMaxWidth(),
                     selectedTableId = currentTable?.id ?: -1L,
                     tables = tables,
@@ -171,21 +174,18 @@ fun FoodEditContent(
                 )
                 
                 // 编辑表
-                EditTable(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 30.dp),
+                FoodEditTable(
+                    modifier = Modifier.weight(1f),
                     foods = foods,
                     onClickStar = actions::onClickStar,
                     onInputName = actions::onInputName,
                     onInputWeight = actions::onInputWeight,
                     onClickDelFood = { editDialogState = EditDialogState.DeleteFood(it) },
                 )
-
-                Spacer(Modifier.height(25.dp))
+                
                 // 底部按钮
                 Row(
-                    modifier = Modifier.padding(horizontal = 20.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                 ){
                     WtePrimaryButton(
