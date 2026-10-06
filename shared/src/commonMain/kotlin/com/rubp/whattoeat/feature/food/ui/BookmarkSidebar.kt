@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,7 +44,8 @@ fun BookmarkSidebar(
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .padding(vertical = 100.dp),
+            .padding(vertical = 100.dp)
+            .verticalScroll(state = rememberScrollState()), // state 保存书签列表的滚动位置
         verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.End
     ) {
@@ -71,10 +74,8 @@ private fun BookmarkItem(
     isExpanded: Boolean,
     onClick: () -> Unit
 ) {
-    val collapsedWidth = 36.dp
-    // 根据文字长度估算展开宽度（每个中文字符约 16dp）
+    val collapsedWidth = 48.dp
     val expandedWidthDp = with(LocalDensity.current) {
-        // 中文一个字约 1em = bodySmall 字号 ≈ 12sp，加上 padding
         val charCount = name.length.coerceIn(2, 8)
         (charCount * 16 + 16).coerceIn(56, 160).dp
     }
@@ -87,7 +88,7 @@ private fun BookmarkItem(
     Surface(
         modifier = Modifier
             .width(width)
-            .height(40.dp)
+            .height(48.dp)
             .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp),

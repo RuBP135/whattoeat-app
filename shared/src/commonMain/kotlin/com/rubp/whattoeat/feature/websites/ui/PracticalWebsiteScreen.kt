@@ -19,8 +19,8 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-import com.rubp.whattoeat.core.components.AppTopBar
-import com.rubp.whattoeat.core.components.CardButton
+import com.rubp.whattoeat.core.components.WteTopBar
+import com.rubp.whattoeat.core.components.button.CardButton
 import androidx.compose.foundation.lazy.items
 import com.rubp.whattoeat.feature.websites.model.practicalWebsites
 import org.jetbrains.compose.resources.DrawableResource
@@ -32,7 +32,7 @@ fun PracticalWebsiteScreen(
 ){
     Scaffold(
         topBar = {
-            AppTopBar(
+            WteTopBar(
                 onClickReturn = onReturnToHome,
                 title = "实用网站"
             )

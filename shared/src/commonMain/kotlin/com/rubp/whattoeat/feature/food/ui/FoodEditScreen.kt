@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,54 +33,61 @@ import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.domain.FoodTableDto
 import com.rubp.whattoeat.feature.food.domain.foodTableToJson
 import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
-import com.rubp.whattoeat.core.components.AppTopBar
-import com.rubp.whattoeat.core.components.CardText
-import com.rubp.whattoeat.core.components.MenuButton
-import com.rubp.whattoeat.core.components.PrimaryButton
+import com.rubp.whattoeat.core.components.WteTopBar
+import com.rubp.whattoeat.core.components.button.MenuButton
+import com.rubp.whattoeat.core.components.button.WtePrimaryButton
+import com.rubp.whattoeat.core.components.button.WteSecondaryButton
+import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
 
-
 @Composable
 fun FoodEditScreen(
     foodViewModel: FoodViewModel,
+    modifier: Modifier = Modifier,
     onReturnToEat: () -> Unit
 ) {
     val foods by foodViewModel.foods.collectAsState(initial = emptyList())
     val tables by foodViewModel.tables.collectAsState()
     val currentTable by foodViewModel.currentTable.collectAsState()
 
-    val actions = remember(foodViewModel) {
-        object : FoodEditActions {
-            override fun onReturnToEat() = onReturnToEat()
-            override fun onTableSelected(id: Long) = foodViewModel.switchTable(id)
-            override fun onRenameTable(tableId: Long, name: String) = foodViewModel.renameTable(tableId, name)
-            override fun onDeleteTable(tableId: Long) = foodViewModel.deleteTable(tableId)
-            override fun onCreateTable(name: String) = foodViewModel.createTable(name)
-            override fun onImportFoodAndTable(dto: FoodTableDto) = foodViewModel.inputFoodTableDto(dto)
-            override fun onAddFood() = foodViewModel.insert(Food(name = "", weight = 1, marked = true))
-            override fun onDelFood(food: Food) = foodViewModel.delete(food)
-            override fun onClickStar(food: Food) = foodViewModel.update(food.copy(marked = !food.marked))
-            override fun onInputName(food: Food, name: String) = foodViewModel.update(food.copy(name = name))
-            override fun onInputWeight(food: Food, weight: Int) = foodViewModel.update(food.copy(weight = weight))
-        }
-    }
-
     FoodEditContent(
+        modifier = modifier,
         foods = foods,
         tables = tables,
         currentTable = currentTable,
-        actions = actions
+        onReturnToEat = onReturnToEat,
+        onTableSelected = foodViewModel::switchTable,
+        onRenameTable = foodViewModel::renameTable,
+        onDeleteTable = foodViewModel::deleteTable,
+        onCreateTable = foodViewModel::createTable,
+        onImportFoodAndTable = foodViewModel::inputFoodTableDto,
+        onAddFood = { foodViewModel.insert(Food(name = "", weight = 1, marked = true)) },
+        onDeleteFood = foodViewModel::delete,
+        onClickStar = { foodViewModel.update(it.copy(marked = !it.marked)) },
+        onInputName = { food, name -> foodViewModel.update(food.copy(name = name)) },
+        onInputWeight = { food, weight -> foodViewModel.update(food.copy(weight = weight)) }
     )
 }
 
 @Composable
-fun FoodEditContent(
+private fun FoodEditContent(
+    modifier: Modifier = Modifier,
     foods: List<Food>,
     tables: List<FoodTable>,
     currentTable: FoodTable?,
-    actions: FoodEditActions
+    onReturnToEat: () -> Unit,
+    onTableSelected: (Long) -> Unit,
+    onRenameTable: (Long, String) -> Unit,
+    onDeleteTable: (Long) -> Unit,
+    onCreateTable: (String) -> Unit,
+    onImportFoodAndTable: (FoodTableDto) -> Unit,
+    onAddFood: () -> Unit,
+    onDeleteFood: (Food) -> Unit,
+    onClickStar: (Food) -> Unit,
+    onInputName: (Food, String) -> Unit,
+    onInputWeight: (Food, Int) -> Unit
 ) {
     var editDialogState: EditDialogState by remember { mutableStateOf(EditDialogState.None) }
     val tableName = currentTable?.name ?: ""
@@ -90,8 +97,9 @@ fun FoodEditContent(
     val clipboardManager = LocalClipboardManager.current
 
     Scaffold(
+        modifier = modifier,
         topBar = {
-            AppTopBar(actions::onReturnToEat, "编辑清单"){ closeMenu ->
+            WteTopBar(onReturnToEat, "编辑清单"){ closeMenu ->
                 MenuButton("新建表格"){ closeMenu(); editDialogState = EditDialogState.CreateTable }
                 HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("重命名表格"){ closeMenu(); editDialogState = EditDialogState.RenameTable }
@@ -108,7 +116,7 @@ fun FoodEditContent(
                                 return@launch
                             }
                             val foodTableDto = jsonToFoodTableDto(input)
-                            actions.onImportFoodAndTable(foodTableDto)
+                            onImportFoodAndTable(foodTableDto)
                             snackbarHostState.showSnackbar("已导入表格")
                         } catch(e: SerializationException){
                             e.printStackTrace()
@@ -134,108 +142,105 @@ fun FoodEditContent(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
+                .padding(paddingValues)
+                .padding(horizontal = 32.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
 
-            Column(
+            // 表格标题
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 5.dp, bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ){
-                // 标题
-                CardText(
-                    modifier = Modifier
-                        .padding(horizontal = 35.dp)
-                        .height(70.dp),
+                    .fillMaxWidth()
+                    .height(72.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
                     text = tableName,
                     style = MaterialTheme.typography.titleLarge,
-                    textColor = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary
                 )
-
-                // 滚动标题栏（切换表格）
-                ScrollableTableTitleRow(
-                    modifier = Modifier
-                        .padding(horizontal = 30.dp)
-                        .fillMaxWidth(),
-                    selectedTableId = currentTable?.id ?: -1L,
-                    tables = tables,
-                    onTableSelected = actions::onTableSelected,
-                    onAddTable = { editDialogState = EditDialogState.CreateTable } // 拉出创建对话框
-                )
-                
-                // 编辑表
-                EditTable(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 30.dp),
-                    foods = foods,
-                    onClickStar = actions::onClickStar,
-                    onInputName = actions::onInputName,
-                    onInputWeight = actions::onInputWeight,
-                    onClickDelFood = { editDialogState = EditDialogState.DeleteFood(it) },
-                )
-
-                Spacer(Modifier.height(25.dp))
-                // 底部按钮
-                Row(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                ){
-                    PrimaryButton("添加新菜品", Modifier
-                        .weight(2f)
-                        .height(48.dp)) { actions.onAddFood() }
-                    PrimaryButton(
-                        "保存",
-                        Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        MaterialTheme.colorScheme.surfaceVariant,
-                        MaterialTheme.colorScheme.primary)
-                    { }
-                }
             }
 
+            // 滚动标题栏（切换表格）
+            ScrollableTableTitleRow(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                selectedTableId = currentTable?.id ?: -1L,
+                tables = tables,
+                onTableSelected = onTableSelected,
+                onAddTable = { editDialogState = EditDialogState.CreateTable } // 拉出创建对话框
+            )
+
+            // 编辑表
+            FoodEditTable(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                foods = foods,
+                onClickStar = onClickStar,
+                onInputName = onInputName,
+                onInputWeight = onInputWeight,
+                onClickDelFood = { editDialogState = EditDialogState.DeleteFood(it) },
+            )
+
+            // 底部按钮
+            Row(
+                modifier = Modifier.padding(top = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+            ){
+                WtePrimaryButton(
+                    text = "添加新菜品",
+                    modifier = Modifier
+                        .weight(2f)
+                        .height(48.dp)
+                ) { onAddFood() }
+                WteSecondaryButton(
+                    text = "保存",
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                ) {}
+            }
         }
     }
 
     FoodEditDialogHandler(
-        editDialogState,
-        tableName,
-        currentTable,
-        actions,
-    ) {
-        editDialogState = EditDialogState.None
-    }
+        dialogState = editDialogState,
+        tableName = tableName,
+        currentTable = currentTable,
+        onCreateTable = onCreateTable,
+        onRenameTable = onRenameTable,
+        onDeleteTable = onDeleteTable,
+        onDeleteFood = onDeleteFood,
+        onDismiss = { editDialogState = EditDialogState.None }
+    )
 }
-
 
 @Preview
 @Composable
 private fun FoodEditContentPreview() {
-    FoodEditContent(
-        foods = emptyList(),
-        tables = listOf(
-            FoodTable(1L, "早餐", 0L),
-            FoodTable(2L, "午餐", 1L)
-        ),
-        currentTable = FoodTable(1L, "早餐", 0L),
-        actions = object : FoodEditActions {
-            override fun onReturnToEat() {}
-            override fun onTableSelected(id: Long) {}
-            override fun onRenameTable(tableId: Long, name: String) {}
-            override fun onDeleteTable(tableId: Long) {}
-            override fun onCreateTable(name: String) {}
-            override fun onImportFoodAndTable(dto: FoodTableDto) {}
-            override fun onAddFood() {}
-            override fun onDelFood(food: Food) {}
-            override fun onClickStar(food: Food) {}
-            override fun onInputName(food: Food, name: String) {}
-            override fun onInputWeight(food: Food, weight: Int) {}
-        }
-    )
+    WhatToEatPreviewTheme {
+        FoodEditContent(
+            foods = emptyList(),
+            tables = listOf(
+                FoodTable(1L, "早餐", 0L),
+                FoodTable(2L, "午餐", 1L)
+            ),
+            currentTable = FoodTable(1L, "早餐", 0L),
+            onReturnToEat = {},
+            onTableSelected = {},
+            onRenameTable = { _, _ -> },
+            onDeleteTable = {},
+            onCreateTable = {},
+            onImportFoodAndTable = {},
+            onAddFood = {},
+            onDeleteFood = {},
+            onClickStar = {},
+            onInputName = { _, _ -> },
+            onInputWeight = { _, _ -> }
+        )
+    }
 }

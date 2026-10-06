@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.outlined.Help
+import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.core.components.ConfirmDialog
 import com.rubp.whattoeat.core.components.EditDialog
@@ -30,7 +31,10 @@ fun FoodEditDialogHandler(
     dialogState: EditDialogState,
     tableName: String,
     currentTable: FoodTable?,
-    actions: FoodEditActions,
+    onCreateTable: (String) -> Unit,
+    onRenameTable: (Long, String) -> Unit,
+    onDeleteTable: (Long) -> Unit,
+    onDeleteFood: (Food) -> Unit,
     onDismiss: () -> Unit
 ) {
     when(dialogState){
@@ -43,7 +47,7 @@ fun FoodEditDialogHandler(
                 title = "新建表格",
                 labelText = "表格名称",
                 onConfirm = { name ->
-                    actions.onCreateTable(name)
+                    onCreateTable(name)
                     onDismiss()
                 },
                 onDismiss = onDismiss
@@ -57,7 +61,7 @@ fun FoodEditDialogHandler(
                 initialText = tableName,
                 labelText = "新的表格名称",
                 onConfirm = { newName ->
-                    currentTable?.let { actions.onRenameTable(it.id, newName) }
+                    currentTable?.let { onRenameTable(it.id, newName) }
                     onDismiss()
                 },
                 onDismiss = onDismiss
@@ -70,7 +74,7 @@ fun FoodEditDialogHandler(
                 title = "删除表格",
                 message = "确认删除？",
                 onConfirm = {
-                    currentTable?.id?.let { actions.onDeleteTable(it) }
+                    currentTable?.id?.let { onDeleteTable(it) }
                     onDismiss()
                 },
                 onDismiss = onDismiss
@@ -82,7 +86,7 @@ fun FoodEditDialogHandler(
                 title = "删除菜品",
                 message = "确认删除？",
                 onConfirm = {
-                    actions.onDelFood(dialogState.food)
+                    onDeleteFood(dialogState.food)
                     onDismiss()
                 },
                 onDismiss = onDismiss

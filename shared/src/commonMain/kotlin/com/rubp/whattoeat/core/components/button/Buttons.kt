@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.components
+package com.rubp.whattoeat.core.components.button
 
 
 import androidx.compose.foundation.background
@@ -8,16 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import com.composables.icons.materialicons.filled.Arrow_forward
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.composables.icons.materialicons.MaterialIcons
+import com.composables.icons.materialicons.filled.Arrow_forward
 
 
 @Composable
@@ -71,29 +68,7 @@ fun ElegantButton(
     }
 }
 
-@Composable
-fun PrimaryButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.primary,
-    textColor: Color = Color.Unspecified,
-    onClick: () -> Unit
-){
-    Card(
-        modifier = modifier,
-        elevation = CardDefaults.elevatedCardElevation(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor),
-        onClick = onClick
-    ){
-        BoxText(
-            modifier = Modifier.fillMaxSize(),
-            text = text,
-            style = MaterialTheme.typography.titleMedium,
-            textColor = textColor
-        )
-    }
-}
+
 
 @Composable
 fun MenuButton(

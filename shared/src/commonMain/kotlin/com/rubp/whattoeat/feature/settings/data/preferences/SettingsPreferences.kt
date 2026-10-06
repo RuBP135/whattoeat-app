@@ -1,25 +1,26 @@
 package com.rubp.whattoeat.feature.settings.data.preferences
 
-import com.rubp.whattoeat.core.theme.ColorTheme
+import com.rubp.whattoeat.core.theme.ThemeMode
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.coroutines.getStringFlow
 import kotlinx.coroutines.flow.map
 
-const val COLOR_THEME = "color_theme"
+private const val THEME_MODE = "theme_mode"
 
 class SettingsPreferences(
     private val settings: ObservableSettings
 ) {
 
     @OptIn(ExperimentalSettingsApi::class)
-    val colorThemeFlow = settings
-        .getStringFlow(COLOR_THEME, ColorTheme.Pink.name)
-        .map { ColorTheme.valueOf(it) }
+    val themeModeFlow = settings
+        .getStringFlow(THEME_MODE, ThemeMode.System.name)
+        .map { storedThemeModeName ->
+            ThemeMode.entries.firstOrNull { it.name == storedThemeModeName } ?: ThemeMode.System
+        }
 
-
-    fun saveColorTheme(theme: ColorTheme) {
-        settings.putString(COLOR_THEME, theme.name)
+    fun saveThemeMode(themeMode: ThemeMode) {
+        settings.putString(THEME_MODE, themeMode.name)
     }
 
 }
