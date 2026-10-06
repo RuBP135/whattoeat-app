@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +27,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -63,6 +66,7 @@ fun LeftSwipeBox(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(min = 48.dp)
                 .offset { IntOffset(offsetX.value.roundToInt(), 0) } // 实时平移
                 .pointerInput(isMenuOpen) {
                     detectHorizontalDragGestures( // 单项拖拽
@@ -107,8 +111,7 @@ fun LeftSwipeBox(
                         }
                     )
                 }
-                // 默认背景色遮挡住底层的菜单内容
-                .background(MaterialTheme.colorScheme.surface)
+
         ) {
             content()
         }

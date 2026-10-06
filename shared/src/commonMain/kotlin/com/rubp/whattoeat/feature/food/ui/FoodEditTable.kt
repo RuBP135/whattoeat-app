@@ -110,8 +110,7 @@ fun FoodEditTable(
 
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         stickyHeader {
