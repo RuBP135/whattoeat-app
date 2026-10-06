@@ -1,6 +1,7 @@
 package com.rubp.whattoeat.core.components
 
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.composables.icons.materialicons.MaterialIcons
+import com.rubp.whattoeat.core.theme.WteTheme
 
 
 @Composable
@@ -72,7 +74,7 @@ fun ElegantButton(
 }
 
 @Composable
-fun PrimaryButton(
+fun WtePrimaryButton(
     text: String,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.primary,
@@ -84,6 +86,7 @@ fun PrimaryButton(
         elevation = CardDefaults.elevatedCardElevation(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor),
+        border = BorderStroke(1.dp, WteTheme.extendedColors.paperBorder),
         onClick = onClick
     ){
         BoxText(

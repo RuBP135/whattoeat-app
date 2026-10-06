@@ -36,7 +36,7 @@ import com.composables.icons.materialicons.filled.Clear_all
 import com.composables.icons.materialicons.filled.Edit
 import com.rubp.whattoeat.core.components.CardButton
 import com.rubp.whattoeat.core.components.CircleIconButton
-import com.rubp.whattoeat.core.components.PrimaryButton
+import com.rubp.whattoeat.core.components.WtePrimaryButton
 import com.rubp.whattoeat.core.components.WtePaperCard
 import com.rubp.whattoeat.core.components.WteSnackbar
 import com.rubp.whattoeat.core.components.WteTopBar
@@ -153,7 +153,7 @@ private fun EatContent(
                         .width(width)
                         .height(height)
 
-                    PrimaryButton(
+                    WtePrimaryButton(
                         text = "查询",
                         modifier = modifier,
                         textColor = MaterialTheme.colorScheme.onPrimary,

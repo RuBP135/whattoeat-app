@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.app.navigation.MainBottomBarSpacer
 import com.rubp.whattoeat.core.components.CardButton
-import com.rubp.whattoeat.core.components.PrimaryButton
+import com.rubp.whattoeat.core.components.WtePrimaryButton
 import com.rubp.whattoeat.core.components.WtePaperCard
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.theme.WteTheme
@@ -106,7 +106,7 @@ private fun PrimaryActionCard(onClick: () -> Unit) {
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
-        PrimaryButton(
+        WtePrimaryButton(
             text = "开始抽取",
             modifier = Modifier
                 .fillMaxWidth()

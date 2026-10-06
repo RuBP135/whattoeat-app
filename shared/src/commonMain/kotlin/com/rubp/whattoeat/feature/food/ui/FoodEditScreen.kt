@@ -36,7 +36,7 @@ import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.CardText
 import com.rubp.whattoeat.core.components.MenuButton
-import com.rubp.whattoeat.core.components.PrimaryButton
+import com.rubp.whattoeat.core.components.WtePrimaryButton
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.coroutines.launch
@@ -187,10 +187,10 @@ fun FoodEditContent(
                     modifier = Modifier.padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                 ){
-                    PrimaryButton("添加新菜品", Modifier
+                    WtePrimaryButton("添加新菜品", Modifier
                         .weight(2f)
                         .height(48.dp)) { actions.onAddFood() }
-                    PrimaryButton(
+                    WtePrimaryButton(
                         "保存",
                         Modifier
                             .weight(1f)
