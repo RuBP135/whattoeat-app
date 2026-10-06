@@ -187,17 +187,18 @@ fun FoodEditContent(
                     modifier = Modifier.padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                 ){
-                    WtePrimaryButton("添加新菜品", Modifier
-                        .weight(2f)
-                        .height(48.dp)) { actions.onAddFood() }
                     WtePrimaryButton(
-                        "保存",
-                        Modifier
+                        text = "添加新菜品",
+                        modifier = Modifier
+                            .weight(2f)
+                            .height(48.dp)
+                    ) { actions.onAddFood() }
+                    WtePrimaryButton(
+                        text = "保存",
+                        modifier = Modifier
                             .weight(1f)
-                            .height(48.dp),
-                        MaterialTheme.colorScheme.surfaceVariant,
-                        MaterialTheme.colorScheme.primary)
-                    { }
+                            .height(48.dp)
+                    ) {}
                 }
             }
 

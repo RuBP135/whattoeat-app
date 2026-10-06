@@ -111,7 +111,6 @@ private fun PrimaryActionCard(onClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
-            textColor = MaterialTheme.colorScheme.onPrimary,
             onClick = onClick
         )
     }

@@ -156,7 +156,6 @@ private fun EatContent(
                     WtePrimaryButton(
                         text = "查询",
                         modifier = modifier,
-                        textColor = MaterialTheme.colorScheme.onPrimary,
                         onClick = onClickRandomFood
                     )
                     CardButton(
