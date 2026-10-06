@@ -37,6 +37,7 @@ import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.CardText
 import com.rubp.whattoeat.core.components.button.MenuButton
 import com.rubp.whattoeat.core.components.button.WtePrimaryButton
+import com.rubp.whattoeat.core.components.button.WteSecondaryButton
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.coroutines.launch
@@ -193,7 +194,7 @@ fun FoodEditContent(
                             .weight(2f)
                             .height(48.dp)
                     ) { actions.onAddFood() }
-                    WtePrimaryButton(
+                    WteSecondaryButton(
                         text = "保存",
                         modifier = Modifier
                             .weight(1f)
