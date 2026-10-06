@@ -12,15 +12,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.theme.WteTheme
 
 @Composable
-fun WteSecondaryButton(
+private fun WteButtonBase(
     text: String,
     modifier: Modifier = Modifier,
+    containerColor: Color,
+    contentColor: Color,
     onClick: () -> Unit
 ){
 
@@ -28,8 +31,8 @@ fun WteSecondaryButton(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        color = containerColor,
+        contentColor = contentColor,
         border = BorderStroke(1.dp, WteTheme.extendedColors.paperBorder),
     ) {
         Box(
@@ -44,6 +47,47 @@ fun WteSecondaryButton(
                 style = MaterialTheme.typography.titleMedium,
             )
         }
+    }
+}
+
+@Composable
+fun WtePrimaryButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+){
+    WteButtonBase(
+        text = text,
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        onClick = onClick
+    )
+}
+
+@Composable
+fun WteSecondaryButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+){
+    WteButtonBase(
+        text = text,
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        onClick = onClick
+    )
+}
+
+@Preview
+@Composable
+private fun WtePrimaryButtonPreview(){
+    WhatToEatPreviewTheme {
+        WtePrimaryButton(
+            text = "点击此按钮",
+            onClick = {}
+        )
     }
 }
 
