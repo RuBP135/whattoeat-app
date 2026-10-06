@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.BuildKonfig
 import com.rubp.whattoeat.app.navigation.MainBottomBarSpacer
-import com.rubp.whattoeat.core.components.CardButton
-import com.rubp.whattoeat.core.components.WtePaperCard
+import com.rubp.whattoeat.core.components.button.CardButton
+import com.rubp.whattoeat.core.components.card.WtePaperCard
 import com.rubp.whattoeat.core.icons.GitHubIcon
 import com.rubp.whattoeat.core.theme.ThemeMode
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme

@@ -27,7 +27,7 @@ import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Brightness_auto
 import com.composables.icons.materialicons.filled.Dark_mode
 import com.composables.icons.materialicons.filled.Light_mode
-import com.rubp.whattoeat.core.components.WtePaperCard
+import com.rubp.whattoeat.core.components.card.WtePaperCard
 import com.rubp.whattoeat.core.theme.ThemeMode
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 

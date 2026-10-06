@@ -36,12 +36,10 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Add
 import com.composables.icons.materialicons.filled.Delete
+import com.rubp.whattoeat.core.components.LeftSwipeBox
+import com.rubp.whattoeat.core.components.button.CircleIconButton
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.core.components.Cell
-import com.rubp.whattoeat.core.components.CircleIconButton
-import com.rubp.whattoeat.core.components.LeftSwipeBox
-import com.rubp.whattoeat.core.components.RowItem
 import org.jetbrains.compose.resources.painterResource
 import whattoeat.shared.generated.resources.Res
 import whattoeat.shared.generated.resources.filled_star
@@ -115,7 +113,7 @@ fun EditTable(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         stickyHeader {
-            RowItem(
+            FoodTableRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(36.dp)
@@ -190,7 +188,7 @@ private fun SwipeRow(
             elevation = CardDefaults.elevatedCardElevation(),
             colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
         ){
-            RowItem(
+            FoodTableRow(
                 modifier = Modifier.fillMaxSize(),
                 cells = listOf(
                     Cell( // 参选Star

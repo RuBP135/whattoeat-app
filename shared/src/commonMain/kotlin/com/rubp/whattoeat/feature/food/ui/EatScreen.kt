@@ -34,10 +34,10 @@ import com.composables.icons.materialicons.filled.Block
 import com.composables.icons.materialicons.filled.Clear
 import com.composables.icons.materialicons.filled.Clear_all
 import com.composables.icons.materialicons.filled.Edit
-import com.rubp.whattoeat.core.components.CardButton
-import com.rubp.whattoeat.core.components.CircleIconButton
-import com.rubp.whattoeat.core.components.WtePrimaryButton
-import com.rubp.whattoeat.core.components.WtePaperCard
+import com.rubp.whattoeat.core.components.button.CardButton
+import com.rubp.whattoeat.core.components.button.CircleIconButton
+import com.rubp.whattoeat.core.components.button.WtePrimaryButton
+import com.rubp.whattoeat.core.components.card.WtePaperCard
 import com.rubp.whattoeat.core.components.WteSnackbar
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme

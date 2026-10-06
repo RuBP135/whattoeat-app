@@ -35,8 +35,8 @@ import com.rubp.whattoeat.feature.food.domain.foodTableToJson
 import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.CardText
-import com.rubp.whattoeat.core.components.MenuButton
-import com.rubp.whattoeat.core.components.WtePrimaryButton
+import com.rubp.whattoeat.core.components.button.MenuButton
+import com.rubp.whattoeat.core.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.coroutines.launch

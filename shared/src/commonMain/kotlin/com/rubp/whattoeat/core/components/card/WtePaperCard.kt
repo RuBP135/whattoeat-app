@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.components
+package com.rubp.whattoeat.core.components.card
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -29,7 +29,7 @@ import com.rubp.whattoeat.core.theme.WteTheme
 @Composable
 fun WtePaperCard(
     modifier: Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(6.dp), // 控制内容的垂直排列与间距
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(6.dp),
     content: @Composable ColumnScope.() -> Unit
 ){
     Box(

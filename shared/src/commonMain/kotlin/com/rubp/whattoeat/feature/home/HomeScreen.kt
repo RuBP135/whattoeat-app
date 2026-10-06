@@ -24,9 +24,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.app.navigation.MainBottomBarSpacer
-import com.rubp.whattoeat.core.components.CardButton
-import com.rubp.whattoeat.core.components.WtePrimaryButton
-import com.rubp.whattoeat.core.components.WtePaperCard
+import com.rubp.whattoeat.core.components.button.CardButton
+import com.rubp.whattoeat.core.components.button.WtePrimaryButton
+import com.rubp.whattoeat.core.components.card.WtePaperCard
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.theme.WteTheme
 import org.jetbrains.compose.resources.painterResource

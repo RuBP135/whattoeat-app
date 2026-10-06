@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import whattoeat.shared.generated.resources.Res
 import com.rubp.whattoeat.core.components.WteTopBar
-import com.rubp.whattoeat.core.components.ElegantButton
+import com.rubp.whattoeat.core.components.button.ElegantButton
 import whattoeat.shared.generated.resources.moba
 
 @Composable
