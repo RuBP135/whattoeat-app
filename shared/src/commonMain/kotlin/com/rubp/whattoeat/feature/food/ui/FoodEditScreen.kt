@@ -28,6 +28,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.rubp.whattoeat.core.components.WteSnackbar
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.domain.FoodTableDto
@@ -140,7 +141,12 @@ private fun FoodEditContent(
                 MenuButton("帮助"){ closeMenu(); editDialogState = EditDialogState.Help }
             }
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = { WteSnackbar(it) }
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
