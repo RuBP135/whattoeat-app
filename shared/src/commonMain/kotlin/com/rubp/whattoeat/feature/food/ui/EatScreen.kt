@@ -22,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,16 +33,16 @@ import com.composables.icons.materialicons.filled.Block
 import com.composables.icons.materialicons.filled.Clear
 import com.composables.icons.materialicons.filled.Clear_all
 import com.composables.icons.materialicons.filled.Edit
+import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.button.CardButton
 import com.rubp.whattoeat.core.components.button.CircleIconButton
 import com.rubp.whattoeat.core.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.components.card.WtePaperCard
-import com.rubp.whattoeat.core.components.WteSnackbar
-import com.rubp.whattoeat.core.components.WteTopBar
+import com.rubp.whattoeat.core.components.snackbar.WteSnackbar
+import com.rubp.whattoeat.core.components.snackbar.rememberWteSnackbarController
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun EatScreen(
@@ -56,7 +55,7 @@ fun EatScreen(
     var foodName by remember { mutableStateOf("点击查询今天吃什么") }
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    val wteSnackbarController = rememberWteSnackbarController(snackbarHostState)
 
     EatContent(
         foodName = foodName,
@@ -72,21 +71,15 @@ fun EatScreen(
         onClickRandomFood = { foodName = foodViewModel.chosenRandomFood() },
         onClickClear = {
             foodName = "点击查询今天吃什么"
-            scope.launch {
-                snackbarHostState.showSnackbar("已清除当前选择")
-            }
+            wteSnackbarController.showSnackbar("已清除当前选择")
         },
         onClickIgnore = {
             foodViewModel.ignoreChosenFood()
-            scope.launch {
-                snackbarHostState.showSnackbar("已忽略当前选择食物")
-            }
+            wteSnackbarController.showSnackbar("已忽略当前选择食物")
         },
         onClickClearIgnore = {
             foodViewModel.clearAllIgnore()
-            scope.launch {
-                snackbarHostState.showSnackbar("已恢复所有被忽略的食物")
-            }
+            wteSnackbarController.showSnackbar("已恢复所有被忽略的食物")
         }
     )
 }

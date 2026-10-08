@@ -1,7 +1,9 @@
-package com.rubp.whattoeat.core.components
+package com.rubp.whattoeat.core.components.snackbar
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -33,52 +35,58 @@ fun WteSnackbar(
 ){
     val visuals = snackbarData.visuals
 
-    Surface(
-        modifier = modifier
-            .padding(12.dp)
-            .widthIn(max = 600.dp),
-        shape = RoundedCornerShape(16.dp),
-        color = WteTheme.extendedColors.paper,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        shadowElevation = 4.dp
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
     ){
-        Row(
+        Surface(
             modifier = Modifier
-                .heightIn(min = 48.dp)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(12.dp)
+                .widthIn(max = 600.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = WteTheme.extendedColors.paper,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            shadowElevation = 4.dp
         ){
-            Text(
-                text = visuals.message,
+            Row(
                 modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .weight(1f, fill = false),
-                style = MaterialTheme.typography.bodyMedium
-            )
+                    .heightIn(min = 48.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                Text(
+                    text = visuals.message,
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .weight(1f, fill = false),
+                    style = MaterialTheme.typography.bodyMedium
+                )
 
-            visuals.actionLabel?.let { label ->
-                TextButton(
-                    onClick = snackbarData::performAction,
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
-                ){
-                    Text(text = label)
+                visuals.actionLabel?.let { label ->
+                    TextButton(
+                        onClick = snackbarData::performAction,
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
+                    ){
+                        Text(text = label)
+                    }
+                }
+
+                if (visuals.withDismissAction) {
+                    IconButton(
+                        onClick = snackbarData::dismiss
+                    ) {
+                        Icon(
+                            imageVector = MaterialIcons.Filled.Close,
+                            contentDescription = "关闭提示"
+                        )
+                    }
                 }
             }
 
-            if (visuals.withDismissAction) {
-                IconButton(
-                    onClick = snackbarData::dismiss
-                ) {
-                    Icon(
-                        imageVector = MaterialIcons.Filled.Close,
-                        contentDescription = "关闭提示"
-                    )
-                }
-            }
         }
-
     }
+
 }
 
 @Preview
