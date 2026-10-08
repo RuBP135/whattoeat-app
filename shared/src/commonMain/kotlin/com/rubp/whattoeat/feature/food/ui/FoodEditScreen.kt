@@ -214,7 +214,10 @@ private fun FoodEditContent(
         currentTable = currentTable,
         onCreateTable = onCreateTable,
         onRenameTable = onRenameTable,
-        onDeleteTable = onDeleteTable,
+        onDeleteTable = {
+            onDeleteTable(it)
+            wteSnackbarController.showSnackbar("已删除表格")
+        },
         onDeleteFood = onDeleteFood,
         onDismiss = { editDialogState = EditDialogState.None }
     )
