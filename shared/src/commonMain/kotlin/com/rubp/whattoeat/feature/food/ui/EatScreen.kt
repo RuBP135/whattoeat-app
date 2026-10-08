@@ -38,7 +38,7 @@ import com.rubp.whattoeat.core.components.button.CardButton
 import com.rubp.whattoeat.core.components.button.CircleIconButton
 import com.rubp.whattoeat.core.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.components.card.WtePaperCard
-import com.rubp.whattoeat.core.components.WteSnackbar
+import com.rubp.whattoeat.core.components.snackbar.WteSnackbar
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
