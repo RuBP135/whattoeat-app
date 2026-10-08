@@ -19,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,19 +27,19 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.rubp.whattoeat.core.components.WteTopBar
+import com.rubp.whattoeat.core.components.button.MenuButton
+import com.rubp.whattoeat.core.components.button.WtePrimaryButton
+import com.rubp.whattoeat.core.components.button.WteSecondaryButton
 import com.rubp.whattoeat.core.components.snackbar.WteSnackbar
+import com.rubp.whattoeat.core.components.snackbar.rememberWteSnackbarController
+import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.domain.FoodTableDto
 import com.rubp.whattoeat.feature.food.domain.foodTableToJson
 import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
-import com.rubp.whattoeat.core.components.WteTopBar
-import com.rubp.whattoeat.core.components.button.MenuButton
-import com.rubp.whattoeat.core.components.button.WtePrimaryButton
-import com.rubp.whattoeat.core.components.button.WteSecondaryButton
-import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
-import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
 
 @Composable
@@ -94,7 +93,7 @@ private fun FoodEditContent(
     val tableName = currentTable?.name ?: ""
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope() // 获取与当前UI组件生命周期绑定的协程作用域
+    val wteSnackbarController = rememberWteSnackbarController(snackbarHostState)
     val clipboardManager = LocalClipboardManager.current
 
     Scaffold(
@@ -109,32 +108,28 @@ private fun FoodEditContent(
                 HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("导入表格"){
                     closeMenu()
-                    scope.launch {
-                        try {
-                            val input = clipboardManager.getText()?.text
-                            if(input == null){
-                                snackbarHostState.showSnackbar("未获取到表格数据")
-                                return@launch
-                            }
-                            val foodTableDto = jsonToFoodTableDto(input)
-                            onImportFoodAndTable(foodTableDto)
-                            snackbarHostState.showSnackbar("已导入表格")
-                        } catch(e: SerializationException){
-                            e.printStackTrace()
-                            snackbarHostState.showSnackbar("json格式错误")
+                    try {
+                        val input = clipboardManager.getText()?.text
+                        if(input == null){
+                            wteSnackbarController.showSnackbar("未获取到表格数据")
+                            return@MenuButton
                         }
+                        val foodTableDto = jsonToFoodTableDto(input)
+                        onImportFoodAndTable(foodTableDto)
+                        wteSnackbarController.showSnackbar("已导入表格")
+                    } catch(e: SerializationException){
+                        e.printStackTrace()
+                        wteSnackbarController.showSnackbar("json格式错误")
                     }
                 }
                 HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("导出表格"){
                     closeMenu()
-                    scope.launch {
-                        if(currentTable == null){
-                            snackbarHostState.showSnackbar("当前没有选中表格")
-                        } else {
-                            clipboardManager.setText(AnnotatedString(foodTableToJson(currentTable, foods)))
-                            snackbarHostState.showSnackbar("已导出json至剪贴板")
-                        }
+                    if(currentTable == null){
+                        wteSnackbarController.showSnackbar("当前没有选中表格")
+                    } else {
+                        clipboardManager.setText(AnnotatedString(foodTableToJson(currentTable, foods)))
+                        wteSnackbarController.showSnackbar("已导出json至剪贴板")
                     }
                 }
                 HorizontalDivider(thickness = Dp.Hairline)
