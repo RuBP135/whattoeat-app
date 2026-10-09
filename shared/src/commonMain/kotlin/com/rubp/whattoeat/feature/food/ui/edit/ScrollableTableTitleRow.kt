@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.feature.food.ui
+package com.rubp.whattoeat.feature.food.ui.edit
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme

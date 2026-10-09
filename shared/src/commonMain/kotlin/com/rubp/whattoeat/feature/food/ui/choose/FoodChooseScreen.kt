@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.feature.food.ui
+package com.rubp.whattoeat.feature.food.ui.choose
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,7 +45,7 @@ import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 
 @Composable
-fun EatScreen(
+fun FoodChooseScreen(
     foodViewModel: FoodViewModel,
     onNavigateToFoodEdit: () -> Unit,
     onReturnToHome: () -> Unit
@@ -57,7 +57,7 @@ fun EatScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val wteSnackbarController = rememberWteSnackbarController(snackbarHostState)
 
-    EatContent(
+    FoodChooseContent(
         foodName = foodName,
         tables = tables,
         currentTable = currentTable,
@@ -85,7 +85,7 @@ fun EatScreen(
 }
 
 @Composable
-private fun EatContent(
+private fun FoodChooseContent(
     foodName: String,
     tables: List<FoodTable>,
     currentTable: FoodTable?,
@@ -99,7 +99,7 @@ private fun EatContent(
     onClickClearIgnore: () -> Unit
 ) {
     Scaffold(
-        topBar = { WteTopBar(onReturnToHome, "Eat") },
+        topBar = { WteTopBar(onReturnToHome, "选择食物") },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarHostState,
@@ -213,9 +213,9 @@ private fun EatContent(
 
 @Preview
 @Composable
-private fun EatContentPreview() {
+private fun FoodChooseContentPreview() {
     WhatToEatPreviewTheme {
-        EatContent(
+        FoodChooseContent(
             foodName = "显示一个食物名称",
             tables = listOf(
                 FoodTable(1L, "默认", 0),

@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.feature.food.ui
+package com.rubp.whattoeat.feature.food.ui.edit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

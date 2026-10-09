@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.feature.food.ui
+package com.rubp.whattoeat.feature.food.ui.choose
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween

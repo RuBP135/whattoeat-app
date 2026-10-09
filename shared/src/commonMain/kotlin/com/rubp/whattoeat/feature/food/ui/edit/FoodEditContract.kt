@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.feature.food.ui
+package com.rubp.whattoeat.feature.food.ui.edit
 
 import com.rubp.whattoeat.feature.food.data.entity.Food
 

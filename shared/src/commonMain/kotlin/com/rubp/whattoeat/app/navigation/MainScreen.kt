@@ -16,8 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.rubp.whattoeat.feature.food.ui.EatScreen
-import com.rubp.whattoeat.feature.food.ui.FoodEditScreen
+import com.rubp.whattoeat.feature.food.ui.choose.FoodChooseScreen
+import com.rubp.whattoeat.feature.food.ui.edit.FoodEditScreen
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import com.rubp.whattoeat.feature.home.HomeScreen
 import com.rubp.whattoeat.feature.other.OtherScreen
@@ -33,7 +33,7 @@ object Settings
 @Serializable
 object FoodEdit
 @Serializable
-object Eat
+object FoodChoose
 @Serializable
 object PracticalWebsite
 @Serializable
@@ -68,20 +68,20 @@ fun MainScreen(
                 exitTransition = { ExitTransition.None }
             ){
                 composable<Home>{ HomeScreen(
-                    onNavigateToEat = { navController.navigate(Eat)}, // Home -> Eat
+                    onNavigateToFoodChoose = { navController.navigate(FoodChoose)}, // Home -> FoodChoose
                     onNavigateToPracticalWebsite = { navController.navigate(PracticalWebsite) }, // Home -> PracticalWebsite
                     onNavigateToOther = { navController.navigate(Other) }
                 ) }
                 composable<Settings>{ SettingsScreen(settingsViewModel) }
-                composable<Eat>{ EatScreen( // Home <- Eat -> FoodEdit
+                composable<FoodChoose>{ FoodChooseScreen( // Home <- FoodChoose -> FoodEdit
                     foodViewModel = foodViewModel,
                     onNavigateToFoodEdit = { navController.navigate(FoodEdit) },
                     onReturnToHome = { navController.popBackStack() }
                 ) }
                 composable<FoodEdit>{ FoodEditScreen(
                     foodViewModel = foodViewModel,
-                    onReturnToEat = { navController.popBackStack()}
-                ) } // Eat <- FoodEdit
+                    onReturnToFoodChoose = { navController.popBackStack()}
+                ) } // FoodChoose <- FoodEdit
                 composable<PracticalWebsite>{ PracticalWebsiteScreen { navController.popBackStack() } }
                 composable<Other>{ OtherScreen{ navController.popBackStack() } }
             }

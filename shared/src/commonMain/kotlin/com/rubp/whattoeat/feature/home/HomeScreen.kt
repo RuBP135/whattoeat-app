@@ -36,7 +36,7 @@ import whattoeat.shared.generated.resources.what_to_eat_wordmark
 
 @Composable
 fun HomeScreen(
-    onNavigateToEat: () -> Unit,
+    onNavigateToFoodChoose: () -> Unit,
     onNavigateToPracticalWebsite: () -> Unit,
     onNavigateToOther: () -> Unit
 ) {
@@ -56,7 +56,7 @@ fun HomeScreen(
         ) {
             HomeHeader()
 
-            PrimaryActionCard(onClick = onNavigateToEat)
+            PrimaryActionCard(onClick = onNavigateToFoodChoose)
 
             SecondaryActionsCard(
                 onNavigateToPracticalWebsite = onNavigateToPracticalWebsite,
@@ -162,7 +162,7 @@ private fun SecondaryActionsCard(
 private fun HomeScreenPreview() {
     WhatToEatPreviewTheme {
         HomeScreen(
-            onNavigateToEat = {},
+            onNavigateToFoodChoose = {},
             onNavigateToPracticalWebsite = {},
             onNavigateToOther = {}
         )

@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.feature.food.ui
+package com.rubp.whattoeat.feature.food.ui.edit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +46,7 @@ import kotlinx.serialization.SerializationException
 fun FoodEditScreen(
     foodViewModel: FoodViewModel,
     modifier: Modifier = Modifier,
-    onReturnToEat: () -> Unit
+    onReturnToFoodChoose: () -> Unit
 ) {
     val foods by foodViewModel.foods.collectAsState(initial = emptyList())
     val tables by foodViewModel.tables.collectAsState()
@@ -57,7 +57,7 @@ fun FoodEditScreen(
         foods = foods,
         tables = tables,
         currentTable = currentTable,
-        onReturnToEat = onReturnToEat,
+        onReturnToFoodChoose = onReturnToFoodChoose,
         onTableSelected = foodViewModel::switchTable,
         onRenameTable = foodViewModel::renameTable,
         onDeleteTable = foodViewModel::deleteTable,
@@ -77,7 +77,7 @@ private fun FoodEditContent(
     foods: List<Food>,
     tables: List<FoodTable>,
     currentTable: FoodTable?,
-    onReturnToEat: () -> Unit,
+    onReturnToFoodChoose: () -> Unit,
     onTableSelected: (Long) -> Unit,
     onRenameTable: (Long, String) -> Unit,
     onDeleteTable: (Long) -> Unit,
@@ -99,7 +99,7 @@ private fun FoodEditContent(
     Scaffold(
         modifier = modifier,
         topBar = {
-            WteTopBar(onReturnToEat, "编辑清单"){ closeMenu ->
+            WteTopBar(onReturnToFoodChoose, "编辑清单"){ closeMenu ->
                 MenuButton("新建表格"){ closeMenu(); editDialogState = EditDialogState.CreateTable }
                 HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("重命名表格"){ closeMenu(); editDialogState = EditDialogState.RenameTable }
@@ -234,7 +234,7 @@ private fun FoodEditContentPreview() {
                 FoodTable(2L, "午餐", 1L)
             ),
             currentTable = FoodTable(1L, "早餐", 0L),
-            onReturnToEat = {},
+            onReturnToFoodChoose = {},
             onTableSelected = {},
             onRenameTable = { _, _ -> },
             onDeleteTable = {},
