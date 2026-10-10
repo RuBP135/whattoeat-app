@@ -9,8 +9,6 @@ class FoodRepository(
 ) {
     fun findByTableId(tableId: Long): Flow<List<Food>> = dao.findByTableId(tableId)
 
-    fun findAll(): Flow<List<Food>> = dao.findAll()
-
     suspend fun update(food: Food): Int = dao.update(food)
 
     suspend fun insert(food: Food): Long = dao.insert(food)

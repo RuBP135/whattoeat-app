@@ -48,9 +48,9 @@ fun FoodEditScreen(
     modifier: Modifier = Modifier,
     onReturnToFoodChoose: () -> Unit
 ) {
-    val foods by foodViewModel.foods.collectAsState(initial = emptyList())
-    val tables by foodViewModel.tables.collectAsState()
-    val currentTable by foodViewModel.currentTable.collectAsState()
+    val foods by foodViewModel.foodListStateFlow.collectAsState(initial = emptyList())
+    val tables by foodViewModel.tableListStateFlow.collectAsState()
+    val currentTable by foodViewModel.currentTableStateFlow.collectAsState()
 
     FoodEditContent(
         modifier = modifier,

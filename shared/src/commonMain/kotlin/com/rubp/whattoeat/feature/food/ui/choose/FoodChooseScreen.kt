@@ -20,9 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +39,7 @@ import com.rubp.whattoeat.core.components.card.WtePaperCard
 import com.rubp.whattoeat.core.components.snackbar.WteSnackbar
 import com.rubp.whattoeat.core.components.snackbar.rememberWteSnackbarController
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
+import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 
@@ -50,27 +49,30 @@ fun FoodChooseScreen(
     onNavigateToFoodEdit: () -> Unit,
     onReturnToHome: () -> Unit
 ) {
-    val tables by foodViewModel.tables.collectAsState()
-    val currentTable by foodViewModel.currentTable.collectAsState()
-    var foodName by remember { mutableStateOf("点击查询今天吃什么") }
+    val tableList by foodViewModel.tableListStateFlow.collectAsState()
+    val currentTable by foodViewModel.currentTableStateFlow.collectAsState()
+    val chosenFood: Food? by foodViewModel.chosenFoodStateFlow.collectAsState()
+    val selectionState by foodViewModel.selectionStateFlow.collectAsState()
+    val resultMessage: String = when(selectionState) {
+        FoodSelectionState.Idle -> "点击查询今天吃什么"
+        is FoodSelectionState.Chosen -> chosenFood?.name ?: "你遇到了一个未知的错误，导致选中的食物消失了"
+        FoodSelectionState.NoAvailableFood -> "没有可供选择的食物！"
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val wteSnackbarController = rememberWteSnackbarController(snackbarHostState)
 
     FoodChooseContent(
-        foodName = foodName,
-        tables = tables,
+        resultMessage = resultMessage,
+        tables = tableList,
         currentTable = currentTable,
         snackbarHostState = snackbarHostState,
         onNavigateToFoodEdit = onNavigateToFoodEdit,
         onReturnToHome = onReturnToHome,
-        onTableSelected = { tableId ->
-            foodViewModel.switchTable(tableId)
-            foodName = "点击查询今天吃什么"
-        },
-        onClickRandomFood = { foodName = foodViewModel.chosenRandomFood() },
+        onTableSelected = { foodViewModel.switchTable(it) },
+        onClickRandomFood = { foodViewModel.chosenRandomFood() },
         onClickClear = {
-            foodName = "点击查询今天吃什么"
+            foodViewModel.clearSelection()
             wteSnackbarController.showSnackbar("已清除当前选择")
         },
         onClickIgnore = {
@@ -86,7 +88,7 @@ fun FoodChooseScreen(
 
 @Composable
 private fun FoodChooseContent(
-    foodName: String,
+    resultMessage: String,
     tables: List<FoodTable>,
     currentTable: FoodTable?,
     snackbarHostState: SnackbarHostState,
@@ -128,7 +130,7 @@ private fun FoodChooseContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = foodName,
+                        text = resultMessage,
                         modifier = Modifier.fillMaxWidth(),
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center
@@ -216,7 +218,7 @@ private fun FoodChooseContent(
 private fun FoodChooseContentPreview() {
     WhatToEatPreviewTheme {
         FoodChooseContent(
-            foodName = "显示一个食物名称",
+            resultMessage = "显示一个食物名称",
             tables = listOf(
                 FoodTable(1L, "默认", 0),
                 FoodTable(2L, "午餐", 1),

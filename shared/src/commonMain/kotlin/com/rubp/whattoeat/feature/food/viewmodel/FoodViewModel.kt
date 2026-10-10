@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -28,32 +29,6 @@ class FoodViewModel(
     private val foodPreferences: FoodPreferences
 ) : ViewModel() {
 
-
-    val tables: StateFlow<List<FoodTable>> = foodTableRepository.findAll()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-
-    val currentTable: StateFlow<FoodTable?> =
-        foodPreferences.foodTableIdFlow.flatMapLatest { tableId ->
-            tableId?.let {
-                foodTableRepository.findById(tableId)
-            } ?: flowOf(null)
-    }.stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            null
-    )
-
-
-    val foods: StateFlow<List<Food>> = currentTable.flatMapLatest { table ->
-        table?.let{
-            foodRepository.findByTableId(table.id)
-        } ?: flowOf(emptyList())
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-    private val _selectionStateFlow: MutableStateFlow<FoodSelectionState> = MutableStateFlow(FoodSelectionState.Idle)
-    val selectionStateFlow: StateFlow<FoodSelectionState> = _selectionStateFlow.asStateFlow()
-
     init {
         // 首次启动无表时自动创建"默认"表格
         viewModelScope.launch {
@@ -62,54 +37,47 @@ class FoodViewModel(
             }
         }
     }
+    val tableListStateFlow: StateFlow<List<FoodTable>> = foodTableRepository.findAll()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val currentTableStateFlow: StateFlow<FoodTable?> =
+        foodPreferences.foodTableIdFlow.flatMapLatest { tableId ->
+            tableId?.let {
+                foodTableRepository.findById(tableId)
+            } ?: flowOf(null)
+    }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+    )
 
-    // 表格管理
+    val foodListStateFlow: StateFlow<List<Food>> = currentTableStateFlow.flatMapLatest { table ->
+        table?.let{
+            foodRepository.findByTableId(table.id)
+        } ?: flowOf(emptyList())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    fun switchTable(id: Long) {
-        if (id == currentTable.value?.id) return
-        saveCurrentTableId(id)
-        _selectionStateFlow.value = FoodSelectionState.Idle
-    }
+    private val _selectionStateFlow: MutableStateFlow<FoodSelectionState> = MutableStateFlow(FoodSelectionState.Idle)
+    val selectionStateFlow: StateFlow<FoodSelectionState> = _selectionStateFlow.asStateFlow()
 
-    fun createTable(name: String) {
-        viewModelScope.launch {
-            val wasEmpty = tables.value.isEmpty()
-            val newId = foodTableRepository.insert(FoodTable(name = name))
-            if(wasEmpty) switchTable(newId) // 没有表格的时候，应该切换到这个新建的表格
-            repeat(3) {
-                foodRepository.insert(
-                    Food(name = "", weight = 1, marked = true, tableId = newId)
-                )
+    val chosenFoodStateFlow: StateFlow<Food?> =
+        combine(selectionStateFlow, foodListStateFlow) { selectionState, foodList ->
+            when(selectionState) {
+                is FoodSelectionState.Chosen -> foodList.find { it.id == selectionState.id }
+                else -> null
             }
-        }
-    }
-
-    fun renameTable(id: Long, newName: String) {
-        viewModelScope.launch {
-            val target = tables.value.find { it.id == id } ?: return@launch
-            foodTableRepository.update(target.copy(name = newName))
-        }
-    }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
 
 
-    fun deleteTable(id: Long) {
-        viewModelScope.launch {
-            if (currentTable.value?.id == id) {
-                // 切换到剩余的表中
-                val remaining = tables.value.filter { it.id != id }
-                if (remaining.isNotEmpty()) {
-                    saveCurrentTableId(remaining.first().id)
-                }
-            }
-            foodRepository.deleteByTableId(id)
-            foodTableRepository.deleteById(id)
-        }
-    }
+
 
     // 添加新菜品用，没有选择表格的时候不会添加
     fun insert(food: Food) {
         viewModelScope.launch { // ui层不管之table_id，因此移到这里添加
-            currentTable.value?.let { table ->
+            currentTableStateFlow.value?.let { table ->
                 foodRepository.insert(food.copy(tableId = table.id))
             }
         }
@@ -130,7 +98,7 @@ class FoodViewModel(
     // 随机选择
 
     fun chosenRandomFood() {
-        val foodList = foods.value.filter { food ->
+        val foodList = foodListStateFlow.value.filter { food ->
             food.marked && food.weight > 0 && food.name.isNotEmpty()
         }
 
@@ -146,23 +114,85 @@ class FoodViewModel(
 
     fun clearAllIgnore() {
         viewModelScope.launch {
-            currentTable.value?.let { table ->
+            currentTableStateFlow.value?.let { table ->
                 foodRepository.updateAllMarked(table.id, marked = true)
             }
         }
     }
+
+    fun clearSelection() {
+        _selectionStateFlow.value = FoodSelectionState.Idle
+    }
+
+
+
+
+
+    // 表格管理
     private fun saveCurrentTableId(id: Long){
         foodPreferences.saveFoodTableId(id)
     }
 
     fun inputFoodTableDto(foodTableDto: FoodTableDto){
         viewModelScope.launch {
-            val wasEmpty = tables.value.isEmpty()
+            val wasEmpty = tableListStateFlow.value.isEmpty()
             val tableId = foodTableRepository.insert(FoodTable(name = foodTableDto.name))
             if(wasEmpty) switchTable(tableId) // 没有表格的时候，应该切换到这个新导入的表格
             foodRepository.insertAll(foodTableDto.foodDtos.map {
                 Food(name = it.name, weight = it.weight, marked = true, tableId = tableId)
             })
+        }
+    }
+
+
+    fun switchTable(id: Long) {
+        if (id == currentTableStateFlow.value?.id) return
+        saveCurrentTableId(id)
+        _selectionStateFlow.value = FoodSelectionState.Idle
+    }
+
+    fun createTable(name: String) {
+        viewModelScope.launch {
+            val wasEmpty = tableListStateFlow.value.isEmpty()
+            val newId = foodTableRepository.insert(FoodTable(name = name))
+            if(wasEmpty) switchTable(newId) // 没有表格的时候，应该切换到这个新建的表格
+            repeat(3) {
+                foodRepository.insert(
+                    Food(name = "", weight = 1, marked = true, tableId = newId)
+                )
+            }
+        }
+    }
+
+    fun renameTable(id: Long, newName: String) {
+        viewModelScope.launch {
+            val target = tableListStateFlow.value.find { it.id == id } ?: return@launch
+            foodTableRepository.update(target.copy(name = newName))
+        }
+    }
+
+
+    fun deleteTable(id: Long) {
+        viewModelScope.launch {
+            if (currentTableStateFlow.value?.id == id) {
+                // 切换到剩余的表中
+
+                val list = tableListStateFlow.value
+                val index = list.indexOf(currentTableStateFlow.value)
+
+                val newId: Long? = when {
+                    index != -1 && index - 1 >= 0 -> list.get(index - 1).id
+                    index != -1 && index + 1 < list.size -> list.get(index + 1).id
+                    else -> null
+                }
+
+                if(newId != null){
+                    saveCurrentTableId(newId)
+                }
+
+            }
+            foodRepository.deleteByTableId(id)
+            foodTableRepository.deleteById(id)
         }
     }
 }
