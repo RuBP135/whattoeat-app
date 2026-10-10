@@ -20,11 +20,11 @@ interface FoodTableDao {
     suspend fun insert(table: FoodTable): Long
 
     @Update
-    suspend fun update(table: FoodTable)
+    suspend fun update(table: FoodTable): Int
 
     @Delete
-    suspend fun delete(table: FoodTable)
+    suspend fun delete(table: FoodTable): Int
 
     @Query("DELETE FROM food_table WHERE id = :id")
-    suspend fun deleteById(id: Long)
+    suspend fun deleteById(id: Long): Int
 }

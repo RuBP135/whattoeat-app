@@ -13,9 +13,9 @@ class FoodTableRepository(
 
     suspend fun insert(table: FoodTable): Long = dao.insert(table)
 
-    suspend fun update(table: FoodTable) = dao.update(table)
+    suspend fun update(table: FoodTable): Int = dao.update(table)
 
-    suspend fun delete(table: FoodTable) = dao.delete(table)
+    suspend fun delete(table: FoodTable): Int = dao.delete(table)
 
-    suspend fun deleteById(id: Long) = dao.deleteById(id)
+    suspend fun deleteById(id: Long): Int = dao.deleteById(id)
 }

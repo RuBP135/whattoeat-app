@@ -17,20 +17,20 @@ interface FoodDao {
     fun findAll(): Flow<List<Food>>
 
     @Update
-    suspend fun update(food: Food)
+    suspend fun update(food: Food): Int
 
     @Insert
-    suspend fun insert(food: Food)
+    suspend fun insert(food: Food): Long
 
     @Insert
-    suspend fun insertAll(foods: List<Food>)
+    suspend fun insertAll(foods: List<Food>): List<Long>
 
     @Delete
-    suspend fun delete(food: Food)
+    suspend fun delete(food: Food): Int
 
     @Query("DELETE FROM food WHERE table_id = :tableId")
-    suspend fun deleteByTableId(tableId: Long)
+    suspend fun deleteByTableId(tableId: Long): Int
 
     @Query("UPDATE food SET marked = :marked WHERE table_id = :tableId")
-    suspend fun updateAllMarked(tableId: Long, marked: Boolean)
+    suspend fun updateAllMarked(tableId: Long, marked: Boolean): Int
 }
