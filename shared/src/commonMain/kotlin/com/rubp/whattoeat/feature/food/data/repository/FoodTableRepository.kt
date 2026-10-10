@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 class FoodTableRepository(
     private val dao: FoodTableDao
 ) {
-    fun getById(id: Long): Flow<FoodTable?> = dao.getById(id)
+    fun findById(id: Long): Flow<FoodTable?> = dao.findById(id)
 
-    fun getAll(): Flow<List<FoodTable>> = dao.getAll()
+    fun findAll(): Flow<List<FoodTable>> = dao.findAll()
 
     suspend fun insert(table: FoodTable): Long = dao.insert(table)
 

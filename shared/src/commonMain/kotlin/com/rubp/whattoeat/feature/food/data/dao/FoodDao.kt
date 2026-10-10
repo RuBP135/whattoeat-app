@@ -11,10 +11,10 @@ import com.rubp.whattoeat.feature.food.data.entity.Food
 @Dao
 interface FoodDao {
     @Query("SELECT * FROM food WHERE table_id = :tableId ORDER BY created_at ASC")
-    fun getByTableId(tableId: Long): Flow<List<Food>>
+    fun findByTableId(tableId: Long): Flow<List<Food>>
 
     @Query("SELECT * FROM food ORDER BY created_at ASC")
-    fun getAll(): Flow<List<Food>>
+    fun findAll(): Flow<List<Food>>
 
     @Update
     suspend fun update(food: Food)

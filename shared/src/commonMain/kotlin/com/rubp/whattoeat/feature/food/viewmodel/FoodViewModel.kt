@@ -9,9 +9,12 @@ import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
 import com.rubp.whattoeat.feature.food.domain.FoodTableDto
 import com.rubp.whattoeat.feature.food.domain.selectFood
+import com.rubp.whattoeat.feature.food.ui.choose.FoodSelectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -26,14 +29,14 @@ class FoodViewModel(
 ) : ViewModel() {
 
 
-    val tables: StateFlow<List<FoodTable>> = foodTableRepository.getAll()
+    val tables: StateFlow<List<FoodTable>> = foodTableRepository.findAll()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 
     val currentTable: StateFlow<FoodTable?> =
         foodPreferences.foodTableIdFlow.flatMapLatest { tableId ->
             tableId?.let {
-                foodTableRepository.getById(tableId)
+                foodTableRepository.findById(tableId)
             } ?: flowOf(null)
     }.stateIn(
             viewModelScope,
@@ -44,16 +47,17 @@ class FoodViewModel(
 
     val foods: StateFlow<List<Food>> = currentTable.flatMapLatest { table ->
         table?.let{
-            foodRepository.getByTableId(table.id)
+            foodRepository.findByTableId(table.id)
         } ?: flowOf(emptyList())
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    var chosenFood: Food? = null
+    private val _selectionStateFlow: MutableStateFlow<FoodSelectionState> = MutableStateFlow(FoodSelectionState.Idle)
+    val selectionStateFlow: StateFlow<FoodSelectionState> = _selectionStateFlow.asStateFlow()
 
     init {
         // 首次启动无表时自动创建"默认"表格
         viewModelScope.launch {
-            if(foodTableRepository.getAll().first().isEmpty()){
+            if(foodTableRepository.findAll().first().isEmpty()){
                 createTable("默认")
             }
         }
@@ -64,7 +68,7 @@ class FoodViewModel(
     fun switchTable(id: Long) {
         if (id == currentTable.value?.id) return
         saveCurrentTableId(id)
-        chosenFood = null
+        _selectionStateFlow.value = FoodSelectionState.Idle
     }
 
     fun createTable(name: String) {
@@ -125,19 +129,19 @@ class FoodViewModel(
 
     // 随机选择
 
-    fun chosenRandomFood(): String {
+    fun chosenRandomFood() {
         val foodList = foods.value.filter { food ->
             food.marked && food.weight > 0 && food.name.isNotEmpty()
         }
 
-        chosenFood = selectFood(foodList, chosenFood)
-        return chosenFood?.name ?: "没有可供选择的食物！"
+        val preId = (_selectionStateFlow.value as? FoodSelectionState.Chosen)?.id
+        val id = selectFood(foodList, preId);
+
+        _selectionStateFlow.value = id?.let { FoodSelectionState.Chosen(it)} ?: FoodSelectionState.NoAvailableFood
     }
 
     fun ignoreChosenFood() {
-        chosenFood?.let {
-            update(it.copy(marked = false))
-        }
+
     }
 
     fun clearAllIgnore() {
@@ -145,7 +149,6 @@ class FoodViewModel(
             currentTable.value?.let { table ->
                 foodRepository.updateAllMarked(table.id, marked = true)
             }
-
         }
     }
     private fun saveCurrentTableId(id: Long){
