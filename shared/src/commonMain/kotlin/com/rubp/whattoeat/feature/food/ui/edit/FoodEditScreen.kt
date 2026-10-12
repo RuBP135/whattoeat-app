@@ -64,10 +64,10 @@ fun FoodEditScreen(
         onCreateTable = foodViewModel::createTable,
         onImportFoodAndTable = foodViewModel::inputFoodTableDto,
         onAddFood = { foodViewModel.insert(Food(name = "", weight = 1, marked = true)) },
-        onDeleteFood = foodViewModel::delete,
-        onClickStar = { foodViewModel.update(it.copy(marked = !it.marked)) },
-        onInputName = { food, name -> foodViewModel.update(food.copy(name = name)) },
-        onInputWeight = { food, weight -> foodViewModel.update(food.copy(weight = weight)) }
+        onDeleteFood = { foodViewModel.deleteById(it.id) },
+        onClickStar = { foodViewModel.updateMarked(it.id, !it.marked) },
+        onInputName = { food, name -> foodViewModel.updateName(food.id, name) },
+        onInputWeight = { food, weight -> foodViewModel.updateWeight(food.id, weight) }
     )
 }
 

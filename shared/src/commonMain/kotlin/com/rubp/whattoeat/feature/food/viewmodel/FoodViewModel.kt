@@ -30,7 +30,6 @@ class FoodViewModel(
 ) : ViewModel() {
 
     init {
-        // 首次启动无表时自动创建"默认"表格
         viewModelScope.launch {
             if(foodTableRepository.findAll().first().isEmpty()){
                 createTable("默认")
@@ -83,15 +82,27 @@ class FoodViewModel(
         }
     }
 
-    fun update(food: Food) {
+    fun updateName(id: Long, name: String) {
         viewModelScope.launch {
-            foodRepository.update(food)
+            foodRepository.updateName(id, name)
         }
     }
 
-    fun delete(food: Food) {
+    fun updateWeight(id: Long, weight: Int) {
         viewModelScope.launch {
-            foodRepository.delete(food)
+            foodRepository.updateWeight(id, weight)
+        }
+    }
+
+    fun updateMarked(id: Long, marked: Boolean) {
+        viewModelScope.launch {
+            foodRepository.updateMarked(id, marked)
+        }
+    }
+
+    fun deleteById(id: Long) {
+        viewModelScope.launch {
+            foodRepository.deleteById(id)
         }
     }
 
