@@ -23,7 +23,7 @@ import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.outlined.Help
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.core.ui.components.ConfirmDialog
+import com.rubp.whattoeat.core.ui.components.dialog.WteConfirmDialog
 import com.rubp.whattoeat.core.ui.components.EditDialog
 
 @Composable
@@ -70,9 +70,10 @@ fun FoodEditDialogHandler(
 
         // 弹出删除表格对话框
         is EditDialogState.DeleteTable -> {
-            ConfirmDialog(
+            WteConfirmDialog(
                 title = "删除表格",
                 message = "确认删除？",
+                isDestructive = true,
                 onConfirm = {
                     currentTable?.id?.let { onDeleteTable(it) }
                     onDismiss()
@@ -82,9 +83,10 @@ fun FoodEditDialogHandler(
         }
 
         is EditDialogState.DeleteFood -> {
-            ConfirmDialog(
+            WteConfirmDialog(
                 title = "删除菜品",
                 message = "确认删除？",
+                isDestructive = true,
                 onConfirm = {
                     onDeleteFood(dialogState.food)
                     onDismiss()

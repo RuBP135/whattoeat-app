@@ -13,34 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ConfirmDialog(
-    title: String,
-    message: String,
-    modifier: Modifier = Modifier,
-    confirmText: String = "确定",
-    dismissText: String = "取消",
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-){
-    AlertDialog(
-        modifier = modifier,
-        onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = { Text(message) },
-        confirmButton = {
-            TextButton(onClick = onConfirm){
-                Text(text = confirmText)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { 
-                Text(text = dismissText, color = MaterialTheme.colorScheme.onSurface)
-            }
-        }
-    )
-}
-
-@Composable
 fun EditDialog(
     title: String,
     modifier: Modifier = Modifier,
