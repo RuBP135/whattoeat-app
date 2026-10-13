@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.components.card
+package com.rubp.whattoeat.core.ui.components.card
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

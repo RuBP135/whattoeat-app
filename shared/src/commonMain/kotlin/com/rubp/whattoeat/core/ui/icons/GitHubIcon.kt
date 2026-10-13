@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.icons
+package com.rubp.whattoeat.core.ui.icons
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType

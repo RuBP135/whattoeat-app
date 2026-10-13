@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.app.navigation
+package com.rubp.whattoeat.app.ui
 
 enum class MainDestination {
     Home,

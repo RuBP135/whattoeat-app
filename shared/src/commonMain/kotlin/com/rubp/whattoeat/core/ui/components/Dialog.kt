@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.components
+package com.rubp.whattoeat.core.ui.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme

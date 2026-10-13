@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.components.snackbar
+package com.rubp.whattoeat.core.ui.components.snackbar
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

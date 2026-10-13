@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.components.button
+package com.rubp.whattoeat.core.ui.components.button
 
 
 import androidx.compose.foundation.background

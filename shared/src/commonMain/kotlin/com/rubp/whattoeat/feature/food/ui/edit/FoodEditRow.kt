@@ -27,7 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Delete
-import com.rubp.whattoeat.core.components.WteLeftSwipeBox
+import com.rubp.whattoeat.core.ui.components.WteLeftSwipeBox
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import org.jetbrains.compose.resources.painterResource
 import whattoeat.shared.generated.resources.Res

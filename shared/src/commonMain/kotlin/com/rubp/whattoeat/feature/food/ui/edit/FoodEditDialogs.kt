@@ -23,8 +23,8 @@ import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.outlined.Help
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.core.components.ConfirmDialog
-import com.rubp.whattoeat.core.components.EditDialog
+import com.rubp.whattoeat.core.ui.components.ConfirmDialog
+import com.rubp.whattoeat.core.ui.components.EditDialog
 
 @Composable
 fun FoodEditDialogHandler(

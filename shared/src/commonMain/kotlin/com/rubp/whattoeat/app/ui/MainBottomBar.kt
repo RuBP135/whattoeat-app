@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.app.navigation
+package com.rubp.whattoeat.app.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

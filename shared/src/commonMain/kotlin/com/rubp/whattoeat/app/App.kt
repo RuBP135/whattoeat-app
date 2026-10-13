@@ -5,7 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rubp.whattoeat.app.di.AppContainer
-import com.rubp.whattoeat.app.navigation.MainScreen
+import com.rubp.whattoeat.app.ui.MainScreen
 import com.rubp.whattoeat.core.theme.WhatToEatTheme
 import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 
