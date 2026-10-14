@@ -56,11 +56,9 @@ fun FoodEditScreen(
         currentTable = currentTable,
         onReturnToFoodChoose = onReturnToFoodChoose,
         onTableSelected = foodViewModel::switchTable,
-        onRenameTable = { id, name -> runner.launch { foodViewModel.renameTable(id, name) } },
-        onDeleteTable = { id ->
-            runner.launch(successMessage = "已删除表格") { foodViewModel.deleteTable(id) }
-        },
-        onCreateTable = { name -> runner.launch { foodViewModel.createTable(name) } },
+        onRenameTable = foodViewModel::renameTable,
+        onDeleteTable = foodViewModel::deleteTable,
+        onCreateTable = foodViewModel::createTable,
         onImportTable = {
             runner.launch(successMessage = "已导入表格") {
                 val input = clipboardManager.getText()?.text
@@ -79,12 +77,12 @@ fun FoodEditScreen(
             }
         },
         onAddFood = {
-            runner.launch { foodViewModel.insert(Food(name = "", weight = 1, marked = true)) }
+            foodViewModel.insert(Food(name = "", weight = 1, marked = true))
         },
-        onDeleteFood = { food -> runner.launch { foodViewModel.deleteById(food.id) } },
-        onClickStar = { food -> runner.launch { foodViewModel.updateMarked(food.id, !food.marked) } },
-        onInputName = { food, name -> runner.launch { foodViewModel.updateName(food.id, name) } },
-        onInputWeight = { food, weight -> runner.launch { foodViewModel.updateWeight(food.id, weight) } }
+        onDeleteFood = { food -> foodViewModel.deleteById(food.id) },
+        onClickStar = { food -> foodViewModel.updateMarked(food.id, !food.marked) },
+        onInputName = { food, name -> foodViewModel.updateName(food.id, name) },
+        onInputWeight = { food, weight -> foodViewModel.updateWeight(food.id, weight) }
     )
 }
 

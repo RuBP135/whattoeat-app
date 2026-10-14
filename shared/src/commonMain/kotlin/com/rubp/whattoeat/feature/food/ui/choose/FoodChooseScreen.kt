@@ -28,7 +28,6 @@ import com.composables.icons.materialicons.filled.Block
 import com.composables.icons.materialicons.filled.Clear
 import com.composables.icons.materialicons.filled.Clear_all
 import com.composables.icons.materialicons.filled.Edit
-import com.rubp.whattoeat.app.ui.localUiTaskRunner
 import com.rubp.whattoeat.core.ui.components.WteTopBar
 import com.rubp.whattoeat.core.ui.components.button.CardButton
 import com.rubp.whattoeat.core.ui.components.button.CircleIconButton
@@ -55,8 +54,6 @@ fun FoodChooseScreen(
         FoodSelectionState.NoAvailableFood -> "没有可供选择的食物！"
     }
 
-    val runner = localUiTaskRunner.current
-
     FoodChooseContent(
         resultMessage = resultMessage,
         tables = tableList,
@@ -65,21 +62,9 @@ fun FoodChooseScreen(
         onReturnToHome = onReturnToHome,
         onTableSelected = { foodViewModel.switchTable(it) },
         onClickRandomFood = { foodViewModel.chosenRandomFood() },
-        onClickClear = {
-            runner.launch(successMessage = "已清除当前选择") {
-                foodViewModel.clearSelection()
-            }
-        },
-        onClickIgnore = {
-            runner.launch(successMessage = "已忽略当前选择食物") {
-                foodViewModel.ignoreChosenFood()
-            }
-        },
-        onClickClearIgnore = {
-            runner.launch(successMessage = "已恢复所有被忽略的食物") {
-                foodViewModel.clearAllIgnore()
-            }
-        }
+        onClickClear = foodViewModel::clearSelection,
+        onClickIgnore = foodViewModel::ignoreChosenFood,
+        onClickClearIgnore = foodViewModel::clearAllIgnore
     )
 }
 

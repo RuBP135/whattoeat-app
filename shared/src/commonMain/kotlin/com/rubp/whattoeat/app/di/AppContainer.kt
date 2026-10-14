@@ -41,7 +41,8 @@ class AppContainer(
             FoodViewModel(
                 foodRepository,
                 foodTableRepository,
-                foodPreferences
+                foodPreferences,
+                uiFeedback
             )
         }
 
