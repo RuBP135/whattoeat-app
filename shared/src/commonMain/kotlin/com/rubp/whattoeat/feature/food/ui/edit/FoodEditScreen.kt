@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,16 +25,16 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.rubp.whattoeat.app.ui.localSnackbarHost
+import com.rubp.whattoeat.app.ui.localUiTaskRunner
+import com.rubp.whattoeat.core.domain.exception.ExpectedException
 import com.rubp.whattoeat.core.ui.components.WteTopBar
 import com.rubp.whattoeat.core.ui.components.button.MenuButton
 import com.rubp.whattoeat.core.ui.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.ui.components.button.WteSecondaryButton
-import com.rubp.whattoeat.core.ui.components.snackbar.WteSnackbar
-import com.rubp.whattoeat.core.ui.components.snackbar.rememberWteSnackbarController
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.feature.food.domain.exception.NoTableSelectedException
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.serialization.SerializationException
 
@@ -49,24 +47,46 @@ fun FoodEditScreen(
     val foods by foodViewModel.foodListStateFlow.collectAsState(initial = emptyList())
     val tables by foodViewModel.tableListStateFlow.collectAsState()
     val currentTable by foodViewModel.currentTableStateFlow.collectAsState()
+    val runner = localUiTaskRunner.current
+    val clipboardManager = LocalClipboardManager.current
 
     FoodEditContent(
         modifier = modifier,
         foods = foods,
         tables = tables,
         currentTable = currentTable,
+        snackbarHost = localSnackbarHost.current,
         onReturnToFoodChoose = onReturnToFoodChoose,
         onTableSelected = foodViewModel::switchTable,
-        onRenameTable = foodViewModel::renameTable,
-        onDeleteTable = foodViewModel::deleteTable,
-        onCreateTable = foodViewModel::createTable,
-        onImportTable = foodViewModel::importTable,
-        onExportTable = foodViewModel::exportTable,
-        onAddFood = { foodViewModel.insert(Food(name = "", weight = 1, marked = true)) },
-        onDeleteFood = { foodViewModel.deleteById(it.id) },
-        onClickStar = { foodViewModel.updateMarked(it.id, !it.marked) },
-        onInputName = { food, name -> foodViewModel.updateName(food.id, name) },
-        onInputWeight = { food, weight -> foodViewModel.updateWeight(food.id, weight) }
+        onRenameTable = { id, name -> runner.launch { foodViewModel.renameTable(id, name) } },
+        onDeleteTable = { id ->
+            runner.launch(successMessage = "已删除表格") { foodViewModel.deleteTable(id) }
+        },
+        onCreateTable = { name -> runner.launch { foodViewModel.createTable(name) } },
+        onImportTable = {
+            runner.launch(successMessage = "已导入表格") {
+                val input = clipboardManager.getText()?.text
+                    ?: throw object : ExpectedException("未获取到表格数据") {}
+                try {
+                    foodViewModel.importTable(input)
+                } catch (exception: SerializationException) {
+                    exception.printStackTrace()
+                    throw object : ExpectedException("json格式错误") {}
+                }
+            }
+        },
+        onExportTable = {
+            runner.launch(successMessage = "已导出json至剪贴板") {
+                clipboardManager.setText(AnnotatedString(foodViewModel.exportTable()))
+            }
+        },
+        onAddFood = {
+            runner.launch { foodViewModel.insert(Food(name = "", weight = 1, marked = true)) }
+        },
+        onDeleteFood = { food -> runner.launch { foodViewModel.deleteById(food.id) } },
+        onClickStar = { food -> runner.launch { foodViewModel.updateMarked(food.id, !food.marked) } },
+        onInputName = { food, name -> runner.launch { foodViewModel.updateName(food.id, name) } },
+        onInputWeight = { food, weight -> runner.launch { foodViewModel.updateWeight(food.id, weight) } }
     )
 }
 
@@ -76,13 +96,14 @@ private fun FoodEditContent(
     foods: List<Food>,
     tables: List<FoodTable>,
     currentTable: FoodTable?,
+    snackbarHost: @Composable () -> Unit, // 由宿主提供的消息展示区域。
     onReturnToFoodChoose: () -> Unit,
     onTableSelected: (Long) -> Unit,
     onRenameTable: (Long, String) -> Unit,
     onDeleteTable: (Long) -> Unit,
     onCreateTable: (String) -> Unit,
-    onImportTable: (String) -> Unit,
-    onExportTable: () -> String,
+    onImportTable: () -> Unit, // 从剪贴板导入表格，由调用方执行并反馈。
+    onExportTable: () -> Unit, // 将表格导出到剪贴板，由调用方执行并反馈。
     onAddFood: () -> Unit,
     onDeleteFood: (Food) -> Unit,
     onClickStar: (Food) -> Unit,
@@ -91,10 +112,6 @@ private fun FoodEditContent(
 ) {
     var editDialogState: EditDialogState by remember { mutableStateOf(EditDialogState.None) }
     val tableName = currentTable?.name ?: ""
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val wteSnackbarController = rememberWteSnackbarController(snackbarHostState)
-    val clipboardManager = LocalClipboardManager.current
 
     Scaffold(
         modifier = modifier,
@@ -106,42 +123,14 @@ private fun FoodEditContent(
                 HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("删除表格"){ closeMenu(); editDialogState = EditDialogState.DeleteTable }
                 HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("导入表格"){
-                    closeMenu()
-                    try {
-                        val input = clipboardManager.getText()?.text
-                        if(input == null){
-                            wteSnackbarController.showSnackbar("未获取到表格数据")
-                            return@MenuButton
-                        }
-                        onImportTable(input)
-                        wteSnackbarController.showSnackbar("已导入表格")
-                    } catch(e: SerializationException){
-                        e.printStackTrace()
-                        wteSnackbarController.showSnackbar("json格式错误")
-                    }
-                }
+                MenuButton("导入表格"){ closeMenu(); onImportTable() }
                 HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("导出表格"){
-                    closeMenu()
-                    try {
-                        val json = onExportTable()
-                        clipboardManager.setText(AnnotatedString(json))
-                        wteSnackbarController.showSnackbar("已导出json至剪贴板")
-                    } catch (e: NoTableSelectedException) {
-                        wteSnackbarController.showSnackbar(e.message)
-                    }
-                }
+                MenuButton("导出表格"){ closeMenu(); onExportTable() }
                 HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("帮助"){ closeMenu(); editDialogState = EditDialogState.Help }
             }
         },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                snackbar = { WteSnackbar(it) }
-            )
-        }
+        snackbarHost = snackbarHost
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -214,10 +203,7 @@ private fun FoodEditContent(
         currentTable = currentTable,
         onCreateTable = onCreateTable,
         onRenameTable = onRenameTable,
-        onDeleteTable = {
-            onDeleteTable(it)
-            wteSnackbarController.showSnackbar("已删除表格")
-        },
+        onDeleteTable = onDeleteTable,
         onDeleteFood = onDeleteFood,
         onDismiss = { editDialogState = EditDialogState.None }
     )
@@ -234,13 +220,14 @@ private fun FoodEditContentPreview() {
                 FoodTable(2L, "午餐", 1L)
             ),
             currentTable = FoodTable(1L, "早餐", 0L),
+            snackbarHost = {},
             onReturnToFoodChoose = {},
             onTableSelected = {},
             onRenameTable = { _, _ -> },
             onDeleteTable = {},
             onCreateTable = {},
             onImportTable = {},
-            onExportTable = { "" },
+            onExportTable = {},
             onAddFood = {},
             onDeleteFood = {},
             onClickStar = {},

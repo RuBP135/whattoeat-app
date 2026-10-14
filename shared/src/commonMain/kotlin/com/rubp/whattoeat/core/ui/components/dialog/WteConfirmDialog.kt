@@ -1,6 +1,9 @@
 package com.rubp.whattoeat.core.ui.components.dialog
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -9,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,7 +57,15 @@ fun WteConfirmDialog(
             Text(text = title, style = MaterialTheme.typography.titleLarge)
         },
         text = {
-            Text(text = message, style = MaterialTheme.typography.bodyMedium)
+            key(message) {
+                SelectionContainer {
+                    Text(
+                        text = message,
+                        modifier = Modifier.verticalScroll(rememberScrollState()),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         },
         confirmButton = {
             Button(
