@@ -7,6 +7,7 @@ import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
+import com.rubp.whattoeat.feature.food.domain.exception.FoodNotFoundException
 import com.rubp.whattoeat.feature.food.domain.exception.NoFoodSelectedException
 import com.rubp.whattoeat.feature.food.domain.exception.NoTableSelectedException
 import com.rubp.whattoeat.feature.food.domain.foodTableToJson
@@ -119,9 +120,14 @@ class FoodViewModel(
         _selectionStateFlow.value = id?.let { FoodSelectionState.Chosen(it)} ?: FoodSelectionState.NoAvailableFood
     }
 
-    fun ignoreChosenFood() {
-        if (_selectionStateFlow.value !is FoodSelectionState.Chosen) {
+    suspend fun ignoreChosenFood() {
+        val state = _selectionStateFlow.value
+        if (state !is FoodSelectionState.Chosen) {
             throw NoFoodSelectedException()
+        }
+        val updatedRows = foodRepository.updateMarked(state.id, false)
+        if (updatedRows == 0) {
+            throw FoodNotFoundException(state.id)
         }
     }
 
