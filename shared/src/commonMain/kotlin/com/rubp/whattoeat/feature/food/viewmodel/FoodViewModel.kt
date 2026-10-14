@@ -98,13 +98,13 @@ class FoodViewModel(
     }
 
     suspend fun deleteById(id: Long) {
+        foodRepository.deleteById(id)
         val state = selectionStateFlow.value
         if(state is FoodSelectionState.Chosen){
             if(state.id == id){
                 _selectionStateFlow.value = FoodSelectionState.Idle
             }
         }
-        foodRepository.deleteById(id)
     }
 
     // 随机选择
