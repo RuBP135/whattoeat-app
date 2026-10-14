@@ -2,6 +2,7 @@ package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rubp.whattoeat.core.domain.exception.ExpectedException
 import com.rubp.whattoeat.core.ui.feedback.UiFeedback
 import com.rubp.whattoeat.core.ui.task.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.serialization.SerializationException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FoodViewModel(
@@ -48,11 +50,7 @@ class FoodViewModel(
             tableId?.let {
                 foodTableRepository.findById(tableId)
             } ?: flowOf(null)
-    }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = null
-    )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val foodListStateFlow: StateFlow<List<Food>> = currentTableStateFlow.flatMapLatest { table ->
         table?.let{
@@ -69,11 +67,7 @@ class FoodViewModel(
                 is FoodSelectionState.Chosen -> foodList.find { it.id == selectionState.id }
                 else -> null
             }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = null
-        )
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     init {
         runner.launch {
@@ -168,14 +162,21 @@ class FoodViewModel(
         return foodTableToJson(table, foodListStateFlow.value)
     }
 
-    suspend fun importTable(jsonStr: String) {
-        val foodTableDto = jsonToFoodTableDto(jsonStr)
-        val wasEmpty = tableListStateFlow.value.isEmpty()
-        val tableId = foodTableRepository.insert(FoodTable(name = foodTableDto.name))
-        if(wasEmpty) switchTable(tableId) // 没有表格的时候，应该切换到这个新导入的表格
-        foodRepository.insertAll(foodTableDto.foodDtos.map {
-            Food(name = it.name, weight = it.weight, marked = true, tableId = tableId)
-        })
+    fun importTable(jsonStr: String) {
+        runner.launch(successMessage = "已导入表格") {
+            val foodTableDto = try {
+                jsonToFoodTableDto(jsonStr)
+            } catch (exception: SerializationException) {
+                exception.printStackTrace()
+                throw object : ExpectedException("json格式错误") {}
+            }
+            val wasEmpty = tableListStateFlow.value.isEmpty()
+            val tableId = foodTableRepository.insert(FoodTable(name = foodTableDto.name))
+            if(wasEmpty) switchTable(tableId) // 没有表格的时候，应该切换到这个新导入的表格
+            foodRepository.insertAll(foodTableDto.foodDtos.map {
+                Food(name = it.name, weight = it.weight, marked = true, tableId = tableId)
+            })
+        }
     }
 
     fun switchTable(id: Long) {
@@ -185,9 +186,7 @@ class FoodViewModel(
     }
 
     fun createTable(name: String) {
-        runner.launch {
-            createTableInternal(name)
-        }
+        runner.launch { createTableInternal(name) }
     }
 
     private suspend fun createTableInternal(name: String) {

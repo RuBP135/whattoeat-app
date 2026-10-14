@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,17 +26,17 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rubp.whattoeat.app.ui.localUiTaskRunner
 import com.rubp.whattoeat.core.domain.exception.ExpectedException
 import com.rubp.whattoeat.core.ui.components.WteTopBar
 import com.rubp.whattoeat.core.ui.components.button.MenuButton
 import com.rubp.whattoeat.core.ui.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.ui.components.button.WteSecondaryButton
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
+import com.rubp.whattoeat.core.ui.feedback.LocalUiFeedback
+import com.rubp.whattoeat.core.ui.task.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
-import kotlinx.serialization.SerializationException
 
 @Composable
 fun FoodEditScreen(
@@ -46,7 +47,15 @@ fun FoodEditScreen(
     val foods by foodViewModel.foodListStateFlow.collectAsState(initial = emptyList())
     val tables by foodViewModel.tableListStateFlow.collectAsState()
     val currentTable by foodViewModel.currentTableStateFlow.collectAsState()
-    val runner = localUiTaskRunner.current
+    val feedback = LocalUiFeedback.current
+    val scope = rememberCoroutineScope()
+    val runner = remember(scope, feedback) {
+        UiTaskRunner(
+            scope = scope,
+            onMessage = feedback::showMessage,
+            onError = feedback::showError
+        )
+    }
     val clipboardManager = LocalClipboardManager.current
 
     FoodEditContent(
@@ -60,15 +69,10 @@ fun FoodEditScreen(
         onDeleteTable = foodViewModel::deleteTable,
         onCreateTable = foodViewModel::createTable,
         onImportTable = {
-            runner.launch(successMessage = "已导入表格") {
+            runner.launch {
                 val input = clipboardManager.getText()?.text
                     ?: throw object : ExpectedException("未获取到表格数据") {}
-                try {
-                    foodViewModel.importTable(input)
-                } catch (exception: SerializationException) {
-                    exception.printStackTrace()
-                    throw object : ExpectedException("json格式错误") {}
-                }
+                foodViewModel.importTable(input)
             }
         },
         onExportTable = {

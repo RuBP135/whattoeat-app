@@ -11,20 +11,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rubp.whattoeat.core.ui.components.dialog.WteConfirmDialog
 import com.rubp.whattoeat.core.ui.components.snackbar.WteSnackbar
 import com.rubp.whattoeat.core.ui.feedback.LocalUiFeedback
 import com.rubp.whattoeat.core.ui.feedback.UiFeedback
-import com.rubp.whattoeat.core.ui.task.UiTaskRunner
 import kotlinx.coroutines.flow.collectLatest
-
-val localUiTaskRunner = staticCompositionLocalOf<UiTaskRunner> {
-    error("未提供 UiTaskRunner")
-}
 
 @Composable
 fun WteFeedbackHost(
@@ -34,14 +27,6 @@ fun WteFeedbackHost(
 ) {
     val currentError by feedback.errorStateFlow.collectAsState()
     val snackbarHostState = remember(feedback) { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val runner = remember(scope, feedback) {
-        UiTaskRunner(
-            scope = scope,
-            onMessage = feedback::showMessage,
-            onError = feedback::showError
-        )
-    }
 
     LaunchedEffect(feedback, snackbarHostState) {
         feedback.messageStateFlow.collectLatest { message ->
@@ -53,10 +38,7 @@ fun WteFeedbackHost(
     }
 
     Box(modifier = modifier) {
-        CompositionLocalProvider(
-            LocalUiFeedback provides feedback,
-            localUiTaskRunner provides runner
-        ) {
+        CompositionLocalProvider(LocalUiFeedback provides feedback) {
             content()
         }
 
