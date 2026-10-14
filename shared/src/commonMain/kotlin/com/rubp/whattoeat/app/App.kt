@@ -17,7 +17,7 @@ fun App(appContainer: AppContainer) {
     val themeMode by settingsViewModel.themeModeStateFlow.collectAsState()
 
     WhatToEatTheme(themeMode) {
-        WteFeedbackHost {
+        WteFeedbackHost(feedback = appContainer.uiFeedback) {
             MainScreen(
                 appContainer.appViewModelFactory,
                 settingsViewModel
