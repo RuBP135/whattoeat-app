@@ -7,7 +7,10 @@ import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
-import com.rubp.whattoeat.feature.food.domain.FoodTableDto
+import com.rubp.whattoeat.feature.food.domain.exception.NoFoodSelectedException
+import com.rubp.whattoeat.feature.food.domain.exception.NoTableSelectedException
+import com.rubp.whattoeat.feature.food.domain.foodTableToJson
+import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
 import com.rubp.whattoeat.feature.food.domain.selectFood
 import com.rubp.whattoeat.feature.food.ui.choose.FoodSelectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -126,7 +129,9 @@ class FoodViewModel(
     }
 
     fun ignoreChosenFood() {
-
+        if (_selectionStateFlow.value !is FoodSelectionState.Chosen) {
+            throw NoFoodSelectedException()
+        }
     }
 
     fun clearAllIgnore() {
@@ -150,7 +155,13 @@ class FoodViewModel(
         foodPreferences.saveFoodTableId(id)
     }
 
-    fun inputFoodTableDto(foodTableDto: FoodTableDto){
+    fun exportTable(): String {
+        val table = currentTableStateFlow.value ?: throw NoTableSelectedException()
+        return foodTableToJson(table, foodListStateFlow.value)
+    }
+
+    fun importTable(jsonStr: String) {
+        val foodTableDto = jsonToFoodTableDto(jsonStr)
         viewModelScope.launch {
             val wasEmpty = tableListStateFlow.value.isEmpty()
             val tableId = foodTableRepository.insert(FoodTable(name = foodTableDto.name))
@@ -182,6 +193,9 @@ class FoodViewModel(
     }
 
     fun renameTable(id: Long, newName: String) {
+        if (currentTableStateFlow.value == null) {
+            throw NoTableSelectedException()
+        }
         viewModelScope.launch {
             val target = tableListStateFlow.value.find { it.id == id } ?: return@launch
             foodTableRepository.update(target.copy(name = newName))
@@ -190,6 +204,9 @@ class FoodViewModel(
 
 
     fun deleteTable(id: Long) {
+        if (currentTableStateFlow.value == null) {
+            throw NoTableSelectedException()
+        }
         viewModelScope.launch {
             if (currentTableStateFlow.value?.id == id) {
                 // 切换到剩余的表中

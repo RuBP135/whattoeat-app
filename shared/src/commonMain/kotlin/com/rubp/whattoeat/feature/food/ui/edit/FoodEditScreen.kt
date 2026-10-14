@@ -36,9 +36,7 @@ import com.rubp.whattoeat.core.ui.components.snackbar.rememberWteSnackbarControl
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.feature.food.domain.FoodTableDto
-import com.rubp.whattoeat.feature.food.domain.foodTableToJson
-import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
+import com.rubp.whattoeat.feature.food.domain.exception.NoTableSelectedException
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.serialization.SerializationException
 
@@ -62,7 +60,8 @@ fun FoodEditScreen(
         onRenameTable = foodViewModel::renameTable,
         onDeleteTable = foodViewModel::deleteTable,
         onCreateTable = foodViewModel::createTable,
-        onImportFoodAndTable = foodViewModel::inputFoodTableDto,
+        onImportTable = foodViewModel::importTable,
+        onExportTable = foodViewModel::exportTable,
         onAddFood = { foodViewModel.insert(Food(name = "", weight = 1, marked = true)) },
         onDeleteFood = { foodViewModel.deleteById(it.id) },
         onClickStar = { foodViewModel.updateMarked(it.id, !it.marked) },
@@ -82,7 +81,8 @@ private fun FoodEditContent(
     onRenameTable: (Long, String) -> Unit,
     onDeleteTable: (Long) -> Unit,
     onCreateTable: (String) -> Unit,
-    onImportFoodAndTable: (FoodTableDto) -> Unit,
+    onImportTable: (String) -> Unit,
+    onExportTable: () -> String,
     onAddFood: () -> Unit,
     onDeleteFood: (Food) -> Unit,
     onClickStar: (Food) -> Unit,
@@ -114,8 +114,7 @@ private fun FoodEditContent(
                             wteSnackbarController.showSnackbar("未获取到表格数据")
                             return@MenuButton
                         }
-                        val foodTableDto = jsonToFoodTableDto(input)
-                        onImportFoodAndTable(foodTableDto)
+                        onImportTable(input)
                         wteSnackbarController.showSnackbar("已导入表格")
                     } catch(e: SerializationException){
                         e.printStackTrace()
@@ -125,11 +124,12 @@ private fun FoodEditContent(
                 HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("导出表格"){
                     closeMenu()
-                    if(currentTable == null){
-                        wteSnackbarController.showSnackbar("当前没有选中表格")
-                    } else {
-                        clipboardManager.setText(AnnotatedString(foodTableToJson(currentTable, foods)))
+                    try {
+                        val json = onExportTable()
+                        clipboardManager.setText(AnnotatedString(json))
                         wteSnackbarController.showSnackbar("已导出json至剪贴板")
+                    } catch (e: NoTableSelectedException) {
+                        wteSnackbarController.showSnackbar(e.message)
                     }
                 }
                 HorizontalDivider(thickness = Dp.Hairline)
@@ -239,7 +239,8 @@ private fun FoodEditContentPreview() {
             onRenameTable = { _, _ -> },
             onDeleteTable = {},
             onCreateTable = {},
-            onImportFoodAndTable = {},
+            onImportTable = {},
+            onExportTable = { "" },
             onAddFood = {},
             onDeleteFood = {},
             onClickStar = {},
