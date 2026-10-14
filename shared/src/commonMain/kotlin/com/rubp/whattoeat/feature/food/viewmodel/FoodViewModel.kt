@@ -132,9 +132,8 @@ class FoodViewModel(
     }
 
     suspend fun clearAllIgnore() {
-        currentTableStateFlow.value?.let { table ->
-            foodRepository.updateAllMarked(table.id, marked = true)
-        }
+        val table = currentTableStateFlow.value ?: throw NoTableSelectedException()
+        foodRepository.updateAllMarked(table.id, marked = true)
     }
 
     fun clearSelection() {
@@ -196,7 +195,11 @@ class FoodViewModel(
         if (currentTableStateFlow.value == null) {
             throw NoTableSelectedException()
         }
-        if (currentTableStateFlow.value?.id == id) {
+
+        val deletingCurrentTable = currentTableStateFlow.value?.id == id
+        val state = selectionStateFlow.value
+
+        if (deletingCurrentTable) {
             // 切换到剩余的表中
 
             val list = tableListStateFlow.value
@@ -215,5 +218,9 @@ class FoodViewModel(
         }
         foodRepository.deleteByTableId(id)
         foodTableRepository.deleteById(id)
+
+        if (deletingCurrentTable && selectionStateFlow.value == state) {
+            clearSelection()
+        }
     }
 }
