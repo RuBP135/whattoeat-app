@@ -28,7 +28,6 @@ import com.composables.icons.materialicons.filled.Block
 import com.composables.icons.materialicons.filled.Clear
 import com.composables.icons.materialicons.filled.Clear_all
 import com.composables.icons.materialicons.filled.Edit
-import com.rubp.whattoeat.app.ui.localSnackbarHost
 import com.rubp.whattoeat.app.ui.localUiTaskRunner
 import com.rubp.whattoeat.core.ui.components.WteTopBar
 import com.rubp.whattoeat.core.ui.components.button.CardButton
@@ -62,7 +61,6 @@ fun FoodChooseScreen(
         resultMessage = resultMessage,
         tables = tableList,
         currentTable = currentTable,
-        snackbarHost = localSnackbarHost.current,
         onNavigateToFoodEdit = onNavigateToFoodEdit,
         onReturnToHome = onReturnToHome,
         onTableSelected = { foodViewModel.switchTable(it) },
@@ -90,7 +88,6 @@ private fun FoodChooseContent(
     resultMessage: String,
     tables: List<FoodTable>,
     currentTable: FoodTable?,
-    snackbarHost: @Composable () -> Unit, // 由宿主提供的消息展示区域。
     onNavigateToFoodEdit: () -> Unit,
     onReturnToHome: () -> Unit,
     onTableSelected: (Long) -> Unit,
@@ -101,7 +98,6 @@ private fun FoodChooseContent(
 ) {
     Scaffold(
         topBar = { WteTopBar(onReturnToHome, "选择食物") },
-        snackbarHost = snackbarHost
     ) { paddingValues ->
 
         Box(
@@ -216,7 +212,6 @@ private fun FoodChooseContentPreview() {
                 FoodTable(3L, "晚餐", 2)
             ),
             currentTable = FoodTable(1L, "默认", 0),
-            snackbarHost = {},
             onNavigateToFoodEdit = {},
             onReturnToHome = {},
             onTableSelected = {},

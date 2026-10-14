@@ -25,7 +25,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rubp.whattoeat.app.ui.localSnackbarHost
 import com.rubp.whattoeat.app.ui.localUiTaskRunner
 import com.rubp.whattoeat.core.domain.exception.ExpectedException
 import com.rubp.whattoeat.core.ui.components.WteTopBar
@@ -55,7 +54,6 @@ fun FoodEditScreen(
         foods = foods,
         tables = tables,
         currentTable = currentTable,
-        snackbarHost = localSnackbarHost.current,
         onReturnToFoodChoose = onReturnToFoodChoose,
         onTableSelected = foodViewModel::switchTable,
         onRenameTable = { id, name -> runner.launch { foodViewModel.renameTable(id, name) } },
@@ -96,14 +94,13 @@ private fun FoodEditContent(
     foods: List<Food>,
     tables: List<FoodTable>,
     currentTable: FoodTable?,
-    snackbarHost: @Composable () -> Unit, // 由宿主提供的消息展示区域。
     onReturnToFoodChoose: () -> Unit,
     onTableSelected: (Long) -> Unit,
     onRenameTable: (Long, String) -> Unit,
     onDeleteTable: (Long) -> Unit,
     onCreateTable: (String) -> Unit,
-    onImportTable: () -> Unit, // 从剪贴板导入表格，由调用方执行并反馈。
-    onExportTable: () -> Unit, // 将表格导出到剪贴板，由调用方执行并反馈。
+    onImportTable: () -> Unit,
+    onExportTable: () -> Unit,
     onAddFood: () -> Unit,
     onDeleteFood: (Food) -> Unit,
     onClickStar: (Food) -> Unit,
@@ -130,7 +127,6 @@ private fun FoodEditContent(
                 MenuButton("帮助"){ closeMenu(); editDialogState = EditDialogState.Help }
             }
         },
-        snackbarHost = snackbarHost
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -220,7 +216,6 @@ private fun FoodEditContentPreview() {
                 FoodTable(2L, "午餐", 1L)
             ),
             currentTable = FoodTable(1L, "早餐", 0L),
-            snackbarHost = {},
             onReturnToFoodChoose = {},
             onTableSelected = {},
             onRenameTable = { _, _ -> },
