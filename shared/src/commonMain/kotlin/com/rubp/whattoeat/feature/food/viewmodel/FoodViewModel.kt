@@ -117,7 +117,7 @@ class FoodViewModel(
         }
 
         val preId = (_selectionStateFlow.value as? FoodSelectionState.Chosen)?.id
-        val id = selectFood(foodList, preId);
+        val id = selectFood(foodList, preId)
 
         _selectionStateFlow.value = id?.let { FoodSelectionState.Chosen(it)} ?: FoodSelectionState.NoAvailableFood
     }
@@ -226,8 +226,8 @@ class FoodViewModel(
                 val index = list.indexOf(currentTableStateFlow.value)
 
                 val newId: Long? = when {
-                    index != -1 && index - 1 >= 0 -> list.get(index - 1).id
-                    index != -1 && index + 1 < list.size -> list.get(index + 1).id
+                    index != -1 && index - 1 >= 0 -> list[index - 1].id
+                    index != -1 && index + 1 < list.size -> list[index + 1].id
                     else -> null
                 }
 

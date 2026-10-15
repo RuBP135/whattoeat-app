@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 
 class UiTaskRunner(
     private val scope: CoroutineScope,
-    private val onMessage: (String) -> Unit,
-    private val onError: (Exception) -> Unit
+    private val onMessage: suspend (String) -> Unit,
+    private val onError: suspend (Exception) -> Unit
 ) {
     /** 在提供的协程作用域中执行任务；
      * 可处理异常将提示错误消息；
@@ -31,6 +31,6 @@ class UiTaskRunner(
             return@launch
         }
 
-        successMessage?.let(onMessage)
+        successMessage?.let{ onMessage(it) }
     }
 }
