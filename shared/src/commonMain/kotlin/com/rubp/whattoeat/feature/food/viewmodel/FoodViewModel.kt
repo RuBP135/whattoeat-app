@@ -153,7 +153,7 @@ class FoodViewModel(
     }
 
     // 表格管理
-    private fun saveCurrentTableId(id: Long){
+    private fun saveCurrentTableId(id: Long?){
         foodPreferences.saveFoodTableId(id)
     }
 
@@ -212,18 +212,16 @@ class FoodViewModel(
 
     fun deleteTable(id: Long) {
         runner.launch(successMessage = "已删除表格") {
-            if (currentTableStateFlow.value == null) {
-                throw NoTableSelectedException()
-            }
+            val list = tableListStateFlow.value
 
-            val deletingCurrentTable = currentTableStateFlow.value?.id == id
-            val state = selectionStateFlow.value
+            foodRepository.deleteByTableId(id)
+            foodTableRepository.deleteById(id)
 
-            if (deletingCurrentTable) {
-                // 切换到剩余的表中
+            val currentTableId = foodPreferences.getFoodTableId()
 
-                val list = tableListStateFlow.value
-                val index = list.indexOf(currentTableStateFlow.value)
+            if (currentTableId == id) { // 切换到剩余的表中
+
+                val index = list.indexOfFirst{ it.id == currentTableId }
 
                 val newId: Long? = when {
                     index != -1 && index - 1 >= 0 -> list[index - 1].id
@@ -231,17 +229,10 @@ class FoodViewModel(
                     else -> null
                 }
 
-                if(newId != null){
-                    saveCurrentTableId(newId)
-                }
-
-            }
-            foodRepository.deleteByTableId(id)
-            foodTableRepository.deleteById(id)
-
-            if (deletingCurrentTable && selectionStateFlow.value == state) {
+                saveCurrentTableId(newId)
                 resetSelection()
             }
+
         }
     }
 }
