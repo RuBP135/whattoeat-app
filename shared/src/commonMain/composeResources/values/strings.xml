@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_language_title">语言设置</string>
+    <string name="settings_language_description">选择 What To Eat 的界面语言</string>
+    <string name="settings_language_chinese_description">始终使用简体中文界面</string>
+    <string name="settings_language_english_description">始终使用英文界面</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_description">Choose the interface language of What To Eat</string>
+    <string name="settings_language_chinese_description">Always use Simplified Chinese</string>
+    <string name="settings_language_english_description">Always use English</string>
+</resources>

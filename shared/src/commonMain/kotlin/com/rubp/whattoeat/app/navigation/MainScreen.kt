@@ -4,7 +4,9 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
@@ -49,6 +51,8 @@ fun MainScreen(
     val navController = rememberNavController()
     val foodViewModel: FoodViewModel = viewModel(factory = appViewModelFactory)
 
+    val appLanguage by settingsViewModel.appLanguageStateFlow.collectAsState()
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination: NavDestination? = navBackStackEntry?.destination
 
@@ -59,52 +63,59 @@ fun MainScreen(
         else -> null
     }
 
-    Box{
-        Box{
-            NavHost(
-                navController = navController,
-                startDestination = Home,
-                enterTransition =  { EnterTransition.None },
-                exitTransition = { ExitTransition.None }
-            ){
-                composable<Home>{ HomeScreen(
-                    onNavigateToEat = { navController.navigate(Eat)}, // Home -> Eat
-                    onNavigateToPracticalWebsite = { navController.navigate(PracticalWebsite) }, // Home -> PracticalWebsite
-                    onNavigateToOther = { navController.navigate(Other) }
-                ) }
-                composable<Settings>{ SettingsScreen(settingsViewModel) }
-                composable<Eat>{ EatScreen( // Home <- Eat -> FoodEdit
-                    foodViewModel = foodViewModel,
-                    onNavigateToFoodEdit = { navController.navigate(FoodEdit) },
-                    onReturnToHome = { navController.popBackStack() }
-                ) }
-                composable<FoodEdit>{ FoodEditScreen(
-                    foodViewModel = foodViewModel,
-                    onReturnToEat = { navController.popBackStack()}
-                ) } // Eat <- FoodEdit
-                composable<PracticalWebsite>{ PracticalWebsiteScreen { navController.popBackStack() } }
-                composable<Other>{ OtherScreen{ navController.popBackStack() } }
-            }
-        }
-
-        MainBottomBar(
-            mainDestination = mainDestination,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        ){ destination ->
-
-            val route = when(destination){
-                MainDestination.Home -> Home
-                MainDestination.Settings -> Settings
-            }
-
-            navController.navigate(route){
-                popUpTo(navController.graph.findStartDestination().id){
-                    saveState = true
+    key(appLanguage) {
+        Box {
+            Box {
+                NavHost(
+                    navController = navController,
+                    startDestination = Home,
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None }
+                ) {
+                    composable<Home> {
+                        HomeScreen(
+                            onNavigateToEat = { navController.navigate(Eat) }, // Home -> Eat
+                            onNavigateToPracticalWebsite = { navController.navigate(PracticalWebsite) }, // Home -> PracticalWebsite
+                            onNavigateToOther = { navController.navigate(Other) }
+                        )
+                    }
+                    composable<Settings> { SettingsScreen(settingsViewModel) }
+                    composable<Eat> {
+                        EatScreen( // Home <- Eat -> FoodEdit
+                            foodViewModel = foodViewModel,
+                            onNavigateToFoodEdit = { navController.navigate(FoodEdit) },
+                            onReturnToHome = { navController.popBackStack() }
+                        )
+                    }
+                    composable<FoodEdit> {
+                        FoodEditScreen(
+                            foodViewModel = foodViewModel,
+                            onReturnToEat = { navController.popBackStack() }
+                        )
+                    } // Eat <- FoodEdit
+                    composable<PracticalWebsite> { PracticalWebsiteScreen { navController.popBackStack() } }
+                    composable<Other> { OtherScreen { navController.popBackStack() } }
                 }
-                launchSingleTop = true
-                restoreState = true
+            }
+
+            MainBottomBar(
+                mainDestination = mainDestination,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            ) { destination ->
+
+                val route = when (destination) {
+                    MainDestination.Home -> Home
+                    MainDestination.Settings -> Settings
+                }
+
+                navController.navigate(route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
         }
     }
-
 }

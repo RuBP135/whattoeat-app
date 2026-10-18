@@ -24,6 +24,7 @@ import com.rubp.whattoeat.BuildKonfig
 import com.rubp.whattoeat.app.navigation.MainBottomBarSpacer
 import com.rubp.whattoeat.core.components.button.CardButton
 import com.rubp.whattoeat.core.components.card.WtePaperCard
+import com.rubp.whattoeat.core.i18n.AppLanguage
 import com.rubp.whattoeat.core.icons.GitHubIcon
 import com.rubp.whattoeat.core.theme.ThemeMode
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
@@ -35,16 +36,21 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel
 ){
     val themeMode by settingsViewModel.themeModeStateFlow.collectAsState()
+    val appLanguage by settingsViewModel.appLanguageStateFlow.collectAsState()
     SettingsContent(
         themeMode = themeMode,
-        onThemeModeChange = settingsViewModel::saveThemeMode
+        onThemeModeChange = settingsViewModel::saveThemeMode ,
+        appLanguage = appLanguage,
+        onAppLanguageChange = settingsViewModel::saveAppLanguage
     )
 }
 
 @Composable
 fun SettingsContent(
     themeMode: ThemeMode,
-    onThemeModeChange: (ThemeMode) -> Unit
+    onThemeModeChange: (ThemeMode) -> Unit,
+    appLanguage: AppLanguage,
+    onAppLanguageChange: (AppLanguage) -> Unit
 ){
     val cardModifier = Modifier
         .widthIn(max = 560.dp)
@@ -73,6 +79,15 @@ fun SettingsContent(
                     modifier = cardModifier
                 )
             }
+
+            item {
+                LanguageSettings(
+                    appLanguage = appLanguage,
+                    onAppLanguageChange = onAppLanguageChange,
+                    modifier = cardModifier
+                )
+            }
+
             item {
                 AppInfo(cardModifier)
             }
@@ -118,7 +133,9 @@ private fun SettingsContentLightPreview(){
     WhatToEatPreviewTheme (false){
         SettingsContent(
             themeMode = ThemeMode.Light,
-            onThemeModeChange = {}
+            onThemeModeChange = {},
+            appLanguage = AppLanguage.Chinese,
+            onAppLanguageChange = {}
         )
     }
 }
@@ -129,7 +146,9 @@ private fun SettingsContentDarkPreview(){
     WhatToEatPreviewTheme (true){
         SettingsContent(
             themeMode = ThemeMode.Dark,
-            onThemeModeChange = {}
+            onThemeModeChange = {},
+            appLanguage = AppLanguage.Chinese,
+            onAppLanguageChange = {}
         )
     }
 }
