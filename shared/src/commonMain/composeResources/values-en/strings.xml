@@ -1,7 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Common -->
+    <string name="common_confirm">OK</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_save">Save</string>
+    <string name="common_back">Back</string>
+    <string name="common_more">More</string>
+    <string name="common_navigate">Navigate</string>
+    <string name="common_dismiss">Dismiss</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Settings: appearance -->
+    <string name="settings_appearance_title">Appearance</string>
+    <string name="settings_appearance_description">Choose how What To Eat looks</string>
+    <string name="settings_theme_system_title">Follow system</string>
+    <string name="settings_theme_system_description">Switch automatically with the device theme</string>
+    <string name="settings_theme_light_title">Light</string>
+    <string name="settings_theme_light_description">Always use the light appearance</string>
+    <string name="settings_theme_dark_title">Dark</string>
+    <string name="settings_theme_dark_description">Always use the dark appearance</string>
+
+    <!-- Settings: language -->
     <string name="settings_language_title">Language</string>
     <string name="settings_language_description">Choose the interface language of What To Eat</string>
     <string name="settings_language_chinese_description">Always use Simplified Chinese</string>
     <string name="settings_language_english_description">Always use English</string>
+
+    <!-- Settings: app info -->
+    <string name="settings_app_info_title">App info</string>
+    <string name="settings_app_info_about">About</string>
+    <string name="settings_app_info_version">Version: %1$s</string>
+    <string name="settings_app_info_github">Open the GitHub repository</string>
+
+    <!-- Home -->
+    <string name="home_title">What to eat today</string>
+    <string name="home_subtitle">Pick one at random from your list</string>
+    <string name="home_start">Start</string>
+    <string name="home_websites_title">Useful sites</string>
+    <string name="home_websites_subtitle">Open common services and tools</string>
+    <string name="home_speed_title">Speed test</string>
+    <string name="home_speed_subtitle">Check the campus network speed</string>
+    <string name="home_other_title">More</string>
+    <string name="home_other_subtitle">See other features</string>
+
+    <!-- Other -->
+    <string name="other_title">More</string>
+    <string name="other_empty">There is nothing here</string>
+    <string name="other_click_5">Why are you still tapping</string>
+    <string name="other_click_10">Really, nothing here</string>
+    <string name="other_click_15">That is the end, there is really nothing</string>
+    <string name="other_click_25">You win. MOBA it is!</string>
+    <string name="other_what">What is this?</string>
+
+    <!-- Useful sites -->
+    <string name="websites_title">Useful sites</string>
+    <string name="website_hall_title">One-stop service portal</string>
+    <string name="website_hall_subtitle">XDU one-stop service portal...</string>
+    <string name="website_power_title">Electricity bill site</string>
+    <string name="website_power_subtitle">Electricity site provided by Queen</string>
+    <string name="website_labor_title">Labor education check</string>
+    <string name="website_labor_subtitle">Check whether labor education hours are complete</string>
+    <string name="website_cet_title">CET-4/6</string>
+    <string name="website_cet_subtitle">You will make it</string>
+    <string name="website_course_title">Course selection</string>
+    <string name="website_course_subtitle">Wake up, it is time to grab your courses</string>
+    <string name="website_practice_title">Social practice lookup</string>
+    <string name="website_practice_subtitle">See how many social practice projects you have done</string>
+    <string name="website_bilibili_subtitle">Even Bilibili</string>
+    <string name="website_ip_title">IP purity test</string>
+    <string name="website_ip_subtitle">Check whether your IP is clean</string>
+
+    <!-- Random pick -->
+    <string name="eat_placeholder">Tap to pick what to eat today</string>
+    <string name="eat_query">Pick</string>
+    <string name="eat_clear">Clear</string>
+    <string name="eat_ignore">Skip</string>
+    <string name="eat_restore_all">Restore all</string>
+    <string name="eat_edit">Edit</string>
+    <string name="eat_msg_cleared">Selection cleared</string>
+    <string name="eat_msg_ignored">Skipped the current food</string>
+    <string name="eat_msg_restored">Restored all skipped foods</string>
+    <string name="eat_empty">No food available to pick!</string>
+
+    <!-- Edit list -->
+    <string name="food_edit_title">Edit list</string>
+    <string name="food_edit_new_table">New table</string>
+    <string name="food_edit_rename_table">Rename table</string>
+    <string name="food_edit_delete_table">Delete table</string>
+    <string name="food_edit_import_table">Import table</string>
+    <string name="food_edit_export_table">Export table</string>
+    <string name="food_edit_help">Help</string>
+    <string name="food_edit_add_dish">Add dish</string>
+    <string name="food_edit_msg_no_data">No table data found</string>
+    <string name="food_edit_msg_imported">Table imported</string>
+    <string name="food_edit_msg_json_error">Invalid JSON format</string>
+    <string name="food_edit_msg_no_table">No table selected</string>
+    <string name="food_edit_msg_exported">JSON copied to clipboard</string>
+    <string name="food_edit_msg_table_deleted">Table deleted</string>
+    <string name="food_table_add">Add table</string>
+
+    <!-- List dialogs -->
+    <string name="food_dialog_new_table">New table</string>
+    <string name="food_dialog_table_name">Table name</string>
+    <string name="food_dialog_rename_table">Rename table</string>
+    <string name="food_dialog_new_table_name">New table name</string>
+    <string name="food_dialog_delete_table">Delete table</string>
+    <string name="food_dialog_delete_dish">Delete dish</string>
+    <string name="food_dialog_delete_confirm">Delete this?</string>
+    <string name="food_dialog_help_title">Help</string>
+    <string name="food_dialog_help_selected">Included: tap the star to toggle a dish. Unselected dishes will not appear in random picks</string>
+    <string name="food_dialog_help_delete">Delete: swipe a food card to the left to reveal the delete button</string>
+    <string name="food_dialog_help_import_export">Import and export: exporting copies the table to the clipboard; importing reads it from the clipboard, so make sure you have copied a table first</string>
+    <string name="food_dialog_help_ok">Got it</string>
+
+    <!-- Table and food rows -->
+    <string name="food_table_selected">Included</string>
+    <string name="food_table_name">Name</string>
+    <string name="food_table_weight">Weight</string>
+    <string name="food_row_delete">Delete this row</string>
+    <string name="food_row_name_placeholder">Enter a name</string>
+    <string name="food_row_invalid_weight">Enter a valid number</string>
 </resources>

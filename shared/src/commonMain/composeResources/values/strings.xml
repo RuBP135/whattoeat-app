@@ -1,7 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 通用 -->
+    <string name="common_confirm">确定</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_save">保存</string>
+    <string name="common_back">返回</string>
+    <string name="common_more">更多</string>
+    <string name="common_navigate">点击跳转</string>
+    <string name="common_dismiss">关闭提示</string>
+
+    <!-- 底部导航 -->
+    <string name="nav_home">首页</string>
+    <string name="nav_settings">设置</string>
+
+    <!-- 设置：外观 -->
+    <string name="settings_appearance_title">外观设置</string>
+    <string name="settings_appearance_description">选择 What To Eat 的显示模式</string>
+    <string name="settings_theme_system_title">跟随系统</string>
+    <string name="settings_theme_system_description">根据设备外观自动切换</string>
+    <string name="settings_theme_light_title">浅色模式</string>
+    <string name="settings_theme_light_description">始终使用浅色外观</string>
+    <string name="settings_theme_dark_title">深色模式</string>
+    <string name="settings_theme_dark_description">始终使用深色外观</string>
+
+    <!-- 设置：语言 -->
     <string name="settings_language_title">语言设置</string>
     <string name="settings_language_description">选择 What To Eat 的界面语言</string>
     <string name="settings_language_chinese_description">始终使用简体中文界面</string>
     <string name="settings_language_english_description">始终使用英文界面</string>
+
+    <!-- 设置：软件信息 -->
+    <string name="settings_app_info_title">软件信息</string>
+    <string name="settings_app_info_about">关于本程序</string>
+    <string name="settings_app_info_version">版本号：%1$s</string>
+    <string name="settings_app_info_github">跳转至github仓库</string>
+
+    <!-- 首页 -->
+    <string name="home_title">今天吃什么</string>
+    <string name="home_subtitle">从当前清单中随机抽取一项</string>
+    <string name="home_start">开始抽取</string>
+    <string name="home_websites_title">实用网站</string>
+    <string name="home_websites_subtitle">查看常用服务与工具入口</string>
+    <string name="home_speed_title">测网速</string>
+    <string name="home_speed_subtitle">检查当前校园网络速度</string>
+    <string name="home_other_title">其他</string>
+    <string name="home_other_subtitle">查看其他功能</string>
+
+    <!-- 其他页 -->
+    <string name="other_title">其他</string>
+    <string name="other_empty">这里什么都没有</string>
+    <string name="other_click_5">为何你还在点击</string>
+    <string name="other_click_10">真什么都没有</string>
+    <string name="other_click_15">已经到头了，确实什么都没有</string>
+    <string name="other_click_25">你赢了，必须moba！</string>
+    <string name="other_what">这是什么？</string>
+
+    <!-- 实用网站 -->
+    <string name="websites_title">实用网站</string>
+    <string name="website_hall_title">一站式服务大厅</string>
+    <string name="website_hall_subtitle">泥电一站式服务大厅...</string>
+    <string name="website_power_title">电费网站</string>
+    <string name="website_power_subtitle">Queen提供的电费网站</string>
+    <string name="website_labor_title">劳动教育查询</string>
+    <string name="website_labor_subtitle">查看劳动教育学时是否已满</string>
+    <string name="website_cet_title">四六级</string>
+    <string name="website_cet_subtitle">会赢的</string>
+    <string name="website_course_title">选课</string>
+    <string name="website_course_subtitle">别睡了，该起床抢课了</string>
+    <string name="website_practice_title">社会实践项目查询</string>
+    <string name="website_practice_subtitle">看看自己社会实践做了几个？</string>
+    <string name="website_bilibili_subtitle">甚至B站</string>
+    <string name="website_ip_title">IP纯净度测试</string>
+    <string name="website_ip_subtitle">测测你的IP是否干净</string>
+
+    <!-- 随机抽取页 -->
+    <string name="eat_placeholder">点击查询今天吃什么</string>
+    <string name="eat_query">查询</string>
+    <string name="eat_clear">清除</string>
+    <string name="eat_ignore">忽略</string>
+    <string name="eat_restore_all">恢复全部</string>
+    <string name="eat_edit">编辑</string>
+    <string name="eat_msg_cleared">已清除当前选择</string>
+    <string name="eat_msg_ignored">已忽略当前选择食物</string>
+    <string name="eat_msg_restored">已恢复所有被忽略的食物</string>
+    <string name="eat_empty">没有可供选择的食物！</string>
+
+    <!-- 编辑清单 -->
+    <string name="food_edit_title">编辑清单</string>
+    <string name="food_edit_new_table">新建表格</string>
+    <string name="food_edit_rename_table">重命名表格</string>
+    <string name="food_edit_delete_table">删除表格</string>
+    <string name="food_edit_import_table">导入表格</string>
+    <string name="food_edit_export_table">导出表格</string>
+    <string name="food_edit_help">帮助</string>
+    <string name="food_edit_add_dish">添加新菜品</string>
+    <string name="food_edit_msg_no_data">未获取到表格数据</string>
+    <string name="food_edit_msg_imported">已导入表格</string>
+    <string name="food_edit_msg_json_error">json格式错误</string>
+    <string name="food_edit_msg_no_table">当前没有选中表格</string>
+    <string name="food_edit_msg_exported">已导出json至剪贴板</string>
+    <string name="food_edit_msg_table_deleted">已删除表格</string>
+    <string name="food_table_add">添加表格</string>
+
+    <!-- 清单对话框 -->
+    <string name="food_dialog_new_table">新建表格</string>
+    <string name="food_dialog_table_name">表格名称</string>
+    <string name="food_dialog_rename_table">修改表格名称</string>
+    <string name="food_dialog_new_table_name">新的表格名称</string>
+    <string name="food_dialog_delete_table">删除表格</string>
+    <string name="food_dialog_delete_dish">删除菜品</string>
+    <string name="food_dialog_delete_confirm">确认删除？</string>
+    <string name="food_dialog_help_title">帮助</string>
+    <string name="food_dialog_help_selected">参选：点击星星可以开关是否选择该食物，未被选择的食物不会进入随机选择列表</string>
+    <string name="food_dialog_help_delete">删除食物：对食物卡片向左滑动可以看到删除按钮</string>
+    <string name="food_dialog_help_import_export">导入导出表格：导出表格时，会将内容复制到手机剪贴板上；导入表格时，会从手机剪贴板获取内容（因此您需要确保已经复制了别人发送给您的表格，才能正确导入）</string>
+    <string name="food_dialog_help_ok">知道了</string>
+
+    <!-- 表格与菜品行 -->
+    <string name="food_table_selected">参选</string>
+    <string name="food_table_name">名称</string>
+    <string name="food_table_weight">权重</string>
+    <string name="food_row_delete">删除此行数据</string>
+    <string name="food_row_name_placeholder">请输入名称</string>
+    <string name="food_row_invalid_weight">请输入有效数字</string>
 </resources>
