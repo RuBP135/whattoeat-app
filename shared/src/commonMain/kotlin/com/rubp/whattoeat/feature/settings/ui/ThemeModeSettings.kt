@@ -30,33 +30,23 @@ import com.composables.icons.materialicons.filled.Light_mode
 import com.rubp.whattoeat.core.components.card.WtePaperCard
 import com.rubp.whattoeat.core.theme.ThemeMode
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.settings_appearance_description
+import whattoeat.shared.generated.resources.settings_appearance_title
+import whattoeat.shared.generated.resources.settings_theme_dark_description
+import whattoeat.shared.generated.resources.settings_theme_dark_title
+import whattoeat.shared.generated.resources.settings_theme_light_description
+import whattoeat.shared.generated.resources.settings_theme_light_title
+import whattoeat.shared.generated.resources.settings_theme_system_description
+import whattoeat.shared.generated.resources.settings_theme_system_title
+
 
 private data class ThemeModeOption(
     val mode: ThemeMode,
     val title: String,
     val description: String,
     val icon: ImageVector
-)
-
-private val themeModeOptions = listOf(
-    ThemeModeOption(
-        mode = ThemeMode.System,
-        title = "跟随系统",
-        description = "根据设备外观自动切换",
-        icon = MaterialIcons.Filled.Brightness_auto
-    ),
-    ThemeModeOption(
-        mode = ThemeMode.Light,
-        title = "浅色模式",
-        description = "始终使用浅色外观",
-        icon = MaterialIcons.Filled.Light_mode
-    ),
-    ThemeModeOption(
-        mode = ThemeMode.Dark,
-        title = "深色模式",
-        description = "始终使用深色外观",
-        icon = MaterialIcons.Filled.Dark_mode
-    )
 )
 
 /**
@@ -73,13 +63,34 @@ internal fun ThemeModeSettings(
     modifier: Modifier
 ) {
 
+    val options = listOf(
+        ThemeModeOption(
+            mode = ThemeMode.System,
+            title = stringResource(Res.string.settings_theme_system_title),
+            description = stringResource(Res.string.settings_theme_system_description),
+            icon = MaterialIcons.Filled.Brightness_auto
+        ),
+        ThemeModeOption(
+            mode = ThemeMode.Light,
+            title = stringResource(Res.string.settings_theme_light_title),
+            description = stringResource(Res.string.settings_theme_light_description),
+            icon = MaterialIcons.Filled.Light_mode
+        ),
+        ThemeModeOption(
+            mode = ThemeMode.Dark,
+            title = stringResource(Res.string.settings_theme_dark_title),
+            description = stringResource(Res.string.settings_theme_dark_description),
+            icon = MaterialIcons.Filled.Dark_mode
+        )
+    )
+
     WtePaperCard(modifier = modifier){
         Text(
-            text = "外观设置",
+            text = stringResource(Res.string.settings_appearance_title),
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = "选择 What To Eat 的显示模式",
+            text = stringResource(Res.string.settings_appearance_description),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge
         )
@@ -90,7 +101,7 @@ internal fun ThemeModeSettings(
                 .selectableGroup(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            themeModeOptions.forEach { option ->
+            options.forEach { option ->
                 ThemeModeOptionRow(
                     option = option,
                     selected = option.mode == themeMode,

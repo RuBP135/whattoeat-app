@@ -29,7 +29,12 @@ import com.rubp.whattoeat.core.icons.GitHubIcon
 import com.rubp.whattoeat.core.theme.ThemeMode
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
-
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.settings_app_info_about
+import whattoeat.shared.generated.resources.settings_app_info_github
+import whattoeat.shared.generated.resources.settings_app_info_title
+import whattoeat.shared.generated.resources.settings_app_info_version
 
 @Composable
 fun SettingsScreen(
@@ -108,16 +113,19 @@ private fun AppInfo(
         modifier = modifier
     ){
         Text(
-            text = "软件信息",
+            text = stringResource(Res.string.settings_app_info_title),
             style = MaterialTheme.typography.titleMedium
         )
         CardButton(
-            title = "关于本程序",
-            subtitle = "版本号：${BuildKonfig.VERSION_NAME}",
+            title = stringResource(Res.string.settings_app_info_about),
+            subtitle = stringResource(
+                Res.string.settings_app_info_version,
+                BuildKonfig.VERSION_NAME
+            ),
             icon = {
                 Icon(
                     imageVector = GitHubIcon,
-                    contentDescription = "跳转至github仓库",
+                    contentDescription = stringResource(Res.string.settings_app_info_github),
                     modifier = Modifier.size(36.dp)
                 )
             }

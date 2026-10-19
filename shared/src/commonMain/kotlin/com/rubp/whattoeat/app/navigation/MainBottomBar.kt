@@ -41,7 +41,10 @@ import com.composables.icons.materialicons.outlined.Home
 import com.composables.icons.materialicons.outlined.Settings
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.theme.WteTheme
-
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.nav_home
+import whattoeat.shared.generated.resources.nav_settings
 private data class MainBottomBarItem(
     val label: String,
     val selected: Boolean,
@@ -92,14 +95,14 @@ fun MainBottomBar(
 
     val items = listOf(
         MainBottomBarItem(
-            label = "首页",
+            label = stringResource(Res.string.nav_home),
             selected = mainDestination == MainDestination.Home,
             filledVector = MaterialIcons.Filled.Home,
             outlinedVector = MaterialIcons.Outlined.Home,
             destination = MainDestination.Home
         ),
         MainBottomBarItem(
-            label = "设置",
+            label = stringResource(Res.string.nav_settings),
             selected = mainDestination == MainDestination.Settings,
             filledVector = MaterialIcons.Filled.Settings,
             outlinedVector = MaterialIcons.Outlined.Settings,
