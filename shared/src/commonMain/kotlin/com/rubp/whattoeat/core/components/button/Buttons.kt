@@ -29,7 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Arrow_forward
-
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.common_navigate
 
 @Composable
 fun ElegantButton(
@@ -187,7 +189,7 @@ fun CardButton(
             if(isNavigable){
                 Icon( //  >
                     imageVector = MaterialIcons.Filled.Arrow_forward,
-                    contentDescription = "点击跳转",
+                    contentDescription = stringResource(Res.string.common_navigate),
                     modifier = Modifier.size(24.dp)
                 )
             }

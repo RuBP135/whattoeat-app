@@ -31,6 +31,10 @@ import com.composables.icons.materialicons.filled.Chevron_left
 import com.composables.icons.materialicons.filled.More_vert
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.theme.WteTheme
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.common_back
+import whattoeat.shared.generated.resources.common_more
 
 /**
  * 可以添加标题或者增加额外菜单的顶部栏
@@ -62,7 +66,7 @@ fun WteTopBar(
                 IconButton(onClickReturn){
                     Icon(
                         imageVector = MaterialIcons.Filled.Chevron_left,
-                        contentDescription = "返回",
+                        contentDescription = stringResource(Res.string.common_back),
                     )
                 }
 
@@ -85,7 +89,7 @@ fun WteTopBar(
                         IconButton({ isShowMenu = true }){
                             Icon(
                                 imageVector = MaterialIcons.Filled.More_vert,
-                                contentDescription = "更多",
+                                contentDescription = stringResource(Res.string.common_more),
                             )
                         }
                         // 锚定父容器Box

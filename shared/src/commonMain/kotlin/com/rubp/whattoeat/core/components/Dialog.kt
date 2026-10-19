@@ -11,17 +11,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.common_cancel
+import whattoeat.shared.generated.resources.common_confirm
+import whattoeat.shared.generated.resources.common_save
 
 @Composable
 fun ConfirmDialog(
     title: String,
     message: String,
     modifier: Modifier = Modifier,
-    confirmText: String = "确定",
-    dismissText: String = "取消",
+    confirmText: String? = null,
+    dismissText: String? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ){
+
+    val confirmLabel = confirmText ?: stringResource(Res.string.common_confirm)
+    val dismissLabel = dismissText ?: stringResource(Res.string.common_cancel)
+
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
@@ -29,12 +38,12 @@ fun ConfirmDialog(
         text = { Text(message) },
         confirmButton = {
             TextButton(onClick = onConfirm){
-                Text(text = confirmText)
+                Text(text = confirmLabel)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { 
-                Text(text = dismissText, color = MaterialTheme.colorScheme.onSurface)
+            TextButton(onClick = onDismiss) {
+                Text(text = dismissLabel, color = MaterialTheme.colorScheme.onSurface)
             }
         }
     )
@@ -46,11 +55,14 @@ fun EditDialog(
     modifier: Modifier = Modifier,
     initialText: String = "",
     labelText: String? = null,
-    confirmText: String = "保存",
-    dismissText: String = "取消",
+    confirmText: String? = null,
+    dismissText: String? = null,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ){
+    val confirmLabel = confirmText ?: stringResource(Res.string.common_save)
+    val dismissLabel = dismissText ?: stringResource(Res.string.common_cancel)
+
     var localText by remember { mutableStateOf(initialText) }
     AlertDialog(
         modifier = modifier,
@@ -66,12 +78,12 @@ fun EditDialog(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(localText) }) {
-                Text(text = confirmText)
+                Text(text = confirmLabel)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = dismissText, color = MaterialTheme.colorScheme.onSurface)
+                Text(text = dismissLabel, color = MaterialTheme.colorScheme.onSurface)
             }
         }
     )

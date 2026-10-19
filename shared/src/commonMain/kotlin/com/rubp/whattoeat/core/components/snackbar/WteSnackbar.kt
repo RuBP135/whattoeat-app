@@ -27,6 +27,9 @@ import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Close
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.theme.WteTheme
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.common_dismiss
 
 @Composable
 fun WteSnackbar(
@@ -78,7 +81,7 @@ fun WteSnackbar(
                     ) {
                         Icon(
                             imageVector = MaterialIcons.Filled.Close,
-                            contentDescription = "关闭提示"
+                            contentDescription = stringResource(Res.string.common_dismiss)
                         )
                     }
                 }
