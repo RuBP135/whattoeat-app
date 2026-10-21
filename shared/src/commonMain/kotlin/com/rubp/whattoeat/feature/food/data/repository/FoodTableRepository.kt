@@ -1,41 +1,32 @@
 package com.rubp.whattoeat.feature.food.data.repository
 
-import com.rubp.whattoeat.core.data.withDatabaseReadFlow
-import com.rubp.whattoeat.core.data.withDatabaseWrite
+import com.rubp.whattoeat.core.data.exception.DataAccessException
+import com.rubp.whattoeat.core.data.exception.withDataAccess
 import com.rubp.whattoeat.feature.food.data.dao.FoodTableDao
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 
 class FoodTableRepository(
     private val dao: FoodTableDao
 ) {
     fun findById(id: Long): Flow<FoodTable?> =
-        withDatabaseReadFlow("FoodTableRepository.findById") {
-            dao.findById(id)
-        }
+        dao.findById(id).catch{ throw DataAccessException.wrapOrThrowCancellationException(it) }
 
     fun findAll(): Flow<List<FoodTable>> =
-        withDatabaseReadFlow("FoodTableRepository.findAll") {
-            dao.findAll()
-        }
+        dao.findAll().catch { throw DataAccessException.wrapOrThrowCancellationException(it) }
+
 
     suspend fun insert(table: FoodTable): Long =
-        withDatabaseWrite("FoodTableRepository.insert") {
-            dao.insert(table)
-        }
+        withDataAccess { dao.insert(table) }
 
     suspend fun update(table: FoodTable): Int =
-        withDatabaseWrite("FoodTableRepository.update") {
-            dao.update(table)
-        }
+        withDataAccess { dao.update(table) }
 
     suspend fun delete(table: FoodTable): Int =
-        withDatabaseWrite("FoodTableRepository.delete") {
-            dao.delete(table)
-        }
+        withDataAccess { dao.delete(table) }
 
     suspend fun deleteById(id: Long): Int =
-        withDatabaseWrite("FoodTableRepository.deleteById") {
-            dao.deleteById(id)
-        }
+        withDataAccess { dao.deleteById(id) }
+
 }
