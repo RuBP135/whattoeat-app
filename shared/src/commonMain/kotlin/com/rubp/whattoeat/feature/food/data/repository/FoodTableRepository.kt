@@ -22,15 +22,14 @@ class FoodTableRepository(
             .catch { throw DataAccessException.wrapOrThrowCancellationException(it) }
             .asReadState()
 
+    suspend fun updateName(id: Long, name: String): Int =
+        withDataAccess { dao.updateName(id, name) }
 
     suspend fun insert(table: FoodTable): Long =
         withDataAccess { dao.insert(table) }
 
     suspend fun update(table: FoodTable): Int =
         withDataAccess { dao.update(table) }
-
-    suspend fun delete(table: FoodTable): Int =
-        withDataAccess { dao.delete(table) }
 
     suspend fun deleteById(id: Long): Int =
         withDataAccess { dao.deleteById(id) }
