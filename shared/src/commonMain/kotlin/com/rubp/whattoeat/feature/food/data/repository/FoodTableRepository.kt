@@ -17,6 +17,10 @@ class FoodTableRepository(
             .catch{ throw DataAccessException.wrapOrThrowCancellationException(it) }
             .asReadState()
 
+    /** viewModel需要的一次性表格查询 */
+    suspend fun findByIdOnce(id: Long): FoodTable? =
+        withDataAccess { dao.findByIdOnce(id) }
+
     fun findAll(): Flow<ReadState<List<FoodTable>>> =
         dao.findAll()
             .catch { throw DataAccessException.wrapOrThrowCancellationException(it) }

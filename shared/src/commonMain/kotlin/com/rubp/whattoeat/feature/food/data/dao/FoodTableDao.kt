@@ -13,6 +13,9 @@ interface FoodTableDao {
     @Query("SELECT * FROM food_table WHERE id = :id")
     fun findById(id: Long): Flow<FoodTable?>
 
+    @Query("SELECT * FROM food_table WHERE id = :id")
+    suspend fun findByIdOnce(id: Long): FoodTable?
+
     @Query("SELECT * FROM food_table ORDER BY created_at ASC")
     fun findAll(): Flow<List<FoodTable>>
 
