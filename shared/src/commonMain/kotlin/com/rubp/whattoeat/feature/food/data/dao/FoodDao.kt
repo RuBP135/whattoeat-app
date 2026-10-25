@@ -11,6 +11,9 @@ interface FoodDao {
     @Query("SELECT * FROM food WHERE table_id = :tableId ORDER BY created_at ASC")
     fun findByTableId(tableId: Long): Flow<List<Food>>
 
+    @Query("SELECT * FROM food WHERE table_id = :tableId ORDER BY created_at ASC")
+    suspend fun findByTableIdOnce(tableId: Long): List<Food>
+
     @Query("SELECT * FROM food ORDER BY created_at ASC")
     fun findAll(): Flow<List<Food>>
 

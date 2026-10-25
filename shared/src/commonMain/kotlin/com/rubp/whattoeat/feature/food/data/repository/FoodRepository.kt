@@ -17,6 +17,11 @@ class FoodRepository(
             .catch { throw DataAccessException.wrapOrThrowCancellationException(it) }
             .asReadState()
 
+    /**
+     * viewModel需要获取foods快照用于逻辑判断时使用（一次性）
+     */
+    suspend fun findByTableIdOnce(tableId: Long): List<Food> =
+        withDataAccess { dao.findByTableIdOnce(tableId) }
 
     suspend fun updateName(id: Long, name: String): Int =
         withDataAccess { dao.updateName(id, name) }
