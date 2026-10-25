@@ -36,6 +36,7 @@ import com.rubp.whattoeat.core.ui.task.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.domain.exception.NoClipboardTableDataException
+import com.rubp.whattoeat.feature.food.model.FoodDataState
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 
 @Composable
@@ -44,9 +45,15 @@ fun FoodEditScreen(
     modifier: Modifier = Modifier,
     onReturnToFoodChoose: () -> Unit
 ) {
-    val foods by foodViewModel.foodListStateFlow.collectAsState(initial = emptyList())
-    val tables by foodViewModel.tableListStateFlow.collectAsState()
-    val currentTable by foodViewModel.currentTableStateFlow.collectAsState()
+    val state by foodViewModel.foodDataStateFlow.collectAsState()
+    val selected = state as? FoodDataState.Selected
+    val foods = selected?.foods ?: emptyList()
+    val tables = when (val state = state) {
+        is FoodDataState.Selected -> state.tables
+        is FoodDataState.NoTableSelected -> state.tables
+        else -> emptyList()
+    }
+    val currentTable = selected?.currentTable
     val feedback = LocalUiFeedback.current
     val scope = rememberCoroutineScope()
     val runner = remember(scope, feedback) {
@@ -65,8 +72,8 @@ fun FoodEditScreen(
         currentTable = currentTable,
         onReturnToFoodChoose = onReturnToFoodChoose,
         onTableSelected = foodViewModel::switchTable,
-        onRenameTable = foodViewModel::renameTable,
-        onDeleteTable = foodViewModel::deleteTable,
+        onRenameTable = { newName -> foodViewModel.renameTable(newName) },
+        onDeleteTable = { foodViewModel.deleteTable() },
         onCreateTable = foodViewModel::createTable,
         onImportTable = {
             runner.launch {
@@ -76,14 +83,14 @@ fun FoodEditScreen(
             }
         },
         onExportTable = {
-            runner.launch(successMessage = "已导出json至剪贴板") {
-                clipboardManager.setText(AnnotatedString(foodViewModel.exportTable()))
+            foodViewModel.exportTable { json ->
+                clipboardManager.setText(AnnotatedString(json))
             }
         },
         onAddFood = {
-            foodViewModel.insert(Food(name = "", weight = 1, marked = true))
+            foodViewModel.insertFood(Food(name = "", weight = 1, marked = true))
         },
-        onDeleteFood = { food -> foodViewModel.deleteById(food.id) },
+        onDeleteFood = { food -> foodViewModel.deleteFoodById(food.id) },
         onClickStar = { food -> foodViewModel.updateMarked(food.id, !food.marked) },
         onInputName = { food, name -> foodViewModel.updateName(food.id, name) },
         onInputWeight = { food, weight -> foodViewModel.updateWeight(food.id, weight) }
@@ -98,8 +105,8 @@ private fun FoodEditContent(
     currentTable: FoodTable?,
     onReturnToFoodChoose: () -> Unit,
     onTableSelected: (Long) -> Unit,
-    onRenameTable: (Long, String) -> Unit,
-    onDeleteTable: (Long) -> Unit,
+    onRenameTable: (String) -> Unit,
+    onDeleteTable: () -> Unit,
     onCreateTable: (String) -> Unit,
     onImportTable: () -> Unit,
     onExportTable: () -> Unit,
@@ -220,7 +227,7 @@ private fun FoodEditContentPreview() {
             currentTable = FoodTable(1L, "早餐", 0L),
             onReturnToFoodChoose = {},
             onTableSelected = {},
-            onRenameTable = { _, _ -> },
+            onRenameTable = { _ -> },
             onDeleteTable = {},
             onCreateTable = {},
             onImportTable = {},

@@ -34,8 +34,9 @@ import com.rubp.whattoeat.core.ui.components.button.CircleIconButton
 import com.rubp.whattoeat.core.ui.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.ui.components.card.WtePaperCard
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
-import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
+import com.rubp.whattoeat.feature.food.model.FoodDataState
+import com.rubp.whattoeat.feature.food.model.FoodSelectionState
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 
 @Composable
@@ -44,19 +45,28 @@ fun FoodChooseScreen(
     onNavigateToFoodEdit: () -> Unit,
     onReturnToHome: () -> Unit
 ) {
-    val tableList by foodViewModel.tableListStateFlow.collectAsState()
-    val currentTable by foodViewModel.currentTableStateFlow.collectAsState()
-    val chosenFood: Food? by foodViewModel.chosenFoodStateFlow.collectAsState()
-    val selectionState by foodViewModel.selectionStateFlow.collectAsState()
-    val resultMessage: String = when(selectionState) {
-        FoodSelectionState.Idle -> "点击查询今天吃什么"
-        is FoodSelectionState.Chosen -> chosenFood?.name ?: "你遇到了一个未知的错误，导致选中的食物消失了"
-        FoodSelectionState.NoAvailableFood -> "没有可供选择的食物！"
+    val state by foodViewModel.foodDataStateFlow.collectAsState()
+    val selected = state as? FoodDataState.Selected
+    val tables = when (val state = state) {
+        is FoodDataState.Selected -> state.tables
+        is FoodDataState.NoTableSelected -> state.tables
+        else -> emptyList()
+    }
+    val currentTable = selected?.currentTable
+    val resultMessage: String = when (val state = state) {
+        FoodDataState.Loading -> "正在读取清单…"
+        is FoodDataState.Error -> "清单加载失败，请稍后重试"
+        is FoodDataState.NoTableSelected -> "请先选择一个表格"
+        is FoodDataState.Selected -> when (val selectionState = state.selectionState) {
+            is FoodSelectionState.Chosen -> selectionState.food.name
+            FoodSelectionState.NoAvailableFood -> "没有可供选择的食物！"
+            FoodSelectionState.Idle -> "点击查询今天吃什么"
+        }
     }
 
     FoodChooseContent(
         resultMessage = resultMessage,
-        tables = tableList,
+        tables = tables,
         currentTable = currentTable,
         onNavigateToFoodEdit = onNavigateToFoodEdit,
         onReturnToHome = onReturnToHome,
@@ -64,7 +74,7 @@ fun FoodChooseScreen(
         onClickRandomFood = { foodViewModel.chosenRandomFood() },
         onClickClear = foodViewModel::clearSelection,
         onClickIgnore = foodViewModel::ignoreChosenFood,
-        onClickClearIgnore = foodViewModel::clearAllIgnore
+        onClickClearIgnore = foodViewModel::recoverAll
     )
 }
 

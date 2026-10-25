@@ -2,7 +2,7 @@ package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rubp.whattoeat.core.domain.exception.ExpectedException
+import com.rubp.whattoeat.core.model.ReadState
 import com.rubp.whattoeat.core.ui.feedback.UiFeedback
 import com.rubp.whattoeat.core.ui.task.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
@@ -11,22 +11,24 @@ import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
 import com.rubp.whattoeat.feature.food.domain.exception.FoodNotFoundException
+import com.rubp.whattoeat.feature.food.domain.exception.FoodTableNotFoundException
+import com.rubp.whattoeat.feature.food.domain.exception.InvalidFoodTableJsonException
 import com.rubp.whattoeat.feature.food.domain.exception.NoFoodSelectedException
 import com.rubp.whattoeat.feature.food.domain.exception.NoTableSelectedException
 import com.rubp.whattoeat.feature.food.domain.foodTableToJson
 import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
 import com.rubp.whattoeat.feature.food.domain.selectFood
-import com.rubp.whattoeat.feature.food.ui.choose.FoodSelectionState
+import com.rubp.whattoeat.feature.food.model.FoodDataState
+import com.rubp.whattoeat.feature.food.model.FoodSelectionIdState
+import com.rubp.whattoeat.feature.food.model.FoodSelectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.serialization.SerializationException
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -43,68 +45,109 @@ class FoodViewModel(
         onError = feedback::showError
     )
 
-    val tableListStateFlow: StateFlow<List<FoodTable>> = foodTableRepository.findAll()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-    val currentTableStateFlow: StateFlow<FoodTable?> =
-        foodPreferences.foodTableIdFlow.flatMapLatest { tableId ->
-            tableId?.let {
-                foodTableRepository.findById(tableId)
-            } ?: flowOf(null)
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    private val selectionIdStateFlow: MutableStateFlow<FoodSelectionIdState> = MutableStateFlow(FoodSelectionIdState.Idle)
 
-    val foodListStateFlow: StateFlow<List<Food>> = currentTableStateFlow.flatMapLatest { table ->
-        table?.let{
-            foodRepository.findByTableId(table.id)
-        } ?: flowOf(emptyList())
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    /**
+     * 仅用于渲染 ui
+     */
+    val foodDataStateFlow =
+        combine(
+            foodTableRepository.findAll(),
+            foodPreferences.foodTableIdFlow
+        ) { tables, currentTableId ->
+            tables to currentTableId
+        }.transformLatest { (tables, currentTableId) ->
+            when(tables) {
+                is ReadState.Loading -> emit(FoodDataState.Loading)
+                is ReadState.Error -> emit(FoodDataState.Error(tables.exception))
+                is ReadState.Success -> {
+                    val currentTable = tables.data.firstOrNull {
+                        it.id == currentTableId
+                    }
 
-    private val _selectionStateFlow: MutableStateFlow<FoodSelectionState> = MutableStateFlow(FoodSelectionState.Idle)
-    val selectionStateFlow: StateFlow<FoodSelectionState> = _selectionStateFlow.asStateFlow()
-
-    val chosenFoodStateFlow: StateFlow<Food?> =
-        combine(selectionStateFlow, foodListStateFlow) { selectionState, foodList ->
-            when(selectionState) {
-                is FoodSelectionState.Chosen -> foodList.find { it.id == selectionState.id }
-                else -> null
+                    if(currentTable == null) emit(
+                        FoodDataState.NoTableSelected(tables.data)
+                    ) else emitAll(
+                        combine(
+                            foodRepository.findByTableId(currentTable.id),
+                            selectionIdStateFlow
+                        ) { foods, idState ->
+                            when(foods){
+                                is ReadState.Loading -> FoodDataState.Loading
+                                is ReadState.Error -> FoodDataState.Error(foods.exception)
+                                is ReadState.Success -> FoodDataState.Selected(
+                                    tables = tables.data,
+                                    currentTable = currentTable,
+                                    foods = foods.data,
+                                    selectionState = when(idState) {
+                                        is FoodSelectionIdState.Idle -> FoodSelectionState.Idle
+                                        is FoodSelectionIdState.NoAvailableFood -> FoodSelectionState.NoAvailableFood
+                                        is FoodSelectionIdState.Chosen -> foods.data.find { it.id == idState.id }?.let {
+                                            FoodSelectionState.Chosen(it)
+                                        } ?: FoodSelectionState.Idle
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
             }
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = FoodDataState.Loading
+        )
+
 
     init {
         runner.launch {
-            if (foodTableRepository.findAll().first().isEmpty()) {
-                createTableInternal("默认")
+            if(foodTableRepository.findAllOnce().isEmpty()) {
+                createTable("默认表格")
             }
         }
     }
 
-    // 添加新菜品用，没有选择表格的时候不会添加
-    fun insert(food: Food) {
+
+    fun insertFood(food: Food) {
         runner.launch {
-            // ui 层不提供 table_id，在这里补充。
-            currentTableStateFlow.value?.let { table ->
-                foodRepository.insert(food.copy(tableId = table.id))
-            }
+            val id = foodPreferences.getFoodTableId() ?:throw NoTableSelectedException()
+            foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
+            foodRepository.insert(food.copy(tableId = id)) // ui 层不提供 table_id，在这里补充。
         }
     }
 
     fun updateName(id: Long, name: String) {
-        runner.launch { foodRepository.updateName(id, name) }
+        runner.launch {
+            if (foodRepository.updateName(id, name) == 0) {
+                throw FoodNotFoundException(id)
+            }
+        }
     }
 
     fun updateWeight(id: Long, weight: Int) {
-        runner.launch { foodRepository.updateWeight(id, weight) }
+        runner.launch {
+            if (foodRepository.updateWeight(id, weight) == 0) {
+                throw FoodNotFoundException(id)
+            }
+        }
     }
 
     fun updateMarked(id: Long, marked: Boolean) {
-        runner.launch { foodRepository.updateMarked(id, marked) }
+        runner.launch {
+            if (foodRepository.updateMarked(id, marked) == 0) {
+                throw FoodNotFoundException(id)
+            }
+        }
     }
 
-    fun deleteById(id: Long) {
-        runner.launch {
-            foodRepository.deleteById(id)
-            val state = selectionStateFlow.value
-            if (state is FoodSelectionState.Chosen && state.id == id) {
-                resetSelection()
+    fun deleteFoodById(id: Long) {
+        runner.launch(successMessage = "删除成功") {
+            if (foodRepository.deleteById(id) == 0) throw FoodNotFoundException(id)
+            selectionIdStateFlow.update { current ->
+                if (current is FoodSelectionIdState.Chosen && current.id == id)
+                    FoodSelectionIdState.Idle
+                else
+                    current
             }
         }
     }
@@ -112,127 +155,145 @@ class FoodViewModel(
     // 随机选择
 
     fun chosenRandomFood() {
-        val foodList = foodListStateFlow.value.filter { food ->
-            food.marked && food.weight > 0 && food.name.isNotEmpty()
+        runner.launch {
+            val tableId = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
+            foodTableRepository.findByIdOnce(tableId) ?: throw NoTableSelectedException()
+            val foods = foodRepository.findByTableIdOnce(tableId)
+
+            val candidateList = foods.filter { food ->
+                food.marked && food.weight > 0 && food.name.isNotEmpty()
+            }
+
+            val selectionState = selectionIdStateFlow.value
+            val preId = (selectionState as? FoodSelectionIdState.Chosen)?.id
+            val id = selectFood(candidateList, preId)
+
+            if (id == null) selectionIdStateFlow.value = FoodSelectionIdState.NoAvailableFood
+            else selectionIdStateFlow.value = FoodSelectionIdState.Chosen(id)
         }
-
-        val preId = (_selectionStateFlow.value as? FoodSelectionState.Chosen)?.id
-        val id = selectFood(foodList, preId)
-
-        _selectionStateFlow.value = id?.let { FoodSelectionState.Chosen(it)} ?: FoodSelectionState.NoAvailableFood
     }
 
     fun ignoreChosenFood() {
         runner.launch(successMessage = "已忽略当前选择食物") {
-            val state = _selectionStateFlow.value
-            if (state !is FoodSelectionState.Chosen) {
-                throw NoFoodSelectedException()
-            }
-            val updatedRows = foodRepository.updateMarked(state.id, false)
-            if (updatedRows == 0) {
-                throw FoodNotFoundException(state.id)
-            }
+            val selectionState = selectionIdStateFlow.value
+            val id = (selectionState as? FoodSelectionIdState.Chosen)?.id ?: throw NoFoodSelectedException()
+
+            val update = foodRepository.updateMarked(id, false)
+            if (update == 0) throw FoodNotFoundException(id)
         }
     }
 
-    fun clearAllIgnore() {
+    fun recoverAll() {
         runner.launch(successMessage = "已恢复所有被忽略的食物") {
-            val table = currentTableStateFlow.value ?: throw NoTableSelectedException()
-            foodRepository.updateAllMarked(table.id, marked = true)
+            val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
+            foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
+            foodRepository.updateAllMarked(id, marked = true)
         }
     }
 
     fun clearSelection() {
         runner.launch(successMessage = "已清除当前选择") {
-            resetSelection()
+            selectionIdStateFlow.value = FoodSelectionIdState.Idle
         }
     }
 
-    private fun resetSelection() {
-        _selectionStateFlow.value = FoodSelectionState.Idle
-    }
 
-    // 表格管理
-    private fun saveCurrentTableId(id: Long?){
+
+    // table
+    private fun saveCurrentTableId(id: Long?) {
         foodPreferences.saveFoodTableId(id)
     }
 
-    fun exportTable(): String {
-        val table = currentTableStateFlow.value ?: throw NoTableSelectedException()
-        return foodTableToJson(table, foodListStateFlow.value)
-    }
-
-    fun importTable(jsonStr: String) {
-        runner.launch(successMessage = "已导入表格") {
-            val foodTableDto = try {
-                jsonToFoodTableDto(jsonStr)
-            } catch (exception: SerializationException) {
-                exception.printStackTrace()
-                throw object : ExpectedException("json格式错误") {}
-            }
-            val wasEmpty = tableListStateFlow.value.isEmpty()
-            val tableId = foodTableRepository.insert(FoodTable(name = foodTableDto.name))
-            if(wasEmpty) switchTable(tableId) // 没有表格的时候，应该切换到这个新导入的表格
-            foodRepository.insertAll(foodTableDto.foodDtos.map {
-                Food(name = it.name, weight = it.weight, marked = true, tableId = tableId)
-            })
+    fun exportTable(
+        onExport: suspend (String) -> Unit
+    ) {
+        runner.launch(successMessage = "已导出json至剪贴板") {
+            val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
+            val table = foodTableRepository.findByIdOnce(id) ?: throw FoodTableNotFoundException(id)
+            val foods = foodRepository.findByTableIdOnce(id)
+            onExport(foodTableToJson(table, foods))
         }
     }
 
+    fun importTable(json: String) {
+        runner.launch(successMessage = "已导入表格") {
+
+            val foodTableDto = try {
+                jsonToFoodTableDto(json)
+            } catch (_: SerializationException) {
+                throw InvalidFoodTableJsonException()
+            }
+
+            val id = foodTableRepository.insert(FoodTable(name = foodTableDto.name))
+            foodRepository.insertAll(foodTableDto.foodDtos.map {
+                Food(name = it.name, weight = it.weight, marked = true, tableId = id)
+            })
+            if(foodPreferences.getFoodTableId() == null) {
+                foodPreferences.saveFoodTableId(id)
+            }
+        }
+    }
+
+
     fun switchTable(id: Long) {
-        if (id == currentTableStateFlow.value?.id) return
-        saveCurrentTableId(id)
-        _selectionStateFlow.value = FoodSelectionState.Idle
+        runner.launch {
+            val preId = foodPreferences.getFoodTableId()
+            if(id == preId) return@launch
+            foodPreferences.saveFoodTableId(id)
+            selectionIdStateFlow.value = FoodSelectionIdState.Idle
+        }
     }
 
     fun createTable(name: String) {
-        runner.launch { createTableInternal(name) }
-    }
-
-    private suspend fun createTableInternal(name: String) {
-        val wasEmpty = tableListStateFlow.value.isEmpty()
-        val newId = foodTableRepository.insert(FoodTable(name = name))
-        if(wasEmpty) switchTable(newId) // 没有表格的时候，应该切换到这个新建的表格
-        repeat(3) {
-            foodRepository.insert(
-                Food(name = "", weight = 1, marked = true, tableId = newId)
-            )
-        }
-    }
-
-    fun renameTable(id: Long, newName: String) {
         runner.launch {
-            if (currentTableStateFlow.value == null) {
-                throw NoTableSelectedException()
+            val id = foodTableRepository.insert(FoodTable(name = name))
+            repeat(3) {
+                foodRepository.insert(
+                    Food(
+                        name = "",
+                        weight = 1,
+                        marked = true,
+                        tableId = id
+                    )
+                )
             }
-            val target = tableListStateFlow.value.find { it.id == id } ?: return@launch
-            foodTableRepository.update(target.copy(name = newName))
+            if(foodPreferences.getFoodTableId() == null) {
+                foodPreferences.saveFoodTableId(id)
+            }
         }
     }
 
-    fun deleteTable(id: Long) {
+    fun renameTable(name: String) {
+        runner.launch {
+            val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
+            foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
+            if(foodTableRepository.updateName(id, name) == 0) {
+                throw FoodTableNotFoundException(id)
+            }
+        }
+    }
+
+    fun deleteTable() {
         runner.launch(successMessage = "已删除表格") {
-            val list = tableListStateFlow.value
+            val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
+            foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
+            val tables = foodTableRepository.findAllOnce()
+
+            val index = tables.indexOfFirst { it.id == id }
+            if(index == -1) throw FoodTableNotFoundException(id)
 
             foodRepository.deleteByTableId(id)
-            foodTableRepository.deleteById(id)
+            if(foodTableRepository.deleteById(id) == 0)
+                throw FoodTableNotFoundException(id)
 
-            val currentTableId = foodPreferences.getFoodTableId()
-
-            if (currentTableId == id) { // 切换到剩余的表中
-
-                val index = list.indexOfFirst{ it.id == currentTableId }
-
-                val newId: Long? = when {
-                    index != -1 && index - 1 >= 0 -> list[index - 1].id
-                    index != -1 && index + 1 < list.size -> list[index + 1].id
-                    else -> null
-                }
-
-                saveCurrentTableId(newId)
-                resetSelection()
+            val newId: Long? = when {
+                index - 1 >= 0 -> tables[index - 1].id
+                index + 1 < tables.size -> tables[index + 1].id
+                else -> null
             }
 
+            saveCurrentTableId(newId)
+            selectionIdStateFlow.value = FoodSelectionIdState.Idle
         }
     }
 }

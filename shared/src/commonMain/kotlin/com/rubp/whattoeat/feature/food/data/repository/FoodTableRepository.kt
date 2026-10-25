@@ -36,9 +36,6 @@ class FoodTableRepository(
     suspend fun insert(table: FoodTable): Long =
         withDataAccess { dao.insert(table) }
 
-    suspend fun update(table: FoodTable): Int =
-        withDataAccess { dao.update(table) }
-
     suspend fun deleteById(id: Long): Int =
         withDataAccess { dao.deleteById(id) }
 

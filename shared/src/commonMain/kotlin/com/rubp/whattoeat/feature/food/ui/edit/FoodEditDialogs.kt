@@ -32,8 +32,8 @@ fun FoodEditDialogHandler(
     tableName: String,
     currentTable: FoodTable?,
     onCreateTable: (String) -> Unit,
-    onRenameTable: (Long, String) -> Unit,
-    onDeleteTable: (Long) -> Unit,
+    onRenameTable: (String) -> Unit,
+    onDeleteTable: () -> Unit,
     onDeleteFood: (Food) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -61,7 +61,7 @@ fun FoodEditDialogHandler(
                 initialText = tableName,
                 labelText = "新的表格名称",
                 onConfirm = { newName ->
-                    currentTable?.let { onRenameTable(it.id, newName) }
+                    currentTable?.let { onRenameTable(newName) }
                     onDismiss()
                 },
                 onDismiss = onDismiss
@@ -75,7 +75,7 @@ fun FoodEditDialogHandler(
                 message = "确认删除？",
                 isDestructive = true,
                 onConfirm = {
-                    currentTable?.id?.let { onDeleteTable(it) }
+                    onDeleteTable()
                     onDismiss()
                 },
                 onDismiss = onDismiss
