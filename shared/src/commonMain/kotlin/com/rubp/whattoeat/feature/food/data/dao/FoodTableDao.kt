@@ -19,6 +19,9 @@ interface FoodTableDao {
     @Query("SELECT * FROM food_table ORDER BY created_at ASC")
     fun findAll(): Flow<List<FoodTable>>
 
+    @Query("SELECT * FROM food_table ORDER BY created_at ASC")
+    suspend fun findAllOnce(): List<FoodTable>
+
     @Query("UPDATE food_table SET name = :name WHERE id = :id")
     suspend fun updateName(id: Long, name: String): Int
 
