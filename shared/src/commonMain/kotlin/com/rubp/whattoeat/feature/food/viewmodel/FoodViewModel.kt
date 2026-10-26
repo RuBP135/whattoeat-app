@@ -268,17 +268,12 @@ class FoodViewModel(
 
     /** name：新表格名称；调用方负责持锁。 */
     private suspend fun createTableInternal(name: String) {
-        val id = foodTableRepository.insert(FoodTable(name = name))
-        repeat(3) {
-            foodRepository.insert(
-                Food(
-                    name = "",
-                    weight = 1,
-                    marked = true,
-                    tableId = id
-                )
-            )
-        }
+        val id = foodTableRepository.insertWithFood(
+            table = FoodTable(name = name),
+            foods = List(3) {
+                Food(name = "", weight = 1, marked = true)
+            }
+        )
         if(foodPreferences.getFoodTableId() == null) {
             foodPreferences.saveFoodTableId(id)
         }

@@ -18,6 +18,9 @@ sealed class DataAccessException(
     }
 }
 
+/**
+ * 将原始异常进行包装
+ */
 suspend fun <T> withDataAccess(block: suspend () -> T) : T =
     try {
         block()

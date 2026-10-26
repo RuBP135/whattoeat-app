@@ -1,16 +1,23 @@
 package com.rubp.whattoeat.feature.food.data.repository
 
+import androidx.room.immediateTransaction
+import androidx.room.useWriterConnection
+import com.rubp.whattoeat.app.database.AppDatabase
 import com.rubp.whattoeat.core.data.exception.DataAccessException
 import com.rubp.whattoeat.core.data.exception.withDataAccess
 import com.rubp.whattoeat.core.model.ReadState
 import com.rubp.whattoeat.core.model.asReadState
+import com.rubp.whattoeat.feature.food.data.dao.FoodDao
 import com.rubp.whattoeat.feature.food.data.dao.FoodTableDao
+import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 
 class FoodTableRepository(
-    private val dao: FoodTableDao
+    private val dao: FoodTableDao,
+    private val foodDao: FoodDao,
+    private val database: AppDatabase
 ) {
     fun findById(id: Long): Flow<ReadState<FoodTable?>> =
         dao.findById(id)
@@ -39,4 +46,16 @@ class FoodTableRepository(
     suspend fun deleteById(id: Long): Int =
         withDataAccess { dao.deleteById(id) }
 
+    suspend fun insertWithFood(
+        table: FoodTable,
+        foods: List<Food>
+    ): Long = withDataAccess {
+        database.useWriterConnection { transactor ->
+            transactor.immediateTransaction {
+                val id = dao.insert(table)
+                foodDao.insertAll(foods.map { it.copy(tableId = id) })
+                id
+            }
+        }
+    }
 }

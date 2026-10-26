@@ -25,7 +25,11 @@ class AppContainer(
     private val foodTableDao = database.foodTableDao()
 
     private val foodRepository = FoodRepository(foodDao)
-    private val foodTableRepository = FoodTableRepository(foodTableDao)
+    private val foodTableRepository = FoodTableRepository(
+        dao = foodTableDao,
+        foodDao = foodDao,
+        database = database
+    )
     private val foodPreferences = FoodPreferences(settings)
 
 
