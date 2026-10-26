@@ -17,9 +17,6 @@ class FoodRepository(
             .catch { throw DataAccessException.wrapOrThrowCancellationException(it) }
             .asReadState()
 
-    /**
-     * viewModel需要获取foods快照用于逻辑判断时使用（一次性）
-     */
     suspend fun findByTableIdOnce(tableId: Long): List<Food> =
         withDataAccess { dao.findByTableIdOnce(tableId) }
 
@@ -35,14 +32,8 @@ class FoodRepository(
     suspend fun insert(food: Food): Long =
         withDataAccess { dao.insert(food) }
 
-    suspend fun insertAll(foods: List<Food>): List<Long> =
-        withDataAccess { dao.insertAll(foods) }
-
     suspend fun deleteById(id: Long): Int =
         withDataAccess { dao.deleteById(id) }
-
-    suspend fun deleteByTableId(tableId: Long): Int =
-        withDataAccess { dao.deleteByTableId(tableId) }
 
     suspend fun updateAllMarked(tableId: Long, marked: Boolean): Int =
         withDataAccess { dao.updateAllMarked(tableId, marked) }
