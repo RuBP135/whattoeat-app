@@ -214,10 +214,13 @@ class FoodViewModel(
             throw InvalidFoodTableJsonException()
         }
 
-        val id = foodTableRepository.insert(FoodTable(name = foodTableDto.name))
-        foodRepository.insertAll(foodTableDto.foodDtos.map {
-            Food(name = it.name, weight = it.weight, marked = true, tableId = id)
-        })
+        val id = foodTableRepository.insertWithFood(
+            table = FoodTable(name = foodTableDto.name),
+            foods = foodTableDto.foodDtos.map {
+                Food(name = it.name, weight = it.weight, marked = true)
+            }
+        )
+
         if(foodPreferences.getFoodTableId() == null) {
             foodPreferences.saveFoodTableId(id)
         }
