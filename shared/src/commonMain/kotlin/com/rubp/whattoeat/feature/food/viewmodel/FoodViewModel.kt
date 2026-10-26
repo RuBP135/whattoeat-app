@@ -112,8 +112,7 @@ class FoodViewModel(
 
 
     fun insertFood(food: Food) = launchLocked {
-        val id = foodPreferences.getFoodTableId() ?:throw NoTableSelectedException()
-        foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
+        val id = requireCurrentTableId()
         foodRepository.insert(food.copy(tableId = id)) // ui 层不提供 table_id，在这里补充。
     }
 
@@ -147,11 +146,9 @@ class FoodViewModel(
         }
     }
 
-    // 随机选择
 
     fun chosenRandomFood() = launchLocked {
-        val tableId = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
-        foodTableRepository.findByIdOnce(tableId) ?: throw NoTableSelectedException()
+        val tableId = requireCurrentTableId()
         val foods = foodRepository.findByTableIdOnce(tableId)
 
         val candidateList = foods.filter { food ->
@@ -179,8 +176,7 @@ class FoodViewModel(
     fun recoverAll() = launchLocked(
         successMessage = "已恢复所有被忽略的食物"
     ) {
-        val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
-        foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
+        val id = requireCurrentTableId()
         foodRepository.updateAllMarked(id, marked = true)
     }
 
@@ -221,13 +217,14 @@ class FoodViewModel(
             }
         )
 
-        if(foodPreferences.getFoodTableId() == null) {
+        if(getCurrentTableIdOrNull() == null) {
             foodPreferences.saveFoodTableId(id)
         }
     }
 
 
     fun switchTable(id: Long) = launchLocked {
+        foodTableRepository.findByIdOnce(id) ?: throw FoodTableNotFoundException(id)
         val preId = foodPreferences.getFoodTableId()
         if(id == preId) return@launchLocked
         foodPreferences.saveFoodTableId(id)
@@ -239,8 +236,7 @@ class FoodViewModel(
     }
 
     fun renameTable(name: String) = launchLocked {
-        val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
-        foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
+        val id = requireCurrentTableId()
         if(foodTableRepository.updateName(id, name) == 0) {
             throw FoodTableNotFoundException(id)
         }
@@ -249,8 +245,7 @@ class FoodViewModel(
     fun deleteTable() = launchLocked(
         successMessage = "已删除表格"
     ) {
-        val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
-        foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
+        val id = requireCurrentTableId()
         val tables = foodTableRepository.findAllOnce()
 
         val index = tables.indexOfFirst { it.id == id }
@@ -277,14 +272,24 @@ class FoodViewModel(
                 Food(name = "", weight = 1, marked = true)
             }
         )
-        if(foodPreferences.getFoodTableId() == null) {
+        if(getCurrentTableIdOrNull() == null) {
             foodPreferences.saveFoodTableId(id)
         }
     }
 
+    /** 获取有效的当前表格 ID，若无效则返回 null */
+    private suspend fun getCurrentTableIdOrNull(): Long? {
+        val id = foodPreferences.getFoodTableId() ?: return null
+        return foodTableRepository.findByIdOnce(id)?.id
+    }
+
+    /** 获取有效的当前表格 ID，若无效则抛出异常 */
+    private suspend fun requireCurrentTableId(): Long =
+        getCurrentTableIdOrNull() ?: throw NoTableSelectedException()
+
     private fun launchLocked(
-        successMessage: String? = null, // 成功提示；null 表示不提示。
-        action: suspend () -> Unit    // 持锁执行的完整业务操作。
+        successMessage: String? = null,
+        action: suspend () -> Unit
     ) = runner.launch(
         successMessage = successMessage
     ) {
