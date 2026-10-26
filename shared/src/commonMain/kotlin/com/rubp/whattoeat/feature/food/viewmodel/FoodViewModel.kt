@@ -264,7 +264,7 @@ class FoodViewModel(
         selectionIdStateFlow.value = FoodSelectionIdState.Idle
     }
 
-    /** name：新表格名称；调用方负责持锁。 */
+
     private suspend fun createTableInternal(name: String) {
         val id = foodTableRepository.insertWithFood(
             table = FoodTable(name = name),
@@ -277,13 +277,13 @@ class FoodViewModel(
         }
     }
 
-    /** 获取有效的当前表格 ID，若无效则返回 null */
+    /** 获取有效的当前表格 ID，无效返回 null */
     private suspend fun getCurrentTableIdOrNull(): Long? {
         val id = foodPreferences.getFoodTableId() ?: return null
         return foodTableRepository.findByIdOnce(id)?.id
     }
 
-    /** 获取有效的当前表格 ID，若无效则抛出异常 */
+    /** 获取有效的当前表格 ID，并且会在无效时抛出异常 */
     private suspend fun requireCurrentTableId(): Long =
         getCurrentTableIdOrNull() ?: throw NoTableSelectedException()
 
