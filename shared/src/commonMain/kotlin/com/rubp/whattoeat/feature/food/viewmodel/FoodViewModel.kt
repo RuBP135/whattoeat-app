@@ -193,10 +193,6 @@ class FoodViewModel(
 
 
     // table
-    private fun saveCurrentTableId(id: Long?) {
-        foodPreferences.saveFoodTableId(id)
-    }
-
     fun exportTable(
         onExport: suspend (String) -> Unit
     ) = launchLocked(
@@ -239,24 +235,6 @@ class FoodViewModel(
         createTableInternal(name)
     }
 
-    /** name：新表格名称；调用方负责持锁。 */
-    private suspend fun createTableInternal(name: String) {
-        val id = foodTableRepository.insert(FoodTable(name = name))
-        repeat(3) {
-            foodRepository.insert(
-                Food(
-                    name = "",
-                    weight = 1,
-                    marked = true,
-                    tableId = id
-                )
-            )
-        }
-        if(foodPreferences.getFoodTableId() == null) {
-            foodPreferences.saveFoodTableId(id)
-        }
-    }
-
     fun renameTable(name: String) = launchLocked {
         val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
         foodTableRepository.findByIdOnce(id) ?: throw NoTableSelectedException()
@@ -284,8 +262,26 @@ class FoodViewModel(
             else -> null
         }
 
-        saveCurrentTableId(newId)
+        foodPreferences.saveFoodTableId(newId)
         selectionIdStateFlow.value = FoodSelectionIdState.Idle
+    }
+
+    /** name：新表格名称；调用方负责持锁。 */
+    private suspend fun createTableInternal(name: String) {
+        val id = foodTableRepository.insert(FoodTable(name = name))
+        repeat(3) {
+            foodRepository.insert(
+                Food(
+                    name = "",
+                    weight = 1,
+                    marked = true,
+                    tableId = id
+                )
+            )
+        }
+        if(foodPreferences.getFoodTableId() == null) {
+            foodPreferences.saveFoodTableId(id)
+        }
     }
 
     private fun launchLocked(
