@@ -282,7 +282,6 @@ class FoodViewModel(
             val index = tables.indexOfFirst { it.id == id }
             if(index == -1) throw FoodTableNotFoundException(id)
 
-            foodRepository.deleteByTableId(id)
             if(foodTableRepository.deleteById(id) == 0)
                 throw FoodTableNotFoundException(id)
 
