@@ -20,7 +20,16 @@ import coil3.compose.AsyncImage
 import whattoeat.shared.generated.resources.Res
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.button.ElegantButton
+import org.jetbrains.compose.resources.stringResource
 import whattoeat.shared.generated.resources.moba
+import whattoeat.shared.generated.resources.other_click_10
+import whattoeat.shared.generated.resources.other_click_15
+import whattoeat.shared.generated.resources.other_click_25
+import whattoeat.shared.generated.resources.other_click_5
+import whattoeat.shared.generated.resources.other_empty
+import whattoeat.shared.generated.resources.other_title
+import whattoeat.shared.generated.resources.other_what
+
 
 @Composable
 fun OtherScreen (
@@ -30,7 +39,7 @@ fun OtherScreen (
         topBar = {
             WteTopBar(
                 onClickReturn = onReturnToHome,
-                title = "其他"
+                title = stringResource(Res.string.other_title)
             )
         }
     ) { paddingValues ->
@@ -43,27 +52,26 @@ fun OtherScreen (
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             var cnt by remember { mutableStateOf(0) }
-            var text by remember { mutableStateOf("这里什么都没有") }
 
-            if(cnt in 5..<10) text = "为何你还在点击"
-            else if(cnt < 15) text = "真什么都没有"
-            else if(cnt < 25) text = "已经到头了，确实什么都没有"
-            else text = "你赢了，必须moba！"
-
+            val text = when {
+                cnt < 5 -> stringResource(Res.string.other_empty)
+                cnt < 10 -> stringResource(Res.string.other_click_5)
+                cnt < 15 -> stringResource(Res.string.other_click_10)
+                cnt < 25 -> stringResource(Res.string.other_click_15)
+                else -> stringResource(Res.string.other_click_25)
+            }
 
             Text(
                 text = text,
                 style = MaterialTheme.typography.titleLarge
             )
 
-
             ElegantButton(
-                text = "这是什么？"
+                text = stringResource(Res.string.other_what)
             ) {
                 ++cnt
             }
-
-            if(cnt >= 25){
+            if(cnt >= 25) {
                 AsyncImage(
                     model = Res.drawable.moba,
                     contentDescription = "moba"

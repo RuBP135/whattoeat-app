@@ -32,7 +32,16 @@ import com.rubp.whattoeat.core.theme.WteTheme
 import org.jetbrains.compose.resources.painterResource
 import whattoeat.shared.generated.resources.Res
 import whattoeat.shared.generated.resources.what_to_eat_wordmark
-
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.home_other_subtitle
+import whattoeat.shared.generated.resources.home_other_title
+import whattoeat.shared.generated.resources.home_speed_subtitle
+import whattoeat.shared.generated.resources.home_speed_title
+import whattoeat.shared.generated.resources.home_start
+import whattoeat.shared.generated.resources.home_subtitle
+import whattoeat.shared.generated.resources.home_title
+import whattoeat.shared.generated.resources.home_websites_subtitle
+import whattoeat.shared.generated.resources.home_websites_title
 
 @Composable
 fun HomeScreen(
@@ -92,7 +101,7 @@ private fun PrimaryActionCard(onClick: () -> Unit) {
             .fillMaxWidth()
     ) {
         Text(
-            text = "今天吃什么",
+            text = stringResource(Res.string.home_title),
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineSmall,
@@ -100,14 +109,14 @@ private fun PrimaryActionCard(onClick: () -> Unit) {
             textAlign = TextAlign.Center
         )
         Text(
-            text = "从当前清单中随机抽取一项",
+            text = stringResource(Res.string.home_subtitle),
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )
         WtePrimaryButton(
-            text = "开始抽取",
+            text = stringResource(Res.string.home_start),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
@@ -135,22 +144,22 @@ private fun SecondaryActionsCard(
             .fillMaxWidth()
     ) {
         CardButton(
-            title = "实用网站",
-            subtitle = "查看常用服务与工具入口",
+            title = stringResource(Res.string.home_websites_title),
+            subtitle = stringResource(Res.string.home_websites_subtitle),
             modifier = Modifier.fillMaxWidth(),
             onClick = onNavigateToPracticalWebsite
         )
         HorizontalDivider(color = WteTheme.extendedColors.paperInnerLine)
         CardButton(
-            title = "测网速",
-            subtitle = "检查当前校园网络速度",
+            title = stringResource(Res.string.home_speed_title),
+            subtitle = stringResource(Res.string.home_speed_subtitle),
             modifier = Modifier.fillMaxWidth(),
             onClick = onOpenSpeedTest
         )
         HorizontalDivider(color = WteTheme.extendedColors.paperInnerLine)
         CardButton(
-            title = "其他",
-            subtitle = "查看其他功能",
+            title = stringResource(Res.string.home_other_title),
+            subtitle = stringResource(Res.string.home_other_subtitle),
             modifier = Modifier.fillMaxWidth(),
             onClick = onNavigateToOther
         )

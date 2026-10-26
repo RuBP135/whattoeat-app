@@ -18,14 +18,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
 import com.rubp.whattoeat.core.components.WteTopBar
 import com.rubp.whattoeat.core.components.button.CardButton
 import androidx.compose.foundation.lazy.items
 import com.rubp.whattoeat.feature.websites.model.practicalWebsites
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.websites_title
+import whattoeat.shared.generated.resources.Res
 @Composable
 fun PracticalWebsiteScreen(
     onReturnToHome: () -> Unit
@@ -34,7 +35,7 @@ fun PracticalWebsiteScreen(
         topBar = {
             WteTopBar(
                 onClickReturn = onReturnToHome,
-                title = "实用网站"
+                title = stringResource(Res.string.websites_title)
             )
         }
     ) { paddingValues ->
@@ -44,6 +45,7 @@ fun PracticalWebsiteScreen(
             .height(75.dp)
         val uriHandler = LocalUriHandler.current
         val iconModifier = Modifier.size(36.dp)
+        val websites = practicalWebsites()
 
         LazyColumn(
             modifier = Modifier
@@ -54,7 +56,7 @@ fun PracticalWebsiteScreen(
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            items(practicalWebsites) { item ->
+            items(websites){ item ->
                 CardButton(
                     title = item.title,
                     subtitle = item.subtitle,
