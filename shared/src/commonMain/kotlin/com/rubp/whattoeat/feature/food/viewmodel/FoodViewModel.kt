@@ -22,10 +22,12 @@ import com.rubp.whattoeat.feature.food.model.FoodDataState
 import com.rubp.whattoeat.feature.food.model.FoodSelectionIdState
 import com.rubp.whattoeat.feature.food.model.FoodSelectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
@@ -48,54 +50,17 @@ class FoodViewModel(
         onError = feedback::showError
     )
 
-    private val selectionIdStateFlow: MutableStateFlow<FoodSelectionIdState> = MutableStateFlow(FoodSelectionIdState.Idle)
+    private val selectionIdStateFlow: MutableStateFlow<FoodSelectionIdState> =
+        MutableStateFlow(FoodSelectionIdState.Idle)
+
+    private val retryTrigger = MutableStateFlow(0)
 
     /**
      * 仅用于渲染 ui
      */
-    val foodDataStateFlow =
-        combine(
-            foodTableRepository.findAll(),
-            foodPreferences.foodTableIdFlow
-        ) { tables, currentTableId ->
-            tables to currentTableId
-        }.transformLatest { (tables, currentTableId) ->
-            when(tables) {
-                is ReadState.Loading -> emit(FoodDataState.Loading)
-                is ReadState.Error -> emit(FoodDataState.Error(tables.exception))
-                is ReadState.Success -> {
-                    val currentTable = tables.data.firstOrNull {
-                        it.id == currentTableId
-                    }
-
-                    if(currentTable == null) emit(
-                        FoodDataState.NoTableSelected(tables.data)
-                    ) else emitAll(
-                        combine(
-                            foodRepository.findByTableId(currentTable.id),
-                            selectionIdStateFlow
-                        ) { foods, idState ->
-                            when(foods){
-                                is ReadState.Loading -> FoodDataState.Loading
-                                is ReadState.Error -> FoodDataState.Error(foods.exception)
-                                is ReadState.Success -> FoodDataState.Selected(
-                                    tables = tables.data,
-                                    currentTable = currentTable,
-                                    foods = foods.data,
-                                    selectionState = when(idState) {
-                                        is FoodSelectionIdState.Idle -> FoodSelectionState.Idle
-                                        is FoodSelectionIdState.NoAvailableFood -> FoodSelectionState.NoAvailableFood
-                                        is FoodSelectionIdState.Chosen -> foods.data.find { it.id == idState.id }?.let {
-                                            FoodSelectionState.Chosen(it)
-                                        } ?: FoodSelectionState.Idle
-                                    }
-                                )
-                            }
-                        }
-                    )
-                }
-            }
-        }.stateIn(
+    val foodDataStateFlow = retryTrigger
+        .flatMapLatest { createFoodDataFlow() }
+        .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
             initialValue = FoodDataState.Loading
@@ -110,6 +75,10 @@ class FoodViewModel(
         }
     }
 
+
+    fun retry() {
+        retryTrigger.update { it + 1 }
+    }
 
     fun insertFood(food: Food) = launchLocked {
         val id = requireCurrentTableId()
@@ -264,6 +233,55 @@ class FoodViewModel(
         selectionIdStateFlow.value = FoodSelectionIdState.Idle
     }
 
+
+    private fun createFoodDataFlow(): Flow<FoodDataState> =
+        combine(
+            foodTableRepository.findAll(),
+            foodPreferences.foodTableIdFlow
+        ) { tables, currentTableId ->
+            tables to currentTableId
+        }.transformLatest { (tables, currentTableId) ->
+            when(tables) {
+                is ReadState.Loading -> emit(FoodDataState.Loading)
+                is ReadState.Error -> emit(FoodDataState.Error(tables.exception))
+                is ReadState.Success -> {
+                    val currentTable = tables.data.firstOrNull { it.id == currentTableId }
+                    if(currentTable == null) emit(
+                        FoodDataState.NoTableSelected(tables.data)
+                    ) else emitAll(observeTableFoods(tables.data, currentTable))
+                }
+            }
+        }
+
+    private fun observeTableFoods(
+        tables: List<FoodTable>,
+        currentTable: FoodTable
+    ): Flow<FoodDataState> = combine(
+        foodRepository.findByTableId(currentTable.id),
+        selectionIdStateFlow
+    ) { foods, idState ->
+        when(foods) {
+            is ReadState.Loading -> FoodDataState.Loading
+            is ReadState.Error -> FoodDataState.Error(foods.exception)
+            is ReadState.Success -> FoodDataState.Selected(
+                tables = tables,
+                currentTable = currentTable,
+                foods = foods.data,
+                selectionState = resolveSelectionState(foods.data, idState)
+            )
+        }
+    }
+
+    private fun resolveSelectionState(
+        foods: List<Food>,
+        idState: FoodSelectionIdState
+    ): FoodSelectionState = when(idState) {
+        is FoodSelectionIdState.Idle -> FoodSelectionState.Idle
+        is FoodSelectionIdState.NoAvailableFood -> FoodSelectionState.NoAvailableFood
+        is FoodSelectionIdState.Chosen -> foods.find { it.id == idState.id }?.let {
+            FoodSelectionState.Chosen(it)
+        } ?: FoodSelectionState.Idle
+    }
 
     private suspend fun createTableInternal(name: String) {
         val id = foodTableRepository.insertWithFood(
