@@ -41,6 +41,23 @@ import com.rubp.whattoeat.feature.food.domain.foodTableToJson
 import com.rubp.whattoeat.feature.food.domain.jsonToFoodTableDto
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import kotlinx.serialization.SerializationException
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.common_save
+import whattoeat.shared.generated.resources.food_edit_add_dish
+import whattoeat.shared.generated.resources.food_edit_delete_table
+import whattoeat.shared.generated.resources.food_edit_export_table
+import whattoeat.shared.generated.resources.food_edit_help
+import whattoeat.shared.generated.resources.food_edit_import_table
+import whattoeat.shared.generated.resources.food_edit_msg_exported
+import whattoeat.shared.generated.resources.food_edit_msg_imported
+import whattoeat.shared.generated.resources.food_edit_msg_json_error
+import whattoeat.shared.generated.resources.food_edit_msg_no_data
+import whattoeat.shared.generated.resources.food_edit_msg_no_table
+import whattoeat.shared.generated.resources.food_edit_msg_table_deleted
+import whattoeat.shared.generated.resources.food_edit_new_table
+import whattoeat.shared.generated.resources.food_edit_rename_table
+import whattoeat.shared.generated.resources.food_edit_title
 
 @Composable
 fun FoodEditScreen(
@@ -95,45 +112,63 @@ private fun FoodEditContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val wteSnackbarController = rememberWteSnackbarController(snackbarHostState)
     val clipboardManager = LocalClipboardManager.current
+    val msgNoData = stringResource(Res.string.food_edit_msg_no_data)
+    val msgImported = stringResource(Res.string.food_edit_msg_imported)
+    val msgJsonError = stringResource(Res.string.food_edit_msg_json_error)
+    val msgNoTable = stringResource(Res.string.food_edit_msg_no_table)
+    val msgExported = stringResource(Res.string.food_edit_msg_exported)
+    val msgTableDeleted = stringResource(Res.string.food_edit_msg_table_deleted)
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            WteTopBar(onReturnToEat, "编辑清单"){ closeMenu ->
-                MenuButton("新建表格"){ closeMenu(); editDialogState = EditDialogState.CreateTable }
+            WteTopBar(onReturnToEat, stringResource(Res.string.food_edit_title)){ closeMenu ->
+                MenuButton(stringResource(Res.string.food_edit_new_table)){
+                    closeMenu();
+                    editDialogState = EditDialogState.CreateTable
+                }
                 HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("重命名表格"){ closeMenu(); editDialogState = EditDialogState.RenameTable }
+                MenuButton(stringResource(Res.string.food_edit_rename_table)){
+                    closeMenu();
+                    editDialogState = EditDialogState.RenameTable
+                }
                 HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("删除表格"){ closeMenu(); editDialogState = EditDialogState.DeleteTable }
+                MenuButton(stringResource(Res.string.food_edit_delete_table)){
+                    closeMenu();
+                    editDialogState = EditDialogState.DeleteTable
+                }
                 HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("导入表格"){
+                MenuButton(stringResource(Res.string.food_edit_import_table)){
                     closeMenu()
                     try {
                         val input = clipboardManager.getText()?.text
                         if(input == null){
-                            wteSnackbarController.showSnackbar("未获取到表格数据")
+                            wteSnackbarController.showSnackbar(msgNoData)
                             return@MenuButton
                         }
                         val foodTableDto = jsonToFoodTableDto(input)
                         onImportFoodAndTable(foodTableDto)
-                        wteSnackbarController.showSnackbar("已导入表格")
+                        wteSnackbarController.showSnackbar(msgImported)
                     } catch(e: SerializationException){
                         e.printStackTrace()
-                        wteSnackbarController.showSnackbar("json格式错误")
+                        wteSnackbarController.showSnackbar(msgJsonError)
                     }
                 }
                 HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("导出表格"){
+                MenuButton(stringResource(Res.string.food_edit_export_table)){
                     closeMenu()
                     if(currentTable == null){
-                        wteSnackbarController.showSnackbar("当前没有选中表格")
+                        wteSnackbarController.showSnackbar(msgNoTable)
                     } else {
                         clipboardManager.setText(AnnotatedString(foodTableToJson(currentTable, foods)))
-                        wteSnackbarController.showSnackbar("已导出json至剪贴板")
+                        wteSnackbarController.showSnackbar(msgExported)
                     }
                 }
                 HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("帮助"){ closeMenu(); editDialogState = EditDialogState.Help }
+                MenuButton(stringResource(Res.string.food_edit_help)){
+                    closeMenu();
+                    editDialogState = EditDialogState.Help
+                }
             }
         },
         snackbarHost = {
@@ -193,13 +228,13 @@ private fun FoodEditContent(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
             ){
                 WtePrimaryButton(
-                    text = "添加新菜品",
+                    stringResource(Res.string.food_edit_add_dish),
                     modifier = Modifier
                         .weight(2f)
                         .height(48.dp)
                 ) { onAddFood() }
                 WteSecondaryButton(
-                    text = "保存",
+                    text = stringResource(Res.string.common_save),
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -216,7 +251,7 @@ private fun FoodEditContent(
         onRenameTable = onRenameTable,
         onDeleteTable = {
             onDeleteTable(it)
-            wteSnackbarController.showSnackbar("已删除表格")
+            wteSnackbarController.showSnackbar(msgTableDeleted)
         },
         onDeleteFood = onDeleteFood,
         onDismiss = { editDialogState = EditDialogState.None }

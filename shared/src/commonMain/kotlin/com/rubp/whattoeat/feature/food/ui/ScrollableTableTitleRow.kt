@@ -10,6 +10,9 @@ import androidx.compose.ui.Modifier
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Add
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.food_table_add
 
 @Composable
 fun ScrollableTableTitleRow(
@@ -37,10 +40,11 @@ fun ScrollableTableTitleRow(
             selected = tables.isEmpty(),
             onClick = onAddTable,
             text = {
-                Text("添加表格", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(Res.string.food_table_add),
+                    style = MaterialTheme.typography.titleSmall)
             },
             icon = {
-                Icon(MaterialIcons.Filled.Add, contentDescription = "添加表格")
+                Icon(MaterialIcons.Filled.Add, contentDescription = stringResource(Res.string.food_table_add))
             }
         )
     }
