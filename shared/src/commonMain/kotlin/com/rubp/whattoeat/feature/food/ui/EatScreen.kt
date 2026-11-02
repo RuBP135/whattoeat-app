@@ -43,6 +43,18 @@ import com.rubp.whattoeat.core.components.snackbar.rememberWteSnackbarController
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.eat_clear
+import whattoeat.shared.generated.resources.eat_edit
+import whattoeat.shared.generated.resources.eat_empty
+import whattoeat.shared.generated.resources.eat_ignore
+import whattoeat.shared.generated.resources.eat_msg_cleared
+import whattoeat.shared.generated.resources.eat_msg_ignored
+import whattoeat.shared.generated.resources.eat_msg_restored
+import whattoeat.shared.generated.resources.eat_placeholder
+import whattoeat.shared.generated.resources.eat_query
+import whattoeat.shared.generated.resources.eat_restore_all
 
 @Composable
 fun EatScreen(
@@ -52,13 +64,18 @@ fun EatScreen(
 ) {
     val tables by foodViewModel.tables.collectAsState()
     val currentTable by foodViewModel.currentTable.collectAsState()
-    var foodName by remember { mutableStateOf("点击查询今天吃什么") }
+    val placeholder = stringResource(Res.string.eat_placeholder)
+    val emptyText = stringResource(Res.string.eat_empty)
+    val msgCleared = stringResource(Res.string.eat_msg_cleared)
+    val msgIgnored = stringResource(Res.string.eat_msg_ignored)
+    val msgRestored = stringResource(Res.string.eat_msg_restored)
+    var foodName by remember { mutableStateOf<String?>(null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val wteSnackbarController = rememberWteSnackbarController(snackbarHostState)
 
     EatContent(
-        foodName = foodName,
+        foodName = foodName ?: placeholder,
         tables = tables,
         currentTable = currentTable,
         snackbarHostState = snackbarHostState,
@@ -66,20 +83,20 @@ fun EatScreen(
         onReturnToHome = onReturnToHome,
         onTableSelected = { tableId ->
             foodViewModel.switchTable(tableId)
-            foodName = "点击查询今天吃什么"
+            foodName = null
         },
-        onClickRandomFood = { foodName = foodViewModel.chosenRandomFood() },
+        onClickRandomFood = { foodName = foodViewModel.chosenRandomFood()?.name ?: emptyText },
         onClickClear = {
-            foodName = "点击查询今天吃什么"
-            wteSnackbarController.showSnackbar("已清除当前选择")
+            foodName = null
+            wteSnackbarController.showSnackbar(msgCleared)
         },
         onClickIgnore = {
             foodViewModel.ignoreChosenFood()
-            wteSnackbarController.showSnackbar("已忽略当前选择食物")
+            wteSnackbarController.showSnackbar(msgIgnored)
         },
         onClickClearIgnore = {
             foodViewModel.clearAllIgnore()
-            wteSnackbarController.showSnackbar("已恢复所有被忽略的食物")
+            wteSnackbarController.showSnackbar(msgRestored)
         }
     )
 }
@@ -147,37 +164,37 @@ private fun EatContent(
                         .height(height)
 
                     WtePrimaryButton(
-                        text = "查询",
+                        text = stringResource(Res.string.eat_query),
                         modifier = modifier,
                         onClick = onClickRandomFood
                     )
                     CardButton(
-                        text = "清除",
+                        text = stringResource(Res.string.eat_clear),
                         modifier = modifier,
                         icon = {
                             Icon(
                                 imageVector = MaterialIcons.Filled.Clear,
-                                contentDescription = "清除"
+                                contentDescription = stringResource(Res.string.eat_clear)
                             )
                         }
                     ) { onClickClear() }
                     CardButton(
-                        text = "忽略",
+                        text = stringResource(Res.string.eat_ignore),
                         modifier = modifier,
                         icon = {
                             Icon(
                                 imageVector = MaterialIcons.Filled.Block,
-                                contentDescription = "忽略"
+                                contentDescription = stringResource(Res.string.eat_ignore)
                             )
                         }
                     ) { onClickIgnore() }
                     CardButton(
-                        text = "恢复全部",
+                        text = stringResource(Res.string.eat_restore_all),
                         modifier = modifier,
                         icon = {
                             Icon(
                                 imageVector = MaterialIcons.Filled.Clear_all,
-                                contentDescription = "恢复全部"
+                                contentDescription = stringResource(Res.string.eat_restore_all)
                             )
                         }
                     ) { onClickClearIgnore() }
@@ -201,7 +218,7 @@ private fun EatContent(
             ) {
                 Icon(
                     imageVector = MaterialIcons.Filled.Edit,
-                    contentDescription = "编辑"
+                    contentDescription = stringResource(Res.string.eat_edit)
                 )
             }
         }

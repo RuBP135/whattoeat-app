@@ -125,15 +125,14 @@ class FoodViewModel(
 
     // 随机选择
 
-    fun chosenRandomFood(): String {
+    fun chosenRandomFood(): Food? {
         val foodList = foods.value.filter { food ->
             food.marked && food.weight > 0 && food.name.isNotEmpty()
         }
 
         chosenFood = selectFood(foodList, chosenFood)
-        return chosenFood?.name ?: "没有可供选择的食物！"
+        return chosenFood
     }
-
     fun ignoreChosenFood() {
         chosenFood?.let {
             update(it.copy(marked = false))
