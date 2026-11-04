@@ -14,6 +14,8 @@ val WteCocoa = Color(0xFF32180F)
 val WteMutedPeach = Color(0xFFD9A885)
 
 val WteLightBackground = Color(0xFFFFF4ED)
+val WteLightSurfaceLowest = Color(0xFFFFFCF7)
+val WteLightSurfaceHigh = Color(0xFFFBECE2)
 val WteLightSurfaceVariant = Color(0xFFF3DED2)
 
 val WteDarkBackground = Color(0xFF1F120D)
