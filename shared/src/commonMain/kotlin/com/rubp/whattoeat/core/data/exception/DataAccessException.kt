@@ -11,9 +11,11 @@ sealed class DataAccessException(
     companion object {
         fun wrapOrThrowCancellationException(cause: Throwable): DataAccessException =
             when(cause) {
-                is CancellationException -> throw cause
+                is CancellationException -> throw cause // 协程取消
+                is DataAccessException -> cause
                 is SQLiteException -> DatabaseException(cause = cause)
-                else -> DataAccessUnknownException(cause = cause)
+                is Exception -> DataAccessUnknownException(cause = cause)
+                else -> throw cause // Error等
             }
     }
 }
