@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,7 +31,7 @@ import com.rubp.whattoeat.core.theme.WteTheme
  */
 @Composable
 fun WtePaperCard(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(6.dp),
     content: @Composable ColumnScope.() -> Unit
 ){
@@ -77,8 +80,15 @@ private fun WtePaperCardPreview(){
     WhatToEatPreviewTheme{
         WtePaperCard(
             modifier = Modifier
-                .width(100.dp)
-                .height(60.dp)
-        ) {}
+                .width(200.dp)
+                .height(120.dp)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("这是一段文字")
+            }
+        }
     }
 }
