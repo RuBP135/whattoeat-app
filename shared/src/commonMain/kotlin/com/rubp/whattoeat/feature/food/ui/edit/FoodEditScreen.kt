@@ -108,15 +108,15 @@ private fun FoodEditContent(
     onInputName: (Food, String) -> Unit,
     onInputWeight: (Food, Int) -> Unit
 ) {
-    val selected = state as? FoodDataState.Selected
-    val foods = selected?.foods ?: emptyList()
-    val tables = when (val state = state) {
+    val tables = when (state) {
         is FoodDataState.Selected -> state.tables
         is FoodDataState.NoTableSelected -> state.tables
         is FoodDataState.Loading -> emptyList()
         is FoodDataState.Error -> emptyList()
     }
+    val selected = state as? FoodDataState.Selected
     val currentTable = selected?.currentTable
+    val foods = selected?.foods ?: emptyList()
     val isError = state is FoodDataState.Error
     var editDialogState: EditDialogState by remember(isError) { mutableStateOf(EditDialogState.None) }
     val tableName = currentTable?.name ?: ""
