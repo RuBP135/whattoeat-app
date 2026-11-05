@@ -123,6 +123,8 @@ data class WteExtendedColors(
     val paper: Color,
     val paperBorder: Color,
     val paperInnerLine: Color,
+    val placeholderBackground: Color,
+    val placeholderSwapLine: Color,
     val patternLine: Color,
     val offsetShadow: Color,
     val decorativeCoral: Color
@@ -133,6 +135,8 @@ private val LightExtendedColors = WteExtendedColors(
     paper = WteCream,
     paperBorder = WteCaramel.copy(alpha = 0.55f),
     paperInnerLine = WteMutedPeach,
+    placeholderBackground = WteLightSurfaceHigh,
+    placeholderSwapLine = WteCream,
     patternLine = WteMutedPeach,
     offsetShadow = WteMutedPeach.copy(alpha = 0.55f),
     decorativeCoral = WteCoral
@@ -143,6 +147,8 @@ private val DarkExtendedColors = WteExtendedColors(
     paper = WteDarkSurface,
     paperBorder = WteDarkOutline.copy(alpha = 0.55f),
     paperInnerLine = WteCaramel,
+    placeholderBackground = WteDarkSurfaceHigh,
+    placeholderSwapLine = WteDarkSurface,
     patternLine = WteCaramel,
     offsetShadow = WteDarkShadow,
     decorativeCoral = WteOrangeSoft
