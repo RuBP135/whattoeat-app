@@ -74,8 +74,8 @@ fun WteSecondaryButton(
     WteButtonBase(
         text = text,
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         onClick = onClick
     )
 }
