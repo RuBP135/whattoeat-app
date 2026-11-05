@@ -30,6 +30,7 @@ import com.rubp.whattoeat.core.ui.components.WteTopBar
 import com.rubp.whattoeat.core.ui.components.button.MenuButton
 import com.rubp.whattoeat.core.ui.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.ui.components.button.WteSecondaryButton
+import com.rubp.whattoeat.core.ui.components.state.WteErrorPanel
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.ui.feedback.LocalUiFeedback
 import com.rubp.whattoeat.core.ui.task.UiTaskRunner
@@ -37,6 +38,7 @@ import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.domain.exception.NoClipboardTableDataException
 import com.rubp.whattoeat.feature.food.model.FoodDataState
+import com.rubp.whattoeat.feature.food.model.FoodSelectionState
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 
 @Composable
@@ -46,14 +48,6 @@ fun FoodEditScreen(
     onReturnToFoodChoose: () -> Unit
 ) {
     val state by foodViewModel.foodDataStateFlow.collectAsState()
-    val selected = state as? FoodDataState.Selected
-    val foods = selected?.foods ?: emptyList()
-    val tables = when (val state = state) {
-        is FoodDataState.Selected -> state.tables
-        is FoodDataState.NoTableSelected -> state.tables
-        else -> emptyList()
-    }
-    val currentTable = selected?.currentTable
     val feedback = LocalUiFeedback.current
     val scope = rememberCoroutineScope()
     val runner = remember(scope, feedback) {
@@ -67,9 +61,8 @@ fun FoodEditScreen(
 
     FoodEditContent(
         modifier = modifier,
-        foods = foods,
-        tables = tables,
-        currentTable = currentTable,
+        state = state,
+        retry = foodViewModel::retry,
         onReturnToFoodChoose = onReturnToFoodChoose,
         onTableSelected = foodViewModel::switchTable,
         onRenameTable = { newName -> foodViewModel.renameTable(newName) },
@@ -100,9 +93,8 @@ fun FoodEditScreen(
 @Composable
 private fun FoodEditContent(
     modifier: Modifier = Modifier,
-    foods: List<Food>,
-    tables: List<FoodTable>,
-    currentTable: FoodTable?,
+    state: FoodDataState,
+    retry: () -> Unit,
     onReturnToFoodChoose: () -> Unit,
     onTableSelected: (Long) -> Unit,
     onRenameTable: (String) -> Unit,
@@ -116,88 +108,114 @@ private fun FoodEditContent(
     onInputName: (Food, String) -> Unit,
     onInputWeight: (Food, Int) -> Unit
 ) {
-    var editDialogState: EditDialogState by remember { mutableStateOf(EditDialogState.None) }
+    val selected = state as? FoodDataState.Selected
+    val foods = selected?.foods ?: emptyList()
+    val tables = when (val state = state) {
+        is FoodDataState.Selected -> state.tables
+        is FoodDataState.NoTableSelected -> state.tables
+        is FoodDataState.Loading -> emptyList()
+        is FoodDataState.Error -> emptyList()
+    }
+    val currentTable = selected?.currentTable
+    val isError = state is FoodDataState.Error
+    var editDialogState: EditDialogState by remember(isError) { mutableStateOf(EditDialogState.None) }
     val tableName = currentTable?.name ?: ""
 
     Scaffold(
         modifier = modifier,
         topBar = {
             WteTopBar(onReturnToFoodChoose, "编辑清单"){ closeMenu ->
-                MenuButton("新建表格"){ closeMenu(); editDialogState = EditDialogState.CreateTable }
-                HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("重命名表格"){ closeMenu(); editDialogState = EditDialogState.RenameTable }
-                HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("删除表格"){ closeMenu(); editDialogState = EditDialogState.DeleteTable }
-                HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("导入表格"){ closeMenu(); onImportTable() }
-                HorizontalDivider(thickness = Dp.Hairline)
-                MenuButton("导出表格"){ closeMenu(); onExportTable() }
-                HorizontalDivider(thickness = Dp.Hairline)
+                if (!isError) {
+                    MenuButton("新建表格"){ closeMenu(); editDialogState = EditDialogState.CreateTable }
+                    HorizontalDivider(thickness = Dp.Hairline)
+                    MenuButton("重命名表格"){ closeMenu(); editDialogState = EditDialogState.RenameTable }
+                    HorizontalDivider(thickness = Dp.Hairline)
+                    MenuButton("删除表格"){ closeMenu(); editDialogState = EditDialogState.DeleteTable }
+                    HorizontalDivider(thickness = Dp.Hairline)
+                    MenuButton("导入表格"){ closeMenu(); onImportTable() }
+                    HorizontalDivider(thickness = Dp.Hairline)
+                    MenuButton("导出表格"){ closeMenu(); onExportTable() }
+                    HorizontalDivider(thickness = Dp.Hairline)
+                }
                 MenuButton("帮助"){ closeMenu(); editDialogState = EditDialogState.Help }
             }
         },
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 32.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-
-            // 表格标题
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(72.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Text(
-                    text = tableName,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
+            if (isError) {
+                WteErrorPanel(
+                    message = "TAT，遇到了一点错误...",
+                    modifier = Modifier.align(Alignment.Center),
+                    retry = retry
                 )
+                return@Box
             }
 
-            // 滚动标题栏（切换表格）
-            ScrollableTableTitleRow(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                selectedTableId = currentTable?.id ?: -1L,
-                tables = tables,
-                onTableSelected = onTableSelected,
-                onAddTable = { editDialogState = EditDialogState.CreateTable } // 拉出创建对话框
-            )
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
 
-            // 编辑表
-            FoodEditTable(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                foods = foods,
-                onClickStar = onClickStar,
-                onInputName = onInputName,
-                onInputWeight = onInputWeight,
-                onClickDelFood = { editDialogState = EditDialogState.DeleteFood(it) },
-            )
+                // 表格标题
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(72.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = tableName,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
 
-            // 底部按钮
-            Row(
-                modifier = Modifier.padding(top = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-            ){
-                WtePrimaryButton(
-                    text = "添加新菜品",
+                // 滚动标题栏（切换表格）
+                ScrollableTableTitleRow(
                     modifier = Modifier
-                        .weight(2f)
-                        .height(48.dp)
-                ) { onAddFood() }
-                WteSecondaryButton(
-                    text = "保存",
+                        .fillMaxWidth(),
+                    selectedTableId = currentTable?.id,
+                    tables = tables,
+                    onTableSelected = onTableSelected,
+                    onAddTable = { editDialogState = EditDialogState.CreateTable } // 拉出创建对话框
+                )
+
+                // 编辑表
+                FoodEditTable(
                     modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                ) {}
+                        .fillMaxWidth()
+                        .weight(1f),
+                    foods = foods,
+                    onClickStar = onClickStar,
+                    onInputName = onInputName,
+                    onInputWeight = onInputWeight,
+                    onClickDelFood = { editDialogState = EditDialogState.DeleteFood(it) },
+                )
+
+                // 底部按钮
+                Row(
+                    modifier = Modifier.padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                ){
+                    WtePrimaryButton(
+                        text = "添加新菜品",
+                        modifier = Modifier
+                            .weight(2f)
+                            .height(48.dp)
+                    ) { onAddFood() }
+                    WteSecondaryButton(
+                        text = "保存",
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                    ) {}
+                }
             }
         }
     }
@@ -219,12 +237,43 @@ private fun FoodEditContent(
 private fun FoodEditContentPreview() {
     WhatToEatPreviewTheme {
         FoodEditContent(
-            foods = emptyList(),
-            tables = listOf(
-                FoodTable(1L, "早餐", 0L),
-                FoodTable(2L, "午餐", 1L)
+            state = FoodDataState.Selected(
+                tables = listOf(
+                    FoodTable(1L, "早餐", 0L),
+                    FoodTable(2L, "午餐", 1L)
+                ),
+                currentTable = FoodTable(1L, "早餐", 0L),
+                foods = listOf(
+                    Food(id = 1L, name = "小笼包", weight = 1, marked = true),
+                    Food(id = 2L, name = "豆浆", weight = 1, marked = true),
+                    Food(id = 3L, name = "炒饭", weight = 1, marked = false)
+                ),
+                selectionState = FoodSelectionState.Idle
             ),
-            currentTable = FoodTable(1L, "早餐", 0L),
+            retry = {},
+            onReturnToFoodChoose = {},
+            onTableSelected = {},
+            onRenameTable = { _ -> },
+            onDeleteTable = {},
+            onCreateTable = {},
+            onImportTable = {},
+            onExportTable = {},
+            onAddFood = {},
+            onDeleteFood = {},
+            onClickStar = {},
+            onInputName = { _, _ -> },
+            onInputWeight = { _, _ -> }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FoodEditContentErrorPreview() {
+    WhatToEatPreviewTheme {
+        FoodEditContent(
+            state = FoodDataState.Error(Exception()),
+            retry = {},
             onReturnToFoodChoose = {},
             onTableSelected = {},
             onRenameTable = { _ -> },
