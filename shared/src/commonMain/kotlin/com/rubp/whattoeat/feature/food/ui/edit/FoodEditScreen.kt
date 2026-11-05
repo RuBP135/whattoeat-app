@@ -178,8 +178,7 @@ private fun FoodEditContent(
 
                 // 滚动标题栏（切换表格）
                 ScrollableTableTitleRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     selectedTableId = currentTable?.id,
                     tables = tables,
                     onTableSelected = onTableSelected,
