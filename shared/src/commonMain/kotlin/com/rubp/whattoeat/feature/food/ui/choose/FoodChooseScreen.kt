@@ -34,6 +34,8 @@ import com.rubp.whattoeat.core.ui.components.button.CircleIconButton
 import com.rubp.whattoeat.core.ui.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.ui.components.card.WtePaperCard
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
+import com.rubp.whattoeat.core.ui.components.state.WteErrorPanel
+import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.model.FoodDataState
 import com.rubp.whattoeat.feature.food.model.FoodSelectionState
@@ -46,28 +48,10 @@ fun FoodChooseScreen(
     onReturnToHome: () -> Unit
 ) {
     val state by foodViewModel.foodDataStateFlow.collectAsState()
-    val selected = state as? FoodDataState.Selected
-    val tables = when (val state = state) {
-        is FoodDataState.Selected -> state.tables
-        is FoodDataState.NoTableSelected -> state.tables
-        else -> emptyList()
-    }
-    val currentTable = selected?.currentTable
-    val resultMessage: String = when (val state = state) {
-        FoodDataState.Loading -> "正在读取清单…"
-        is FoodDataState.Error -> "清单加载失败，请稍后重试"
-        is FoodDataState.NoTableSelected -> "请先选择一个表格"
-        is FoodDataState.Selected -> when (val selectionState = state.selectionState) {
-            is FoodSelectionState.Chosen -> selectionState.food.name
-            FoodSelectionState.NoAvailableFood -> "没有可供选择的食物！"
-            FoodSelectionState.Idle -> "点击查询今天吃什么"
-        }
-    }
 
     FoodChooseContent(
-        resultMessage = resultMessage,
-        tables = tables,
-        currentTable = currentTable,
+        state = state,
+        retry = foodViewModel::retry,
         onNavigateToFoodEdit = onNavigateToFoodEdit,
         onReturnToHome = onReturnToHome,
         onTableSelected = { foodViewModel.switchTable(it) },
@@ -80,9 +64,8 @@ fun FoodChooseScreen(
 
 @Composable
 private fun FoodChooseContent(
-    resultMessage: String,
-    tables: List<FoodTable>,
-    currentTable: FoodTable?,
+    state: FoodDataState,
+    retry: () -> Unit,
     onNavigateToFoodEdit: () -> Unit,
     onReturnToHome: () -> Unit,
     onTableSelected: (Long) -> Unit,
@@ -95,11 +78,38 @@ private fun FoodChooseContent(
         topBar = { WteTopBar(onReturnToHome, "选择食物") },
     ) { paddingValues ->
 
+        val tables = when (state) {
+            is FoodDataState.Selected -> state.tables
+            is FoodDataState.NoTableSelected -> state.tables
+            is FoodDataState.Loading -> emptyList()
+            is FoodDataState.Error -> emptyList()
+        }
+        val currentTable = (state as? FoodDataState.Selected)?.currentTable
+        val resultMessage: String = when (state) {
+            FoodDataState.Loading -> "正在读取清单…"
+            is FoodDataState.Error -> "清单加载失败，请稍后重试"
+            is FoodDataState.NoTableSelected -> "请先选择一个表格"
+            is FoodDataState.Selected -> when (val selectionState = state.selectionState) {
+                is FoodSelectionState.Chosen -> selectionState.food.name
+                FoodSelectionState.NoAvailableFood -> "没有可供选择的食物！"
+                FoodSelectionState.Idle -> "点击查询今天吃什么"
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            if (state is FoodDataState.Error) {
+                WteErrorPanel(
+                    message = "TAT，遇到了一点错误...",
+                    modifier = Modifier.align(Alignment.Center),
+                    retry = retry
+                )
+                return@Box
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -200,13 +210,37 @@ private fun FoodChooseContent(
 private fun FoodChooseContentPreview() {
     WhatToEatPreviewTheme {
         FoodChooseContent(
-            resultMessage = "显示一个食物名称",
-            tables = listOf(
-                FoodTable(1L, "默认", 0),
-                FoodTable(2L, "午餐", 1),
-                FoodTable(3L, "晚餐", 2)
+            state = FoodDataState.Selected(
+                tables = listOf(
+                    FoodTable(1L, "默认", 0),
+                    FoodTable(2L, "午餐", 1),
+                    FoodTable(3L, "晚餐", 2)
+                ),
+                currentTable = FoodTable(1L, "默认", 0),
+                foods = emptyList(),
+                selectionState = FoodSelectionState.Chosen(
+                    Food(name = "食物名称", weight = 1, marked = true)
+                )
             ),
-            currentTable = FoodTable(1L, "默认", 0),
+            retry = {},
+            onNavigateToFoodEdit = {},
+            onReturnToHome = {},
+            onTableSelected = {},
+            onClickRandomFood = {},
+            onClickClear = {},
+            onClickIgnore = {},
+            onClickClearIgnore = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FoodChooseContentErrorPreview() {
+    WhatToEatPreviewTheme {
+        FoodChooseContent(
+            state = FoodDataState.Error(Exception()),
+            retry = {},
             onNavigateToFoodEdit = {},
             onReturnToHome = {},
             onTableSelected = {},
