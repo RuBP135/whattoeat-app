@@ -48,8 +48,9 @@ fun WteFeedbackHost(
         if(showDialog) {
             WteConfirmDialog(
                 title = "未预期的错误",
-                message = "哦不，遇到了一个未预期的错误。您可以点击“确定”上传最近的日志，帮助我们排查并修复问题。" +
-                        "日志可能包含部分本地信息，您可以先查看日志，再决定是否上传。如果不想上传，点击“取消”即可。",
+                message = "哦不，遇到了一个未预期的错误",
+//                message = "哦不，遇到了一个未预期的错误。您可以点击“确定”上传最近的日志，帮助我们排查并修复问题。" +
+//                        "日志可能包含部分本地信息，您可以先查看日志，再决定是否上传。如果不想上传，点击“取消”即可。",
                 onConfirm = { showDialog = false },
                 onDismiss = { showDialog = false }
             )
