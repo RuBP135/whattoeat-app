@@ -1,9 +1,11 @@
 package com.rubp.whattoeat.core.ui.components.snackbar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -44,9 +46,9 @@ fun WteSnackbar(
                 .padding(12.dp)
                 .widthIn(max = 600.dp),
             shape = RoundedCornerShape(16.dp),
-            color = WteTheme.extendedColors.paper,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            shadowElevation = 4.dp
+            color = WteTheme.extendedColors.snackbarBackground,
+            contentColor = WteTheme.extendedColors.snackbarContent,
+//            shadowElevation = 4.dp
         ){
             Row(
                 modifier = Modifier
@@ -66,7 +68,7 @@ fun WteSnackbar(
                 visuals.actionLabel?.let { label ->
                     TextButton(
                         onClick = snackbarData::performAction,
-                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
+                        colors = ButtonDefaults.textButtonColors(contentColor = WteTheme.extendedColors.snackbarContent)
                     ){
                         Text(text = label)
                     }
@@ -107,7 +109,15 @@ private fun WteSnackbarMessageOnlyPreview(){
     }
 
     WhatToEatPreviewTheme {
-        WteSnackbar(snackbarData)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(color = MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            WteSnackbar(snackbarData)
+        }
     }
 }
 
@@ -129,6 +139,14 @@ private fun WteSnackbarWithActionAndDismissPreview(){
     }
 
     WhatToEatPreviewTheme {
-        WteSnackbar(snackbarData)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(color = MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            WteSnackbar(snackbarData)
+        }
     }
 }
