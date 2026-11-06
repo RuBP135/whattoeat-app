@@ -14,8 +14,16 @@ class FoodPreferences(
         FOOD_TABLE_ID
     )
 
-    fun saveFoodTableId(id: Long){
-        settings.putLong(FOOD_TABLE_ID, id)
+    fun getFoodTableId(): Long? {
+        return settings.getLongOrNull(FOOD_TABLE_ID)
+    }
+
+    fun saveFoodTableId(id: Long?){
+        if (id == null) {
+            settings.remove(FOOD_TABLE_ID)
+        } else {
+            settings.putLong(FOOD_TABLE_ID, id)
+        }
     }
 }
 

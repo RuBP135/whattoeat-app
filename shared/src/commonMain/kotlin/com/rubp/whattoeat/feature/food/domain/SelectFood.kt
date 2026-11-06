@@ -5,14 +5,14 @@ import kotlin.random.Random
 
 fun selectFood(
     foodList: List<Food>,
-    chosenFood: Food?
-): Food? {
+    chosenId: Long?
+): Long? {
     if (foodList.isEmpty()) return null
 
     val candidates = if (foodList.size == 1) {
         foodList
     } else {
-        foodList.filter { food -> food != chosenFood }
+        foodList.filter { food -> food.id != chosenId }
     }
 
     val totalWeight = candidates.sumOf { food -> food.weight }
@@ -22,8 +22,8 @@ fun selectFood(
     for (food in candidates) {
         sumWeight += food.weight
         if (sumWeight.toDouble() / totalWeight >= random) {
-            return food // 一定非null
+            return food.id // 一定非null
         }
     }
-    return candidates.last()
+    return candidates.last().id
 }

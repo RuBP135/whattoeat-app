@@ -3,6 +3,7 @@ package com.rubp.whattoeat.app.di
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.rubp.whattoeat.app.database.AppDatabase
+import com.rubp.whattoeat.core.ui.feedback.UiFeedback
 import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
@@ -16,12 +17,19 @@ class AppContainer(
     settings: ObservableSettings
 ) {
 
+    // 共享 UI 操作反馈
+    val uiFeedback = UiFeedback()
+
     // food
     private val foodDao = database.foodDao()
     private val foodTableDao = database.foodTableDao()
 
     private val foodRepository = FoodRepository(foodDao)
-    private val foodTableRepository = FoodTableRepository(foodTableDao)
+    private val foodTableRepository = FoodTableRepository(
+        dao = foodTableDao,
+        foodDao = foodDao,
+        database = database
+    )
     private val foodPreferences = FoodPreferences(settings)
 
 
@@ -37,7 +45,8 @@ class AppContainer(
             FoodViewModel(
                 foodRepository,
                 foodTableRepository,
-                foodPreferences
+                foodPreferences,
+                uiFeedback
             )
         }
 

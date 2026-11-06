@@ -21,10 +21,10 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.BuildKonfig
-import com.rubp.whattoeat.app.navigation.MainBottomBarSpacer
-import com.rubp.whattoeat.core.components.button.CardButton
-import com.rubp.whattoeat.core.components.card.WtePaperCard
-import com.rubp.whattoeat.core.icons.GitHubIcon
+import com.rubp.whattoeat.app.ui.MainBottomBarSpacer
+import com.rubp.whattoeat.core.ui.components.button.CardButton
+import com.rubp.whattoeat.core.ui.components.card.WtePaperCard
+import com.rubp.whattoeat.core.ui.icons.GitHubIcon
 import com.rubp.whattoeat.core.theme.ThemeMode
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel

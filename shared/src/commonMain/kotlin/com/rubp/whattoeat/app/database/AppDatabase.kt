@@ -14,7 +14,7 @@ import kotlinx.coroutines.IO
 
 @Database(
     entities = [Food::class, FoodTable::class],
-    version = 1
+    version = 2
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -23,7 +23,6 @@ abstract class AppDatabase : RoomDatabase() {
 
 }
 
-// 必须自动生成，不需手写actual
 @Suppress("KotlinNoActualForExpect")
 expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
     override fun initialize(): AppDatabase
@@ -36,5 +35,6 @@ fun buildAppDatabase(
     return builder
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
+        .fallbackToDestructiveMigrationFrom(dropAllTables = true, 1) // 开发阶段允许从 v1 清空重建，以应用外键约束。
         .build()
 }
