@@ -53,6 +53,7 @@ fun FoodEditScreen(
     val runner = remember(scope, feedback) {
         UiTaskRunner(
             scope = scope,
+            tag = "FoodEditScreen",
             onMessage = feedback::showMessage,
             onError = feedback::showError
         )
@@ -69,7 +70,9 @@ fun FoodEditScreen(
         onDeleteTable = { foodViewModel.deleteTable() },
         onCreateTable = foodViewModel::createTable,
         onImportTable = {
-            runner.launch {
+            runner.launch(
+                errorLogMessage = "Failed to read food table data from clipboard"
+            ) {
                 val input = clipboardManager.getText()?.text
                     ?: throw NoClipboardTableDataException()
                 foodViewModel.importTable(input)

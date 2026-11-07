@@ -5,8 +5,6 @@ import androidx.room.useWriterConnection
 import com.rubp.whattoeat.app.database.AppDatabase
 import com.rubp.whattoeat.core.data.exception.DataAccessException
 import com.rubp.whattoeat.core.data.exception.withDataAccess
-import com.rubp.whattoeat.core.model.ReadState
-import com.rubp.whattoeat.core.model.asReadState
 import com.rubp.whattoeat.feature.food.data.dao.FoodDao
 import com.rubp.whattoeat.feature.food.data.dao.FoodTableDao
 import com.rubp.whattoeat.feature.food.data.entity.Food
@@ -23,10 +21,9 @@ class FoodTableRepository(
     suspend fun findByIdOnce(id: Long): FoodTable? =
         withDataAccess { dao.findByIdOnce(id) }
 
-    fun findAll(): Flow<ReadState<List<FoodTable>>> =
+    fun findAll(): Flow<List<FoodTable>> =
         dao.findAll()
             .catch { throw DataAccessException.wrapOrThrowCancellationException(it) }
-            .asReadState()
 
     suspend fun findAllOnce(): List<FoodTable> =
         withDataAccess { dao.findAllOnce() }

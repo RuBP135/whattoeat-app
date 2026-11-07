@@ -18,7 +18,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        initializeLogging {
+        val logInitException = initializeLogging {
             val directoryPath = Path(this.noBackupFilesDir.resolve("logs").absolutePath)
             SystemFileSystem.createDirectories(
                 path = directoryPath,
@@ -31,7 +31,8 @@ class MainApplication : Application() {
         val appDatabase: AppDatabase = buildAppDatabase(createDatabaseBuilder(this))
         this.appContainer = AppContainer(
             database = appDatabase,
-            settings = Settings() as ObservableSettings
+            settings = Settings() as ObservableSettings,
+            logInitException = logInitException
         )
     }
 }
