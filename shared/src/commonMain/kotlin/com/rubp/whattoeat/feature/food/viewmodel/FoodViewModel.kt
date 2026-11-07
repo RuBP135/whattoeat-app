@@ -8,9 +8,9 @@ import com.rubp.whattoeat.core.ui.state.ReadStateMapper
 import com.rubp.whattoeat.core.ui.task.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
+import com.rubp.whattoeat.feature.food.data.repository.FoodTableSelectionRepository
 import com.rubp.whattoeat.feature.food.domain.exception.FoodNotFoundException
 import com.rubp.whattoeat.feature.food.domain.exception.FoodTableNotFoundException
 import com.rubp.whattoeat.feature.food.domain.exception.InvalidFoodTableJsonException
@@ -40,7 +40,7 @@ import kotlinx.serialization.SerializationException
 class FoodViewModel(
     private val foodRepository: FoodRepository,
     private val foodTableRepository: FoodTableRepository,
-    private val foodPreferences: FoodPreferences,
+    private val foodTableSelectionRepository: FoodTableSelectionRepository,
     feedback: UiFeedback
 ) : ViewModel() {
 
@@ -179,7 +179,7 @@ class FoodViewModel(
         errorLogMessage = "Failed to export food table",
         successMessage = "已导出json至剪贴板"
     ) {
-        val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
+        val id = foodTableSelectionRepository.getFoodTableId() ?: throw NoTableSelectedException()
         val table = foodTableRepository.findByIdOnce(id) ?: throw FoodTableNotFoundException(id)
         val foods = foodRepository.findByTableIdOnce(id)
         onExport(foodTableToJson(table, foods))
@@ -204,7 +204,7 @@ class FoodViewModel(
         )
 
         if(getCurrentTableIdOrNull() == null) {
-            foodPreferences.saveFoodTableId(id)
+            foodTableSelectionRepository.saveFoodTableId(id)
         }
     }
 
@@ -212,9 +212,9 @@ class FoodViewModel(
         errorLogMessage = "Failed to switch food table: tableId=$id"
     ) {
         foodTableRepository.findByIdOnce(id) ?: throw FoodTableNotFoundException(id)
-        val preId = foodPreferences.getFoodTableId()
+        val preId = foodTableSelectionRepository.getFoodTableId()
         if(id == preId) return@launchLocked
-        foodPreferences.saveFoodTableId(id)
+        foodTableSelectionRepository.saveFoodTableId(id)
         selectionIdStateFlow.value = FoodSelectionIdState.Idle
     }
 
@@ -252,28 +252,29 @@ class FoodViewModel(
             else -> null
         }
 
-        foodPreferences.saveFoodTableId(newId)
+        foodTableSelectionRepository.saveFoodTableId(newId)
         selectionIdStateFlow.value = FoodSelectionIdState.Idle
     }
 
     private fun createFoodDataFlow(): Flow<FoodDataState> =
-        combine(
-            mapper.map(
-                flow = foodTableRepository.findAll(),
-                errorLogMessage = "Failed to observe food tables"
-            ),
-            foodPreferences.foodTableIdFlow
-        ) { tables, currentTableId ->
-            tables to currentTableId
-        }.transformLatest { (tables, currentTableId) ->
-            when(tables) {
+        mapper.map(
+            flow = combine(
+                foodTableRepository.findAll(),
+                foodTableSelectionRepository.foodTableIdFlow
+            ) { tables, currentTableId ->
+                tables to currentTableId
+            },
+            errorLogMessage = "Failed to observe food tables and selected table ID"
+        ).transformLatest { state ->
+            when(state) {
                 is ReadState.Loading -> emit(FoodDataState.Loading)
-                is ReadState.Error -> emit(FoodDataState.Error(tables.exception))
+                is ReadState.Error -> emit(FoodDataState.Error(state.exception))
                 is ReadState.Success -> {
-                    val currentTable = tables.data.firstOrNull { it.id == currentTableId }
+                    val (tables, currentTableId) = state.data
+                    val currentTable = tables.firstOrNull { it.id == currentTableId }
                     if(currentTable == null) emit(
-                        FoodDataState.NoTableSelected(tables.data)
-                    ) else emitAll(observeTableFoods(tables.data, currentTable))
+                        FoodDataState.NoTableSelected(tables)
+                    ) else emitAll(observeTableFoods(tables, currentTable))
                 }
             }
         }
@@ -319,13 +320,13 @@ class FoodViewModel(
             }
         )
         if(getCurrentTableIdOrNull() == null) {
-            foodPreferences.saveFoodTableId(id)
+            foodTableSelectionRepository.saveFoodTableId(id)
         }
     }
 
     /** 获取有效的当前表格 ID，无效返回 null */
     private suspend fun getCurrentTableIdOrNull(): Long? {
-        val id = foodPreferences.getFoodTableId() ?: return null
+        val id = foodTableSelectionRepository.getFoodTableId() ?: return null
         return foodTableRepository.findByIdOnce(id)?.id
     }
 
