@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class UiFeedback {
-
     private val _messageSharedFlow = MutableSharedFlow<String>()
     val messageSharedFlow: SharedFlow<String> = _messageSharedFlow.asSharedFlow()
 
