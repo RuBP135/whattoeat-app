@@ -25,6 +25,20 @@ import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.core.components.ConfirmDialog
 import com.rubp.whattoeat.core.components.EditDialog
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.food_dialog_new_table
+import whattoeat.shared.generated.resources.food_dialog_table_name
+import whattoeat.shared.generated.resources.food_dialog_rename_table
+import whattoeat.shared.generated.resources.food_dialog_new_table_name
+import whattoeat.shared.generated.resources.food_dialog_delete_table
+import whattoeat.shared.generated.resources.food_dialog_delete_confirm
+import whattoeat.shared.generated.resources.food_dialog_delete_dish
+import whattoeat.shared.generated.resources.food_dialog_help_title
+import whattoeat.shared.generated.resources.food_dialog_help_selected
+import whattoeat.shared.generated.resources.food_dialog_help_delete
+import whattoeat.shared.generated.resources.food_dialog_help_import_export
+import whattoeat.shared.generated.resources.food_dialog_help_ok
 
 @Composable
 fun FoodEditDialogHandler(
@@ -44,8 +58,8 @@ fun FoodEditDialogHandler(
         // 弹出创建新表格对话框
         is EditDialogState.CreateTable -> {
             EditDialog(
-                title = "新建表格",
-                labelText = "表格名称",
+                title = stringResource(Res.string.food_dialog_new_table),
+                labelText = stringResource(Res.string.food_dialog_table_name),
                 onConfirm = { name ->
                     onCreateTable(name)
                     onDismiss()
@@ -57,9 +71,9 @@ fun FoodEditDialogHandler(
         // 弹出修改表格对话框
         is EditDialogState.RenameTable -> {
             EditDialog(
-                title = "修改表格名称",
+                title = stringResource(Res.string.food_dialog_rename_table),
                 initialText = tableName,
-                labelText = "新的表格名称",
+                labelText = stringResource(Res.string.food_dialog_new_table_name),
                 onConfirm = { newName ->
                     currentTable?.let { onRenameTable(it.id, newName) }
                     onDismiss()
@@ -71,8 +85,8 @@ fun FoodEditDialogHandler(
         // 弹出删除表格对话框
         is EditDialogState.DeleteTable -> {
             ConfirmDialog(
-                title = "删除表格",
-                message = "确认删除？",
+                title = stringResource(Res.string.food_dialog_delete_table),
+                message = stringResource(Res.string.food_dialog_delete_confirm),
                 onConfirm = {
                     currentTable?.id?.let { onDeleteTable(it) }
                     onDismiss()
@@ -83,8 +97,8 @@ fun FoodEditDialogHandler(
 
         is EditDialogState.DeleteFood -> {
             ConfirmDialog(
-                title = "删除菜品",
-                message = "确认删除？",
+                title = stringResource(Res.string.food_dialog_delete_dish),
+                message = stringResource(Res.string.food_dialog_delete_confirm),
                 onConfirm = {
                     onDeleteFood(dialogState.food)
                     onDismiss()
@@ -121,19 +135,19 @@ fun FoodEditDialogHandler(
                                 imageVector = MaterialIcons.Outlined.Help,
                                 contentDescription = null
                             )
-                            Text("帮助")
+                            Text(stringResource(Res.string.food_dialog_help_title))
                         }
                         HorizontalDivider()
                         Text(
-                            text = "参选：点击星星可以开关是否选择该食物，未被选择的食物不会进入随机选择列表",
+                            text = stringResource(Res.string.food_dialog_help_selected),
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
-                            text = "删除食物：对食物卡片向左滑动可以看到删除按钮",
+                            text = stringResource(Res.string.food_dialog_help_delete),
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
-                            text = "导入导出表格：导出表格时，会将内容复制到手机剪贴板上；导入表格时，会从手机剪贴板获取内容（因此您需要确保已经复制了别人发送给您的表格，才能正确导入）",
+                            text = stringResource(Res.string.food_dialog_help_import_export),
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Row(
@@ -141,7 +155,7 @@ fun FoodEditDialogHandler(
                             horizontalArrangement = Arrangement.End
                         ){
                             TextButton(onClick = onDismiss){
-                                Text("知道了")
+                                Text(stringResource(Res.string.food_dialog_help_ok ))
                             }
                         }
                     }
