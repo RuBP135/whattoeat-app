@@ -15,7 +15,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.feature.food.data.entity.Food
-
+import org.jetbrains.compose.resources.stringResource
+import whattoeat.shared.generated.resources.Res
+import whattoeat.shared.generated.resources.food_table_selected
+import whattoeat.shared.generated.resources.food_table_name
+import whattoeat.shared.generated.resources.food_table_weight
 @Composable
 fun FoodEditTable(
     modifier: Modifier = Modifier,
@@ -55,9 +59,9 @@ private fun FoodTableHeader(modifier: Modifier = Modifier) {
             .background(MaterialTheme.colorScheme.surface)
             .heightIn(min = 36.dp)
             .padding(vertical = 4.dp),
-        selection = { Text("参选", color = color, style = style) },
-        name = { Text("名称", color = color, style = style) },
-        weight = { Text("权重", color = color, style = style) }
+        selection = { Text(stringResource(Res.string.food_table_selected), color = color, style = style) },
+        name = { Text(stringResource(Res.string.food_table_name), color = color, style = style) },
+        weight = { Text(stringResource(Res.string.food_table_weight), color = color, style = style) }
     )
 }
 

@@ -30,10 +30,14 @@ import com.composables.icons.materialicons.filled.Delete
 import com.rubp.whattoeat.core.components.WteLeftSwipeBox
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import whattoeat.shared.generated.resources.Res
 import whattoeat.shared.generated.resources.filled_star
 import whattoeat.shared.generated.resources.outlined_star
-
+import whattoeat.shared.generated.resources.food_row_delete
+import whattoeat.shared.generated.resources.food_table_selected
+import whattoeat.shared.generated.resources.food_row_name_placeholder
+import whattoeat.shared.generated.resources.food_row_invalid_weight
 
 @Composable
 internal fun FoodEditRow(
@@ -60,7 +64,7 @@ internal fun FoodEditRow(
                     contentColor = MaterialTheme.colorScheme.onErrorContainer
                 )
             ) {
-                Icon(MaterialIcons.Filled.Delete, contentDescription = "删除此行数据")
+                Icon(MaterialIcons.Filled.Delete, contentDescription = stringResource(Res.string.food_row_delete))
             }
         }
     ) { foregroundModifier ->
@@ -81,7 +85,7 @@ internal fun FoodEditRow(
                                 if (food.marked) Res.drawable.filled_star
                                 else Res.drawable.outlined_star
                             ),
-                            contentDescription = "参选"
+                            contentDescription = stringResource(Res.string.food_table_selected)
                         )
                     }
                 },
@@ -94,7 +98,7 @@ internal fun FoodEditRow(
                             onInputName(it.text)
                         },
                         shape = RoundedCornerShape(4.dp),
-                        placeholder = "请输入名称"
+                        placeholder = stringResource(Res.string.food_row_name_placeholder)
                     )
                 },
                 weight = {
@@ -143,7 +147,7 @@ private fun FoodEditTextField(
         },
         isError = isError,
         supportingText = if (isError) {
-            { Text("请输入有效数字", color = MaterialTheme.colorScheme.error) }
+            { Text(stringResource(Res.string.food_row_invalid_weight), color = MaterialTheme.colorScheme.error) }
         } else null,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
     )
