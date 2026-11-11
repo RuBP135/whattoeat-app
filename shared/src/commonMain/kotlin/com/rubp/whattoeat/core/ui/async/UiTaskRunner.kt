@@ -29,7 +29,7 @@ class UiTaskRunner(
      * 任务正常完成且 [successMessage] 不为 null 时，通过消息回调发送成功提示。
      * [BusinessException] 通过消息回调反馈，不记录错误日志；其他 [Exception] 记录日志并传给错误回调。
      * 这两类异常均结束当前任务，不发送成功提示。
-     * [CancellationException] 直接传播；[Error] 等非 [Exception] 的 [Throwable] 不由本方法捕获或记录。
+     * [CancellationException] 直接传播；[Error] 等非 [Exception] 的 [Throwable] 记录日志后继续抛出。
      * 异常处理仅覆盖 [task] 的执行；反馈回调自身抛出的异常继续传播。
      *
      * @param successMessage 完成操作后的成功提示，展示给用户看（后续打算换成字符串资源引用）
@@ -52,6 +52,9 @@ class UiTaskRunner(
             log.e(exception) { errorLogMessage }
             onError(exception)
             return@launch
+        } catch (cause: Throwable) {
+            log.e(cause) { errorLogMessage }
+            throw cause
         }
 
         successMessage?.let{ onMessage(it) }
