@@ -6,17 +6,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import com.composables.icons.materialicons.MaterialIcons
+import com.composables.icons.materialicons.filled.Content_copy
 import com.rubp.whattoeat.core.theme.WteTheme
-import com.rubp.whattoeat.core.ui.components.button.WteSecondaryButton
+import com.rubp.whattoeat.core.ui.components.button.WteSquareIconButton
 
 
 @Composable
@@ -46,7 +51,18 @@ internal fun LogRecordItem(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                WteSecondaryButton(text = "复制", onClick = { onCopy(content) })
+                WteSquareIconButton(
+                    onClick = { onCopy(content) },
+                    modifier = Modifier
+                        .minimumInteractiveComponentSize()
+                        .size(36.dp)
+                ) {
+                    Icon(
+                        imageVector = MaterialIcons.Filled.Content_copy,
+                        contentDescription = "复制日志",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
             SelectionContainer {
                 Text(
