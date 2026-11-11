@@ -30,7 +30,7 @@ import com.composables.icons.materialicons.filled.Clear_all
 import com.composables.icons.materialicons.filled.Edit
 import com.rubp.whattoeat.core.ui.components.WteTopBar
 import com.rubp.whattoeat.core.ui.components.button.CardButton
-import com.rubp.whattoeat.core.ui.components.button.CircleIconButton
+import com.rubp.whattoeat.core.ui.components.button.WteCircleIconButton
 import com.rubp.whattoeat.core.ui.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.ui.components.card.WtePaperCard
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
@@ -190,7 +190,7 @@ private fun FoodChooseContent(
             )
 
             // 编辑按钮
-            CircleIconButton(
+            WteCircleIconButton(
                 onClick = onNavigateToFoodEdit,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
