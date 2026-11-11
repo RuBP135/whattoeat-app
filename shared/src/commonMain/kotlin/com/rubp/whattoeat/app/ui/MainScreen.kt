@@ -20,6 +20,8 @@ import com.rubp.whattoeat.feature.food.ui.choose.FoodChooseScreen
 import com.rubp.whattoeat.feature.food.ui.edit.FoodEditScreen
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import com.rubp.whattoeat.feature.home.HomeScreen
+import com.rubp.whattoeat.feature.logs.ui.LogScreen
+import com.rubp.whattoeat.feature.logs.viewmodel.LogViewModel
 import com.rubp.whattoeat.feature.other.OtherScreen
 import com.rubp.whattoeat.feature.settings.ui.SettingsScreen
 import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
@@ -38,6 +40,8 @@ object FoodChoose
 object PracticalWebsite
 @Serializable
 object Other
+@Serializable
+object Logs
 
 
 
@@ -72,7 +76,17 @@ fun MainScreen(
                     onNavigateToPracticalWebsite = { navController.navigate(PracticalWebsite) }, // Home -> PracticalWebsite
                     onNavigateToOther = { navController.navigate(Other) }
                 ) }
-                composable<Settings>{ SettingsScreen(settingsViewModel) }
+                composable<Settings>{ SettingsScreen(
+                    settingsViewModel = settingsViewModel,
+                    onNavigateToLogs = { navController.navigate(Logs) }
+                ) }
+                composable<Logs>{
+                    val logViewModel: LogViewModel = viewModel(factory = appViewModelFactory)
+                    LogScreen(
+                        logViewModel = logViewModel,
+                        onReturnToSettings = { navController.popBackStack() }
+                    )
+                }
                 composable<FoodChoose>{ FoodChooseScreen( // Home <- FoodChoose -> FoodEdit
                     foodViewModel = foodViewModel,
                     onNavigateToFoodEdit = { navController.navigate(FoodEdit) },

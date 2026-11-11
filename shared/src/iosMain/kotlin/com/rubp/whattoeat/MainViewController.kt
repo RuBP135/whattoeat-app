@@ -29,6 +29,7 @@ import platform.Foundation.NSUserDomainMask
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private val appContainer by lazy {
 
+    var logDirectory: Path? = null
     val logInitException = initializeLogging {
         val fileManager = NSFileManager.defaultManager
 
@@ -51,9 +52,9 @@ private val appContainer by lazy {
         }
 
         memScoped {
-            val directoryPath = Path(directory)
+            logDirectory = Path(directory)
             SystemFileSystem.createDirectories(
-                path = directoryPath,
+                path = logDirectory,
                 mustCreate = false
             )
 
@@ -75,14 +76,15 @@ private val appContainer by lazy {
                 )
             }
 
-            directoryPath
+            logDirectory
         }
     }
 
     AppContainer(
         database = buildAppDatabase(createDatabaseBuilder()),
         settings = Settings() as ObservableSettings,
-        logInitException = logInitException
+        logInitException = logInitException,
+        logDirectory = logDirectory
     )
 }
 
