@@ -8,7 +8,7 @@
 ## 2. 架构与边界规范
 
 - **commonMain**：承载所有业务、数据层与 Compose UI，保持纯 Kotlin Multiplatform，不要使用平台专属的 import。
-- **平台抽象**：硬件/系统级调用统一采用 expect/actual 或 DI 注入。 
+- **平台抽象**：硬件/系统级调用统一采用 expect/actual 或 DI 注入。
 - **Android 入口**：仅以 MainActivity 作为容器壳，页面导航与渲染均走 Compose Multiplatform。
 
 ## 3. 架构与状态管理 (MVVM)
