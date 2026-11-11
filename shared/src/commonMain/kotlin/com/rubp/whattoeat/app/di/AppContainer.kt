@@ -11,6 +11,7 @@ import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableSelectionRepository
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 import com.rubp.whattoeat.feature.settings.data.preferences.SettingsPreferences
+import com.rubp.whattoeat.feature.settings.data.repository.SettingsRepository
 import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 import com.russhwolf.settings.ObservableSettings
 
@@ -38,6 +39,7 @@ class AppContainer(
 
     // settings
     private val settingsPreferences = SettingsPreferences(settings)
+    private val settingsRepository = SettingsRepository(settingsPreferences)
 
     // viewModelFactory
 
@@ -54,7 +56,8 @@ class AppContainer(
 
         initializer {
             SettingsViewModel(
-                settingsPreferences
+                settingsRepository,
+                uiFeedback
             )
         }
     }

@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.ui.task
+package com.rubp.whattoeat.core.ui.async
 
 import co.touchlab.kermit.Logger
 import com.rubp.whattoeat.core.domain.exception.BusinessException
@@ -24,7 +24,13 @@ class UiTaskRunner(
     private val log = Logger.withTag(tag)
 
     /**
-     * 异步执行任务，并自动处理异常、给出成功提示
+     * 在配置的协程作用域中启动 [task]，返回可用于跟踪或取消任务的 [Job]。
+     *
+     * 任务正常完成且 [successMessage] 不为 null 时，通过消息回调发送成功提示。
+     * [BusinessException] 通过消息回调反馈，不记录错误日志；其他 [Exception] 记录日志并传给错误回调。
+     * 这两类异常均结束当前任务，不发送成功提示。
+     * [CancellationException] 直接传播；[Error] 等非 [Exception] 的 [Throwable] 不由本方法捕获或记录。
+     * 异常处理仅覆盖 [task] 的执行；反馈回调自身抛出的异常继续传播。
      *
      * @param successMessage 完成操作后的成功提示，展示给用户看（后续打算换成字符串资源引用）
      * @param errorLogMessage 任务发生非业务异常/错误（除开协程取消）时记录的错误日志描述

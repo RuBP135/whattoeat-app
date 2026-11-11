@@ -2,10 +2,10 @@ package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rubp.whattoeat.core.ui.state.ReadState
+import com.rubp.whattoeat.core.ui.async.ReadState
 import com.rubp.whattoeat.core.ui.feedback.UiFeedback
-import com.rubp.whattoeat.core.ui.state.ReadStateMapper
-import com.rubp.whattoeat.core.ui.task.UiTaskRunner
+import com.rubp.whattoeat.core.ui.async.UiFlowHandler
+import com.rubp.whattoeat.core.ui.async.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
@@ -46,7 +46,10 @@ class FoodViewModel(
 
     private val mutex = Mutex()
     private val tag = "FoodViewModel"
-    private val mapper = ReadStateMapper(tag)
+    private val handler = UiFlowHandler(
+        tag = tag,
+        onMessage = feedback::showMessage
+    )
     private val runner = UiTaskRunner(
         scope = viewModelScope,
         tag = tag,
@@ -257,7 +260,7 @@ class FoodViewModel(
     }
 
     private fun createFoodDataFlow(): Flow<FoodDataState> =
-        mapper.map(
+        handler.asReadState(
             flow = combine(
                 foodTableRepository.findAll(),
                 foodTableSelectionRepository.foodTableIdFlow
@@ -283,7 +286,7 @@ class FoodViewModel(
         tables: List<FoodTable>,
         currentTable: FoodTable
     ): Flow<FoodDataState> = combine(
-        mapper.map(
+        handler.asReadState(
             flow = foodRepository.findByTableId(currentTable.id),
             errorLogMessage = "Failed to observe foods: tableId=${currentTable.id}"
         ),

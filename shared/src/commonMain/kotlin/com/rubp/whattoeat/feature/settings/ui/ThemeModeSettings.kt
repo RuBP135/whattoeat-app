@@ -68,7 +68,7 @@ private val themeModeOptions = listOf(
  */
 @Composable
 internal fun ThemeModeSettings(
-    themeMode: ThemeMode,
+    themeMode: ThemeMode?,
     modifier: Modifier = Modifier,
     onThemeModeChange: (ThemeMode) -> Unit
 ) {

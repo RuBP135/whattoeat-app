@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.core.ui.state
+package com.rubp.whattoeat.core.ui.async
 
 sealed interface ReadState<out T> {
     data object Loading: ReadState<Nothing>

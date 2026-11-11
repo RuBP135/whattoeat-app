@@ -33,7 +33,7 @@ import com.rubp.whattoeat.core.ui.components.button.WteSecondaryButton
 import com.rubp.whattoeat.core.ui.components.state.WteErrorPanel
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.ui.feedback.LocalUiFeedback
-import com.rubp.whattoeat.core.ui.task.UiTaskRunner
+import com.rubp.whattoeat.core.ui.async.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.domain.exception.NoClipboardTableDataException
