@@ -8,3 +8,8 @@ import androidx.compose.ui.platform.Clipboard
 actual suspend fun Clipboard.setPlainText(text: String) {
     setClipEntry(ClipEntry.withPlainText(text))
 }
+
+@OptIn(ExperimentalComposeUiApi::class)
+actual suspend fun Clipboard.getPlainText(): String? {
+    return getClipEntry()?.getPlainText()
+}
