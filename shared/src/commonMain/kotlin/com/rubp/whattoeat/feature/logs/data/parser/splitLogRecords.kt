@@ -6,12 +6,10 @@ private val logHeaderPattern = Regex(
 )
 
 /**
- * 按当前 Kermit 文件日志的时间戳和级别前缀，划分单次日志调用输出的内容。
+ * 按 Kermit 文件日志头（行首时间戳 + 级别）切分单次日志调用的输出：多行消息、空行与堆栈
+ * 归入所在记录，未匹配日志头的内容也不丢弃；换行原样保留，便于整条复制。
  *
- * 多行消息、空行及异常堆栈均归入同一条记录，保留原始换行以便完整复制。
- * 没有匹配到日志头的内容也会保留。
- *
- * @param content 日志文件的完整原文。
+ * @param content 日志文件全文。
  */
 internal fun splitLogRecords(content: String): List<String> {
     if (content.isEmpty()) return emptyList()
