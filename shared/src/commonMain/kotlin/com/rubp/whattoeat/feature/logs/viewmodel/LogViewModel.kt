@@ -2,6 +2,7 @@ package com.rubp.whattoeat.feature.logs.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import com.rubp.whattoeat.core.ui.async.ReadState
 import com.rubp.whattoeat.core.ui.async.UiFlowHandler
 import com.rubp.whattoeat.core.ui.async.UiTaskRunner
@@ -20,7 +21,8 @@ import kotlinx.coroutines.flow.update
 
 class LogViewModel(
     private val logRepository: LogRepository,
-    feedback: UiFeedback
+    feedback: UiFeedback,
+    recorder: DeduplicatingExceptionLogRecorder
 ) : ViewModel() {
     private data class ReadRequest(val fileName: String? = null, val refreshKey: Int = 0)
 
@@ -28,11 +30,13 @@ class LogViewModel(
     private val requestStateFlow = MutableStateFlow(ReadRequest())
     private val handler = UiFlowHandler(
         tag = tag,
+        recorder = recorder,
         onMessage = feedback::showMessage
     )
     private val runner = UiTaskRunner(
         scope = viewModelScope,
         tag = tag,
+        recorder = recorder,
         onMessage = feedback::showMessage,
         onError = feedback::showError
     )

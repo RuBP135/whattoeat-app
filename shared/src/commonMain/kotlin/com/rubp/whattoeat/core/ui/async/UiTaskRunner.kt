@@ -1,6 +1,7 @@
 package com.rubp.whattoeat.core.ui.async
 
 import co.touchlab.kermit.Logger
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import com.rubp.whattoeat.core.domain.exception.BusinessException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -12,12 +13,14 @@ import kotlinx.coroutines.launch
  *
  * @param scope 用于启动任务并管理任务生命周期的协程作用域
  * @param tag 日志的标签
+ * @param recorder 与全局回调共用的异常日志去重记录器。
  * @param onMessage 反馈提示消息的挂起方法，应当传入 UiFeedback::showMessage
  * @param onError 反馈错误的挂机方法，应当传入 UiFeedback::showError
  */
 class UiTaskRunner(
     private val scope: CoroutineScope,
     tag: String,
+    private val recorder: DeduplicatingExceptionLogRecorder,
     private val onMessage: suspend (String) -> Unit,
     private val onError: suspend (Exception) -> Unit
 ) {
@@ -53,8 +56,13 @@ class UiTaskRunner(
             onError(exception)
             return@launch
         } catch (cause: Throwable) {
-            log.e(cause) { errorLogMessage }
-            throw cause
+            try {
+                recorder.recordOnce(cause) {
+                    log.e(cause) { errorLogMessage }
+                }
+            } finally {
+                throw cause
+            }
         }
 
         successMessage?.let{ onMessage(it) }

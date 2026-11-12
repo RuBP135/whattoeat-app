@@ -1,10 +1,12 @@
 package com.rubp.whattoeat
 
 import androidx.compose.ui.window.ComposeUIViewController
+import co.touchlab.kermit.Logger
 import com.rubp.whattoeat.app.App
 import com.rubp.whattoeat.app.database.buildAppDatabase
 import com.rubp.whattoeat.app.database.createDatabaseBuilder
 import com.rubp.whattoeat.app.di.AppContainer
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import com.rubp.whattoeat.app.logging.LoggingInitializationException
 import com.rubp.whattoeat.app.logging.initializeLogging
 import com.russhwolf.settings.ObservableSettings
@@ -25,8 +27,11 @@ import platform.Foundation.NSNumber
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLIsExcludedFromBackupKey
 import platform.Foundation.NSUserDomainMask
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.setUnhandledExceptionHook
+import kotlin.native.terminateWithUnhandledException
 
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class, ExperimentalNativeApi::class)
 private val appContainer by lazy {
 
     var logDirectory: Path? = null
@@ -80,11 +85,31 @@ private val appContainer by lazy {
         }
     }
 
+    val recorder = DeduplicatingExceptionLogRecorder()
+    var previousHook: ((Throwable) -> Unit)? = null
+
+    previousHook = setUnhandledExceptionHook { throwable ->
+        try {
+            recorder.recordOnce(throwable) {
+                Logger.withTag("UncaughtException").e(throwable = throwable) {
+                    "Unhandled Kotlin exception"
+                }
+            }
+        } finally {
+            try {
+                previousHook?.invoke(throwable)
+            } finally {
+                terminateWithUnhandledException(throwable)
+            }
+        }
+    }
+
     AppContainer(
         database = buildAppDatabase(createDatabaseBuilder()),
         settings = Settings() as ObservableSettings,
         logInitException = logInitException,
-        logDirectory = logDirectory
+        logDirectory = logDirectory,
+        deduplicatingExceptionLogRecorder = recorder
     )
 }
 

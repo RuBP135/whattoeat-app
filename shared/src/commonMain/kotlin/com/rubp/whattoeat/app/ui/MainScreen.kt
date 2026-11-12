@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import com.rubp.whattoeat.feature.food.ui.choose.FoodChooseScreen
 import com.rubp.whattoeat.feature.food.ui.edit.FoodEditScreen
 import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
@@ -48,7 +49,8 @@ object Logs
 @Composable
 fun MainScreen(
     appViewModelFactory: ViewModelProvider.Factory,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    recorder: DeduplicatingExceptionLogRecorder
 ){
     val navController = rememberNavController()
     val foodViewModel: FoodViewModel = viewModel(factory = appViewModelFactory)
@@ -94,6 +96,7 @@ fun MainScreen(
                 ) }
                 composable<FoodEdit>{ FoodEditScreen(
                     foodViewModel = foodViewModel,
+                    recorder = recorder,
                     onReturnToFoodChoose = { navController.popBackStack()}
                 ) } // FoodChoose <- FoodEdit
                 composable<PracticalWebsite>{ PracticalWebsiteScreen { navController.popBackStack() } }

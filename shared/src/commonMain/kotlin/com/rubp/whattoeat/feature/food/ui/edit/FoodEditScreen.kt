@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.ui.async.UiTaskRunner
 import com.rubp.whattoeat.core.ui.clipboard.getPlainText
@@ -45,16 +46,18 @@ import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 @Composable
 fun FoodEditScreen(
     foodViewModel: FoodViewModel,
+    recorder: DeduplicatingExceptionLogRecorder,
     modifier: Modifier = Modifier,
     onReturnToFoodChoose: () -> Unit
 ) {
     val state by foodViewModel.foodDataStateFlow.collectAsState()
     val feedback = LocalUiFeedback.current
     val scope = rememberCoroutineScope()
-    val runner = remember(scope, feedback) {
+    val runner = remember(scope, feedback, recorder) {
         UiTaskRunner(
             scope = scope,
             tag = "FoodEditScreen",
+            recorder = recorder,
             onMessage = feedback::showMessage,
             onError = feedback::showError
         )

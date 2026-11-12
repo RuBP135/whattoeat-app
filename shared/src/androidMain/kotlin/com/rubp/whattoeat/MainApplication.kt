@@ -1,10 +1,12 @@
 package com.rubp.whattoeat
 
 import android.app.Application
+import co.touchlab.kermit.Logger
 import com.rubp.whattoeat.app.database.AppDatabase
 import com.rubp.whattoeat.app.database.buildAppDatabase
 import com.rubp.whattoeat.app.database.createDatabaseBuilder
 import com.rubp.whattoeat.app.di.AppContainer
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import com.rubp.whattoeat.app.logging.initializeLogging
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
@@ -29,12 +31,33 @@ class MainApplication : Application() {
             logDirectory
         }
 
+        val recorder = DeduplicatingExceptionLogRecorder()
+        val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
+
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            try {
+                recorder.recordOnce(throwable) {
+                    Logger.withTag("UncaughtException").e(throwable = throwable) {
+                        "Unhandled exception in thread ${thread.name}"
+                    }
+                }
+            } finally {
+                if (previousHandler != null) {
+                    previousHandler.uncaughtException(thread, throwable)
+                } else {
+                    kotlin.system.exitProcess(1)
+                }
+            }
+        }
+
         val appDatabase: AppDatabase = buildAppDatabase(createDatabaseBuilder(this))
         this.appContainer = AppContainer(
             database = appDatabase,
             settings = Settings() as ObservableSettings,
             logInitException = logInitException,
-            logDirectory = logDirectory
+            logDirectory = logDirectory,
+            deduplicatingExceptionLogRecorder = recorder
         )
+
     }
 }

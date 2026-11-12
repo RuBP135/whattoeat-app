@@ -23,7 +23,8 @@ fun App(appContainer: AppContainer) {
         ) {
             MainScreen(
                 appContainer.appViewModelFactory,
-                settingsViewModel
+                settingsViewModel,
+                appContainer.deduplicatingExceptionLogRecorder
             )
         }
     }

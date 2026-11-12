@@ -2,6 +2,7 @@ package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import com.rubp.whattoeat.core.ui.async.ReadState
 import com.rubp.whattoeat.core.ui.feedback.UiFeedback
 import com.rubp.whattoeat.core.ui.async.UiFlowHandler
@@ -41,18 +42,21 @@ class FoodViewModel(
     private val foodRepository: FoodRepository,
     private val foodTableRepository: FoodTableRepository,
     private val foodTableSelectionRepository: FoodTableSelectionRepository,
-    feedback: UiFeedback
+    feedback: UiFeedback,
+    recorder: DeduplicatingExceptionLogRecorder
 ) : ViewModel() {
 
     private val mutex = Mutex()
     private val tag = "FoodViewModel"
     private val handler = UiFlowHandler(
         tag = tag,
+        recorder = recorder,
         onMessage = feedback::showMessage
     )
     private val runner = UiTaskRunner(
         scope = viewModelScope,
         tag = tag,
+        recorder = recorder,
         onMessage = feedback::showMessage,
         onError = feedback::showError
     )

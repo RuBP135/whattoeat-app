@@ -3,6 +3,7 @@ package com.rubp.whattoeat.app.di
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.rubp.whattoeat.app.database.AppDatabase
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import com.rubp.whattoeat.app.logging.LoggingInitializationException
 import com.rubp.whattoeat.core.ui.feedback.UiFeedback
 import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
@@ -18,11 +19,13 @@ import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 import com.russhwolf.settings.ObservableSettings
 import kotlinx.io.files.Path
 
+
 class AppContainer(
     database: AppDatabase,
     settings: ObservableSettings,
     val logInitException: LoggingInitializationException?,
-    logDirectory: Path?
+    logDirectory: Path?,
+    val deduplicatingExceptionLogRecorder: DeduplicatingExceptionLogRecorder
 ) {
 
     // 共享 UI 操作反馈
@@ -53,7 +56,7 @@ class AppContainer(
     val appViewModelFactory = viewModelFactory {
 
         initializer {
-            LogViewModel(logRepository, uiFeedback)
+            LogViewModel(logRepository, uiFeedback, deduplicatingExceptionLogRecorder)
         }
 
         initializer {
@@ -61,14 +64,16 @@ class AppContainer(
                 foodRepository,
                 foodTableRepository,
                 foodTableSelectionRepository,
-                uiFeedback
+                uiFeedback,
+                deduplicatingExceptionLogRecorder
             )
         }
 
         initializer {
             SettingsViewModel(
                 settingsRepository,
-                uiFeedback
+                uiFeedback,
+                deduplicatingExceptionLogRecorder
             )
         }
     }

@@ -1,14 +1,23 @@
 package com.rubp.whattoeat.core.ui.async
 
 import co.touchlab.kermit.Logger
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * 将读取失败转换为 UI 状态或反馈，并对继续外抛的严重错误去重记录。
+ *
+ * @param tag 日志标签。
+ * @param recorder 与全局回调共用的异常日志去重记录器。
+ * @param onMessage 普通读取失败时发送用户提示的回调。
+ */
 class UiFlowHandler(
     tag: String,
+    private val recorder: DeduplicatingExceptionLogRecorder,
     private val onMessage: suspend (String) -> Unit,
 ) {
     private val log = Logger.withTag(tag)
@@ -39,8 +48,13 @@ class UiFlowHandler(
                     emit(ReadState.Error(cause))
                 }
                 else -> {
-                    log.e(cause) { errorLogMessage }
-                    throw cause
+                    try {
+                        recorder.recordOnce(cause) {
+                            log.e(cause) { errorLogMessage }
+                        }
+                    } finally {
+                        throw cause
+                    }
                 }
             }
         }
@@ -68,8 +82,13 @@ class UiFlowHandler(
                 onMessage(errorMessage)
             }
             else -> {
-                log.e(cause) { errorLogMessage }
-                throw cause
+                try {
+                    recorder.recordOnce(cause) {
+                        log.e(cause) { errorLogMessage }
+                    }
+                } finally {
+                    throw cause
+                }
             }
         }
     }
