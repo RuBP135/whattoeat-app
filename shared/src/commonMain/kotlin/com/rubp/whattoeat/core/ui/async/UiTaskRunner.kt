@@ -67,4 +67,46 @@ class UiTaskRunner(
 
         successMessage?.let{ onMessage(it) }
     }
+
+    /**
+     * 在调用线程同步执行 [task]，并按与 [launch] 相同的规则处理任务异常
+     *
+     * 任务执行和异常日志记录在返回前完成，消息与错误反馈通过已配置的 [scope] 异步发送
+     * 反馈受作用域生命周期约束，反馈回调自身抛出的异常不在本方法的捕获范围内
+     * [CancellationException] 直接重抛，其他非 [Exception] 的 [Throwable] 去重记录后原样重抛
+     *
+     * @param successMessage 任务成功时异步发送的提示，null 表示不提示
+     * @param errorLogMessage 非业务异常或错误发生时记录的开发者日志文本
+     * @param task 在调用线程执行的同步任务
+     */
+    fun execute(
+        successMessage: String? = null,
+        errorLogMessage: String,
+        task: () -> Unit
+    ) {
+        try {
+            task()
+        } catch (exception: CancellationException) {
+            throw exception
+        } catch (exception: BusinessException) {
+            scope.launch { onMessage(exception.message) }
+            return
+        } catch (exception: Exception) {
+            log.e(exception) { errorLogMessage }
+            scope.launch { onError(exception) }
+            return
+        } catch (cause: Throwable) {
+            try {
+                recorder.recordOnce(cause) {
+                    log.e(cause) { errorLogMessage }
+                }
+            } finally {
+                throw cause
+            }
+        }
+
+        successMessage?.let { message ->
+            scope.launch { onMessage(message) }
+        }
+    }
 }

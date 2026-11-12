@@ -99,7 +99,12 @@ fun MainScreen(
                     recorder = recorder,
                     onReturnToFoodChoose = { navController.popBackStack()}
                 ) } // FoodChoose <- FoodEdit
-                composable<PracticalWebsite>{ PracticalWebsiteScreen { navController.popBackStack() } }
+                composable<PracticalWebsite>{
+                    PracticalWebsiteScreen(
+                        recorder = recorder,
+                        onReturnToHome = { navController.popBackStack() }
+                    )
+                }
                 composable<Other>{ OtherScreen{ navController.popBackStack() } }
             }
         }
