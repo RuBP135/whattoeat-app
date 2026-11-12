@@ -24,6 +24,7 @@ import platform.Foundation.NSApplicationSupportDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSNumber
+import platform.Foundation.NSThread
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLIsExcludedFromBackupKey
 import platform.Foundation.NSUserDomainMask
@@ -97,9 +98,13 @@ private val appContainer by lazy {
             }
         } finally {
             try {
-                previousHook?.invoke(throwable)
+                NSThread.sleepForTimeInterval(0.2)
             } finally {
-                terminateWithUnhandledException(throwable)
+                try {
+                    previousHook?.invoke(throwable)
+                } finally {
+                    terminateWithUnhandledException(throwable)
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.rubp.whattoeat
 
 import android.app.Application
+import android.os.SystemClock
 import co.touchlab.kermit.Logger
 import com.rubp.whattoeat.app.database.AppDatabase
 import com.rubp.whattoeat.app.database.buildAppDatabase
@@ -42,10 +43,14 @@ class MainApplication : Application() {
                     }
                 }
             } finally {
-                if (previousHandler != null) {
-                    previousHandler.uncaughtException(thread, throwable)
-                } else {
-                    kotlin.system.exitProcess(1)
+                try {
+                    SystemClock.sleep(200L)
+                } finally {
+                    if (previousHandler != null) {
+                        previousHandler.uncaughtException(thread, throwable)
+                    } else {
+                        kotlin.system.exitProcess(1)
+                    }
                 }
             }
         }
