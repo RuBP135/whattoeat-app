@@ -68,6 +68,8 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)    // 数据库
             implementation(libs.kotlinx.serialization.json)   // 导航类型安全路由依赖
             implementation(libs.androidx.navigation.compose)   // 导航
+            implementation(libs.kermit.logger) // 日志 API 和默认平台输出
+            implementation(libs.kermit.io)     // 文件日志和文件轮换
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

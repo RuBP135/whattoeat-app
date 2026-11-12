@@ -17,3 +17,15 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+### claude code local files ###
+.claude/settings.local.json
+.claude/worktrees/
+
+### agents local files ###
+.agents/settings.local.json
+.agents/worktrees/
+.agents/cache/
+
+### codex local files ###
+.codex-remote-attachments/
