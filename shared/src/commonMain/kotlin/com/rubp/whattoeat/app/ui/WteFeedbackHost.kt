@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rubp.whattoeat.app.logging.LoggingInitializationException
 import com.rubp.whattoeat.core.ui.components.dialog.WteConfirmDialog
 import com.rubp.whattoeat.core.ui.components.snackbar.WteSnackbar
 import com.rubp.whattoeat.core.ui.feedback.LocalUiFeedback
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun WteFeedbackHost(
     feedback: UiFeedback,
+    logInitException: LoggingInitializationException?,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -38,7 +40,17 @@ fun WteFeedbackHost(
     }
 
     LaunchedEffect(feedback.errorSharedFlow) {
-        feedback.errorSharedFlow.collectLatest { showDialog = true }
+        feedback.errorSharedFlow.collectLatest {
+            showDialog = true
+        }
+    }
+
+    LaunchedEffect(logInitException) {
+        if (logInitException != null) {
+            snackbarHostState.showSnackbar(
+                message = "文件日志不可用，本次运行无法保存日志文件，其他功能仍可使用。"
+            )
+        }
     }
 
     Box(modifier = modifier) {
@@ -46,13 +58,13 @@ fun WteFeedbackHost(
             content()
         }
 
-
         if(showDialog) {
             WteConfirmDialog(
                 title = "未预期的错误",
-                message = "哦不，遇到了一个未预期的错误",
+                message = "哦不，遇到了一个未预期的错误或是一个当前无法处理的异常",
 //                message = "哦不，遇到了一个未预期的错误。您可以点击“确定”上传最近的日志，帮助我们排查并修复问题。" +
 //                        "日志可能包含部分本地信息，您可以先查看日志，再决定是否上传。如果不想上传，点击“取消”即可。",
+                confirmText = "知道了",
                 onConfirm = { showDialog = false },
                 onDismiss = { showDialog = false }
             )

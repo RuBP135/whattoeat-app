@@ -1,5 +1,5 @@
 package com.rubp.whattoeat.feature.food.domain.exception
 
-import com.rubp.whattoeat.core.domain.exception.ExpectedException
+import com.rubp.whattoeat.core.domain.exception.BusinessException
 
-class NoFoodSelectedException : ExpectedException("请先选择一个食物")
+class NoFoodSelectedException : BusinessException("请先选择一个食物")

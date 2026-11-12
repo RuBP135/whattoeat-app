@@ -2,8 +2,6 @@ package com.rubp.whattoeat.feature.food.data.repository
 
 import com.rubp.whattoeat.core.data.exception.DataAccessException
 import com.rubp.whattoeat.core.data.exception.withDataAccess
-import com.rubp.whattoeat.core.model.ReadState
-import com.rubp.whattoeat.core.model.asReadState
 import com.rubp.whattoeat.feature.food.data.dao.FoodDao
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import kotlinx.coroutines.flow.Flow
@@ -12,10 +10,9 @@ import kotlinx.coroutines.flow.catch
 class FoodRepository(
     private val dao: FoodDao
 ) {
-    fun findByTableId(tableId: Long): Flow<ReadState<List<Food>>> =
+    fun findByTableId(tableId: Long): Flow<List<Food>> =
         dao.findByTableId(tableId)
             .catch { throw DataAccessException.wrapOrThrowCancellationException(it) }
-            .asReadState()
 
     suspend fun findByTableIdOnce(tableId: Long): List<Food> =
         withDataAccess { dao.findByTableIdOnce(tableId) }

@@ -18,7 +18,7 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 
-### claude code ###
+### claude code local files ###
 .claude/settings.local.json
 .claude/worktrees/
 
@@ -26,3 +26,6 @@ node_modules/
 .agents/settings.local.json
 .agents/worktrees/
 .agents/cache/
+
+### codex local files ###
+.codex-remote-attachments/

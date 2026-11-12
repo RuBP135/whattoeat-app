@@ -2,14 +2,16 @@ package com.rubp.whattoeat.feature.food.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rubp.whattoeat.core.model.ReadState
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
+import com.rubp.whattoeat.core.ui.async.ReadState
 import com.rubp.whattoeat.core.ui.feedback.UiFeedback
-import com.rubp.whattoeat.core.ui.task.UiTaskRunner
+import com.rubp.whattoeat.core.ui.async.UiFlowHandler
+import com.rubp.whattoeat.core.ui.async.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
-import com.rubp.whattoeat.feature.food.data.preferences.FoodPreferences
 import com.rubp.whattoeat.feature.food.data.repository.FoodRepository
 import com.rubp.whattoeat.feature.food.data.repository.FoodTableRepository
+import com.rubp.whattoeat.feature.food.data.repository.FoodTableSelectionRepository
 import com.rubp.whattoeat.feature.food.domain.exception.FoodNotFoundException
 import com.rubp.whattoeat.feature.food.domain.exception.FoodTableNotFoundException
 import com.rubp.whattoeat.feature.food.domain.exception.InvalidFoodTableJsonException
@@ -39,13 +41,22 @@ import kotlinx.serialization.SerializationException
 class FoodViewModel(
     private val foodRepository: FoodRepository,
     private val foodTableRepository: FoodTableRepository,
-    private val foodPreferences: FoodPreferences,
-    feedback: UiFeedback
+    private val foodTableSelectionRepository: FoodTableSelectionRepository,
+    feedback: UiFeedback,
+    recorder: DeduplicatingExceptionLogRecorder
 ) : ViewModel() {
 
     private val mutex = Mutex()
+    private val tag = "FoodViewModel"
+    private val handler = UiFlowHandler(
+        tag = tag,
+        recorder = recorder,
+        onMessage = feedback::showMessage
+    )
     private val runner = UiTaskRunner(
         scope = viewModelScope,
+        tag = tag,
+        recorder = recorder,
         onMessage = feedback::showMessage,
         onError = feedback::showError
     )
@@ -66,44 +77,53 @@ class FoodViewModel(
             initialValue = FoodDataState.Loading
         )
 
-
     init {
-        launchLocked {
+        launchLocked(
+            errorLogMessage = "Failed to initialize default food table"
+        ) {
             if(foodTableRepository.findAllOnce().isEmpty()) {
                 createTableInternal("默认表格")
             }
         }
     }
 
-
     fun retry() {
         retryTrigger.update { it + 1 }
     }
 
-    fun insertFood(food: Food) = launchLocked {
+    fun insertFood(food: Food) = launchLocked(
+        errorLogMessage = "Failed to insert food"
+    ) {
         val id = requireCurrentTableId()
         foodRepository.insert(food.copy(tableId = id)) // ui 层不提供 table_id，在这里补充。
     }
 
-    fun updateName(id: Long, name: String) = launchLocked {
+    fun updateName(id: Long, name: String) = launchLocked(
+        errorLogMessage = "Failed to update food name: foodId=$id"
+    ) {
         if (foodRepository.updateName(id, name) == 0) {
             throw FoodNotFoundException(id)
         }
     }
 
-    fun updateWeight(id: Long, weight: Int) = launchLocked {
+    fun updateWeight(id: Long, weight: Int) = launchLocked(
+        errorLogMessage = "Failed to update food weight: foodId=$id, weight=$weight"
+    ) {
         if (foodRepository.updateWeight(id, weight) == 0) {
             throw FoodNotFoundException(id)
         }
     }
 
-    fun updateMarked(id: Long, marked: Boolean) = launchLocked {
+    fun updateMarked(id: Long, marked: Boolean) = launchLocked(
+        errorLogMessage = "Failed to update food marked state: foodId=$id, marked=$marked"
+    ) {
         if (foodRepository.updateMarked(id, marked) == 0) {
             throw FoodNotFoundException(id)
         }
     }
 
     fun deleteFoodById(id: Long) = launchLocked(
+        errorLogMessage = "Failed to delete food: foodId=$id",
         successMessage = "删除成功"
     ) {
         if (foodRepository.deleteById(id) == 0) throw FoodNotFoundException(id)
@@ -115,8 +135,9 @@ class FoodViewModel(
         }
     }
 
-
-    fun chosenRandomFood() = launchLocked {
+    fun chosenRandomFood() = launchLocked(
+        errorLogMessage = "Failed to choose random food"
+    ) {
         val tableId = requireCurrentTableId()
         val foods = foodRepository.findByTableIdOnce(tableId)
 
@@ -133,6 +154,7 @@ class FoodViewModel(
     }
 
     fun ignoreChosenFood() = launchLocked(
+        errorLogMessage = "Failed to ignore selected food",
         successMessage = "已忽略当前选择食物"
     ) {
         val selectionState = selectionIdStateFlow.value
@@ -143,6 +165,7 @@ class FoodViewModel(
     }
 
     fun recoverAll() = launchLocked(
+        errorLogMessage = "Failed to restore all ignored foods",
         successMessage = "已恢复所有被忽略的食物"
     ) {
         val id = requireCurrentTableId()
@@ -150,26 +173,27 @@ class FoodViewModel(
     }
 
     fun clearSelection() = launchLocked(
+        errorLogMessage = "Failed to clear food selection",
         successMessage = "已清除当前选择"
     ) {
         selectionIdStateFlow.value = FoodSelectionIdState.Idle
     }
 
-
-
     // table
     fun exportTable(
         onExport: suspend (String) -> Unit
     ) = launchLocked(
+        errorLogMessage = "Failed to export food table",
         successMessage = "已导出json至剪贴板"
     ) {
-        val id = foodPreferences.getFoodTableId() ?: throw NoTableSelectedException()
+        val id = foodTableSelectionRepository.getFoodTableId() ?: throw NoTableSelectedException()
         val table = foodTableRepository.findByIdOnce(id) ?: throw FoodTableNotFoundException(id)
         val foods = foodRepository.findByTableIdOnce(id)
         onExport(foodTableToJson(table, foods))
     }
 
     fun importTable(json: String) = launchLocked(
+        errorLogMessage = "Failed to import food table",
         successMessage = "已导入表格"
     ) {
 
@@ -187,24 +211,29 @@ class FoodViewModel(
         )
 
         if(getCurrentTableIdOrNull() == null) {
-            foodPreferences.saveFoodTableId(id)
+            foodTableSelectionRepository.saveFoodTableId(id)
         }
     }
 
-
-    fun switchTable(id: Long) = launchLocked {
+    fun switchTable(id: Long) = launchLocked(
+        errorLogMessage = "Failed to switch food table: tableId=$id"
+    ) {
         foodTableRepository.findByIdOnce(id) ?: throw FoodTableNotFoundException(id)
-        val preId = foodPreferences.getFoodTableId()
+        val preId = foodTableSelectionRepository.getFoodTableId()
         if(id == preId) return@launchLocked
-        foodPreferences.saveFoodTableId(id)
+        foodTableSelectionRepository.saveFoodTableId(id)
         selectionIdStateFlow.value = FoodSelectionIdState.Idle
     }
 
-    fun createTable(name: String) = launchLocked {
+    fun createTable(name: String) = launchLocked(
+        errorLogMessage = "Failed to create food table"
+    ) {
         createTableInternal(name)
     }
 
-    fun renameTable(name: String) = launchLocked {
+    fun renameTable(name: String) = launchLocked(
+        errorLogMessage = "Failed to rename food table"
+    ) {
         val id = requireCurrentTableId()
         if(foodTableRepository.updateName(id, name) == 0) {
             throw FoodTableNotFoundException(id)
@@ -212,6 +241,7 @@ class FoodViewModel(
     }
 
     fun deleteTable() = launchLocked(
+        errorLogMessage = "Failed to delete food table",
         successMessage = "已删除表格"
     ) {
         val id = requireCurrentTableId()
@@ -229,26 +259,29 @@ class FoodViewModel(
             else -> null
         }
 
-        foodPreferences.saveFoodTableId(newId)
+        foodTableSelectionRepository.saveFoodTableId(newId)
         selectionIdStateFlow.value = FoodSelectionIdState.Idle
     }
 
-
     private fun createFoodDataFlow(): Flow<FoodDataState> =
-        combine(
-            foodTableRepository.findAll(),
-            foodPreferences.foodTableIdFlow
-        ) { tables, currentTableId ->
-            tables to currentTableId
-        }.transformLatest { (tables, currentTableId) ->
-            when(tables) {
+        handler.asReadState(
+            flow = combine(
+                foodTableRepository.findAll(),
+                foodTableSelectionRepository.foodTableIdFlow
+            ) { tables, currentTableId ->
+                tables to currentTableId
+            },
+            errorLogMessage = "Failed to observe food tables and selected table ID"
+        ).transformLatest { state ->
+            when(state) {
                 is ReadState.Loading -> emit(FoodDataState.Loading)
-                is ReadState.Error -> emit(FoodDataState.Error(tables.exception))
+                is ReadState.Error -> emit(FoodDataState.Error(state.exception))
                 is ReadState.Success -> {
-                    val currentTable = tables.data.firstOrNull { it.id == currentTableId }
+                    val (tables, currentTableId) = state.data
+                    val currentTable = tables.firstOrNull { it.id == currentTableId }
                     if(currentTable == null) emit(
-                        FoodDataState.NoTableSelected(tables.data)
-                    ) else emitAll(observeTableFoods(tables.data, currentTable))
+                        FoodDataState.NoTableSelected(tables)
+                    ) else emitAll(observeTableFoods(tables, currentTable))
                 }
             }
         }
@@ -257,7 +290,10 @@ class FoodViewModel(
         tables: List<FoodTable>,
         currentTable: FoodTable
     ): Flow<FoodDataState> = combine(
-        foodRepository.findByTableId(currentTable.id),
+        handler.asReadState(
+            flow = foodRepository.findByTableId(currentTable.id),
+            errorLogMessage = "Failed to observe foods: tableId=${currentTable.id}"
+        ),
         selectionIdStateFlow
     ) { foods, idState ->
         when(foods) {
@@ -291,13 +327,13 @@ class FoodViewModel(
             }
         )
         if(getCurrentTableIdOrNull() == null) {
-            foodPreferences.saveFoodTableId(id)
+            foodTableSelectionRepository.saveFoodTableId(id)
         }
     }
 
     /** 获取有效的当前表格 ID，无效返回 null */
     private suspend fun getCurrentTableIdOrNull(): Long? {
-        val id = foodPreferences.getFoodTableId() ?: return null
+        val id = foodTableSelectionRepository.getFoodTableId() ?: return null
         return foodTableRepository.findByIdOnce(id)?.id
     }
 
@@ -307,9 +343,11 @@ class FoodViewModel(
 
     private fun launchLocked(
         successMessage: String? = null,
+        errorLogMessage: String,
         action: suspend () -> Unit
     ) = runner.launch(
-        successMessage = successMessage
+        successMessage = successMessage,
+        errorLogMessage = errorLogMessage
     ) {
         mutex.withLock {
             action()

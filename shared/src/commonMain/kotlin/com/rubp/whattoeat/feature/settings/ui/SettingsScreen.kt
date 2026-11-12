@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.composables.icons.materialicons.MaterialIcons
+import com.composables.icons.materialicons.filled.Description
 import com.rubp.whattoeat.BuildKonfig
 import com.rubp.whattoeat.app.ui.MainBottomBarSpacer
 import com.rubp.whattoeat.core.ui.components.button.CardButton
@@ -32,19 +34,22 @@ import com.rubp.whattoeat.feature.settings.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    onNavigateToLogs: () -> Unit
 ){
     val themeMode by settingsViewModel.themeModeStateFlow.collectAsState()
     SettingsContent(
         themeMode = themeMode,
-        onThemeModeChange = settingsViewModel::saveThemeMode
+        onThemeModeChange = settingsViewModel::saveThemeMode,
+        onNavigateToLogs = onNavigateToLogs
     )
 }
 
 @Composable
 fun SettingsContent(
     themeMode: ThemeMode,
-    onThemeModeChange: (ThemeMode) -> Unit
+    onThemeModeChange: (ThemeMode) -> Unit,
+    onNavigateToLogs: () -> Unit
 ){
     val cardModifier = Modifier
         .widthIn(max = 560.dp)
@@ -74,7 +79,7 @@ fun SettingsContent(
                 )
             }
             item {
-                AppInfo(cardModifier)
+                AppInfo(onNavigateToLogs = onNavigateToLogs, modifier = cardModifier)
             }
         }
     }
@@ -85,7 +90,8 @@ fun SettingsContent(
 
 @Composable
 private fun AppInfo(
-    modifier: Modifier
+    onNavigateToLogs: () -> Unit,
+    modifier: Modifier = Modifier
 ){
     val uriHandler = LocalUriHandler.current
 
@@ -109,6 +115,18 @@ private fun AppInfo(
         ){
             uriHandler.openUri("https://github.com/RuBP-cmd/WhatToEat2")
         }
+        CardButton(
+            title = "查看日志",
+            subtitle = "查看本机保存的错误日志",
+            icon = {
+                Icon(
+                    imageVector = MaterialIcons.Filled.Description,
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            onClick = onNavigateToLogs
+        )
     }
 }
 
@@ -118,7 +136,8 @@ private fun SettingsContentLightPreview(){
     WhatToEatPreviewTheme (false){
         SettingsContent(
             themeMode = ThemeMode.Light,
-            onThemeModeChange = {}
+            onThemeModeChange = {},
+            onNavigateToLogs = {}
         )
     }
 }
@@ -129,7 +148,8 @@ private fun SettingsContentDarkPreview(){
     WhatToEatPreviewTheme (true){
         SettingsContent(
             themeMode = ThemeMode.Dark,
-            onThemeModeChange = {}
+            onThemeModeChange = {},
+            onNavigateToLogs = {}
         )
     }
 }

@@ -1,5 +1,5 @@
 package com.rubp.whattoeat.feature.food.domain.exception
 
-import com.rubp.whattoeat.core.domain.exception.ExpectedException
+import com.rubp.whattoeat.core.domain.exception.BusinessException
 
-class NoClipboardTableDataException : ExpectedException("未获取到表格数据")
+class NoClipboardTableDataException : BusinessException("未获取到表格数据")

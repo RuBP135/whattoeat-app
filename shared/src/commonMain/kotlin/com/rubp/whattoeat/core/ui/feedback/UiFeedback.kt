@@ -1,14 +1,10 @@
 package com.rubp.whattoeat.core.ui.feedback
 
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class UiFeedback {
-
-    private val idStateFlow = MutableStateFlow(0L)
-
     private val _messageSharedFlow = MutableSharedFlow<String>()
     val messageSharedFlow: SharedFlow<String> = _messageSharedFlow.asSharedFlow()
 

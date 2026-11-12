@@ -1,5 +1,5 @@
 package com.rubp.whattoeat.feature.food.domain.exception
 
-import com.rubp.whattoeat.core.domain.exception.ExpectedException
+import com.rubp.whattoeat.core.domain.exception.BusinessException
 
-class InvalidFoodTableJsonException : ExpectedException("json格式错误")
+class InvalidFoodTableJsonException : BusinessException("json格式错误")

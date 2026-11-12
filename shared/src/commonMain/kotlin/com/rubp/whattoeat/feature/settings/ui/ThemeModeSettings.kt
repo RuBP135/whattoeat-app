@@ -48,13 +48,13 @@ private val themeModeOptions = listOf(
     ThemeModeOption(
         mode = ThemeMode.Light,
         title = "浅色模式",
-        description = "始终使用浅色外观",
+        description = "始终使用浅色主题",
         icon = MaterialIcons.Filled.Light_mode
     ),
     ThemeModeOption(
         mode = ThemeMode.Dark,
         title = "深色模式",
-        description = "始终使用深色外观",
+        description = "始终使用深色主题",
         icon = MaterialIcons.Filled.Dark_mode
     )
 )
@@ -68,18 +68,18 @@ private val themeModeOptions = listOf(
  */
 @Composable
 internal fun ThemeModeSettings(
-    themeMode: ThemeMode,
-    onThemeModeChange: (ThemeMode) -> Unit,
-    modifier: Modifier
+    themeMode: ThemeMode?,
+    modifier: Modifier = Modifier,
+    onThemeModeChange: (ThemeMode) -> Unit
 ) {
 
     WtePaperCard(modifier = modifier){
         Text(
-            text = "外观设置",
+            text = "主题设置",
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = "选择 What To Eat 的显示模式",
+            text = "选择 What To Eat 的主题模式",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge
         )
@@ -171,12 +171,22 @@ private fun ThemeModeOptionRow(
 
 @Preview
 @Composable
-private fun ThemeModeSettingsPreview(){
+private fun ThemeModeSettingsLightPreview() {
     WhatToEatPreviewTheme {
         ThemeModeSettings(
             themeMode = ThemeMode.Light,
-            onThemeModeChange = {},
-            modifier = Modifier
+            onThemeModeChange = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ThemeModeSettingsDarkPreview() {
+    WhatToEatPreviewTheme(darkTheme = true) {
+        ThemeModeSettings(
+            themeMode = ThemeMode.Dark,
+            onThemeModeChange = {}
         )
     }
 }

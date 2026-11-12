@@ -21,19 +21,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.rubp.whattoeat.app.logging.DeduplicatingExceptionLogRecorder
+import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
+import com.rubp.whattoeat.core.ui.async.UiTaskRunner
+import com.rubp.whattoeat.core.ui.clipboard.getPlainText
+import com.rubp.whattoeat.core.ui.clipboard.setPlainText
 import com.rubp.whattoeat.core.ui.components.WteTopBar
 import com.rubp.whattoeat.core.ui.components.button.MenuButton
 import com.rubp.whattoeat.core.ui.components.button.WtePrimaryButton
 import com.rubp.whattoeat.core.ui.components.button.WteSecondaryButton
 import com.rubp.whattoeat.core.ui.components.state.WteErrorPanel
-import com.rubp.whattoeat.core.theme.WhatToEatPreviewTheme
 import com.rubp.whattoeat.core.ui.feedback.LocalUiFeedback
-import com.rubp.whattoeat.core.ui.task.UiTaskRunner
 import com.rubp.whattoeat.feature.food.data.entity.Food
 import com.rubp.whattoeat.feature.food.data.entity.FoodTable
 import com.rubp.whattoeat.feature.food.domain.exception.NoClipboardTableDataException
@@ -44,20 +46,23 @@ import com.rubp.whattoeat.feature.food.viewmodel.FoodViewModel
 @Composable
 fun FoodEditScreen(
     foodViewModel: FoodViewModel,
+    recorder: DeduplicatingExceptionLogRecorder,
     modifier: Modifier = Modifier,
     onReturnToFoodChoose: () -> Unit
 ) {
     val state by foodViewModel.foodDataStateFlow.collectAsState()
     val feedback = LocalUiFeedback.current
     val scope = rememberCoroutineScope()
-    val runner = remember(scope, feedback) {
+    val runner = remember(scope, feedback, recorder) {
         UiTaskRunner(
             scope = scope,
+            tag = "FoodEditScreen",
+            recorder = recorder,
             onMessage = feedback::showMessage,
             onError = feedback::showError
         )
     }
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
 
     FoodEditContent(
         modifier = modifier,
@@ -69,15 +74,17 @@ fun FoodEditScreen(
         onDeleteTable = { foodViewModel.deleteTable() },
         onCreateTable = foodViewModel::createTable,
         onImportTable = {
-            runner.launch {
-                val input = clipboardManager.getText()?.text
+            runner.launch(
+                errorLogMessage = "Failed to read food table data from clipboard"
+            ) {
+                val input = clipboard.getPlainText()
                     ?: throw NoClipboardTableDataException()
                 foodViewModel.importTable(input)
             }
         },
         onExportTable = {
             foodViewModel.exportTable { json ->
-                clipboardManager.setText(AnnotatedString(json))
+                clipboard.setPlainText(json)
             }
         },
         onAddFood = {
